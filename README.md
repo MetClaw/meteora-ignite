@@ -2,18 +2,20 @@
 
 Your AI cofounder for token launches on Solana.
 
-Ignite is an open-source collection of Claude Code skills that gives token founders an AI cofounder. Install it, run it, and get the same strategic thinking that powers Meteora's ecosystem team.
+Ignite is an open-source collection of AI skills that gives token founders an AI cofounder. Install it, run it, and get the same strategic thinking that powers Meteora's ecosystem team.
+
+Works with **Claude Code** (slash commands) and **OpenClaw** (24/7 always-on assistant with Telegram, Discord, and browser integrations).
 
 Partners (EasyA, Bags, and others) fork this repo and add their own flavor. The base layer is maintained by Meteora.
 
-## Quick Start
+## Quick Start — Claude Code
 
 ```bash
 # Clone the repo
-git clone https://github.com/anthropics/meteora-ignite.git ~/.claude/skills/ignite
+git clone https://github.com/MetClaw/meteora-ignite.git ~/.claude/skills/ignite
 
 # Or install individual skills
-cp -r meteora-ignite/skills/launch-prep ~/.claude/skills/
+cp -r meteora-ignite/skills/ignite-prep ~/.claude/skills/
 ```
 
 Then use any skill as a slash command:
@@ -28,6 +30,27 @@ Then use any skill as a slash command:
 /ignite-pitch     — Pitch review (founder mode)
 /ignite-weekly    — Weekly retro and token holder update
 ```
+
+## Quick Start — OpenClaw
+
+```bash
+# Clone the repo
+git clone https://github.com/MetClaw/meteora-ignite.git
+
+# Install all OpenClaw skills
+cp -r meteora-ignite/openclaw/* ~/.openclaw/workspace/skills/
+
+# Or install individual skills
+cp -r meteora-ignite/openclaw/ignite-prep ~/.openclaw/workspace/skills/
+```
+
+OpenClaw skills include everything in Claude Code plus:
+
+```
+/ignite-monitor   — 24/7 pool monitor with Telegram/Discord alerts
+```
+
+The monitor watches your Meteora pool around the clock: TVL, volume, fees, LP count, community sentiment. Sends GREEN/YELLOW/RED alerts to your Telegram or Discord so you never miss a critical moment.
 
 ## What You Get
 
