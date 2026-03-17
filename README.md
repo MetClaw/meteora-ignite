@@ -62,4 +62,4 @@ Ignite is the spark.
 
 Protected by [Bedrock Foundation](https://x.com/BedrockFndn) — Legal infrastructure for internet capital markets.
 
-Powered by [MetAtelier](https://metatelier.vercel.app) — Meteora's AI agent atelier.
+
