@@ -1,0 +1,1668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meteora Ignite - Your AI Cofounder</title>
+<meta name="description" content="The agentic AI suite for token launches on Solana. Plug in, launch smarter.">
+<meta property="og:title" content="Meteora Ignite | AI Cofounder for Token Launches">
+<meta property="og:description" content="Production-ready agents, skills, CLI, and MCP for teams launching in the Meteora ecosystem.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Meteora Ignite | AI Cofounder for Token Launches">
+<meta name="theme-color" content="#0D0D13">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+/* ═══ IGNITE-SPECIFIC STYLES ═══ */
+
+/* Ignite gradient — fire to purple */
+.ignite-gradient {
+  background: linear-gradient(135deg, #FF6B00 0%, #FF8C38 25%, #E44D8A 50%, #9B4DFF 75%, #6E45FF 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ignite-glow {
+  text-shadow: 0 0 80px rgba(255, 107, 0, 0.15), 0 0 160px rgba(110, 69, 255, 0.1);
+}
+
+/* Hero override for Ignite */
+.ignite-hero {
+  padding: 160px 0 100px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.ignite-hero::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 900px; height: 900px;
+  background: radial-gradient(circle, rgba(255, 107, 0, 0.08) 0%, rgba(110, 69, 255, 0.04) 40%, transparent 65%);
+  pointer-events: none;
+  animation: ignite-pulse 8s ease-in-out infinite;
+}
+
+@keyframes ignite-pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.7; }
+}
+
+.ignite-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  color: #FF8C38; background: rgba(255, 107, 0, 0.08);
+  border: 1px solid rgba(255, 107, 0, 0.2);
+  padding: 6px 16px; border-radius: 100px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  margin-bottom: 28px;
+}
+
+.ignite-badge .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #FF8C38;
+  animation: dot-pulse 2s ease-in-out infinite;
+}
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.ignite-subtitle {
+  font-size: 1.25rem; color: var(--text-tertiary); max-width: 560px;
+  margin: 0 auto 20px; line-height: 1.7; font-weight: 300;
+}
+
+.ignite-formats {
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+
+.format-pill {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+  color: var(--text-tertiary); background: var(--base-0);
+  border: 1px solid var(--border-tertiary);
+  padding: 6px 14px; border-radius: 8px;
+  letter-spacing: 0.05em;
+}
+
+/* ═══ CHAT DEMO ═══ */
+.chat-demo {
+  max-width: 560px;
+  margin: 0 auto 24px;
+  background: var(--base-0);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
+}
+
+.chat-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 16px 20px;
+  background: var(--base--1);
+  border-bottom: 1px solid var(--border-tertiary);
+}
+
+.chat-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, #FF6B00, #6E45FF);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+}
+
+.chat-name {
+  font-size: 14px; font-weight: 600; color: var(--text-primary);
+}
+
+.chat-status {
+  font-size: 11px; color: var(--success); font-weight: 500;
+}
+
+.chat-messages {
+  padding: 20px;
+  display: flex; flex-direction: column; gap: 12px;
+  min-height: 280px;
+}
+
+.chat-msg {
+  max-width: 85%;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 13px;
+  line-height: 1.6;
+  animation: msg-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.chat-msg.bot {
+  align-self: flex-start;
+  background: var(--base-1);
+  color: var(--text-primary);
+  border-bottom-left-radius: 4px;
+}
+
+.chat-msg.user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, rgba(255, 107, 0, 0.15), rgba(110, 69, 255, 0.15));
+  border: 1px solid rgba(255, 107, 0, 0.1);
+  color: var(--text-primary);
+  border-bottom-right-radius: 4px;
+}
+
+.chat-msg .action-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--font-mono); font-size: 10px;
+  color: #FF8C38; background: rgba(255, 107, 0, 0.1);
+  padding: 2px 8px; border-radius: 4px; margin-top: 6px;
+  letter-spacing: 0.05em;
+}
+
+.chat-msg .action-tag.done {
+  color: var(--success); background: var(--success-opacity1);
+}
+
+.chat-phase-tabs {
+  display: flex; gap: 0; border-top: 1px solid var(--border-tertiary);
+}
+
+.chat-phase-tab {
+  flex: 1; padding: 12px 8px; font-size: 11px; font-weight: 600;
+  color: var(--text-disabled); background: var(--base--1);
+  border: none; cursor: pointer; transition: all 0.3s;
+  font-family: var(--font-mono); letter-spacing: 0.05em;
+  border-right: 1px solid var(--border-tertiary);
+}
+
+.chat-phase-tab:last-child { border-right: none; }
+
+.chat-phase-tab:hover { color: var(--text-secondary); background: var(--base-0); }
+
+.chat-phase-tab.active {
+  color: #FF8C38; background: rgba(255, 107, 0, 0.05);
+  box-shadow: inset 0 2px 0 #FF8C38;
+}
+
+/* ═══ CAPABILITY GRID ═══ */
+.cap-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 24px 0;
+}
+
+.cap-card {
+  padding: 24px;
+  background: var(--base-0);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 12px;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.cap-card:hover {
+  border-color: rgba(255, 107, 0, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+.cap-card .cap-icon {
+  font-size: 20px; margin-bottom: 12px;
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 107, 0, 0.08);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 107, 0, 0.1);
+}
+
+.cap-card h4 {
+  font-size: 0.875rem; font-weight: 600; color: var(--text-primary);
+  margin-bottom: 6px;
+}
+
+.cap-card p {
+  font-size: 0.8125rem; color: var(--text-tertiary);
+  margin: 0; line-height: 1.6;
+}
+
+.cap-card .cap-status {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  padding: 3px 8px; border-radius: 4px;
+  position: absolute; top: 16px; right: 16px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+.cap-status.live { color: var(--success); background: var(--success-opacity1); }
+.cap-status.building { color: #FF8C38; background: rgba(255, 107, 0, 0.1); }
+.cap-status.planned { color: var(--text-disabled); background: rgba(108, 108, 137, 0.08); }
+
+@media (max-width: 600px) {
+  .cap-grid { grid-template-columns: 1fr; }
+  .ignite-hero { padding: 140px 0 80px; }
+}
+
+/* ═══ PERMISSION TABLE ═══ */
+.perm-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 24px 0;
+  font-size: 0.8125rem;
+  border: 1px solid var(--border-tertiary);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.perm-table th {
+  font-family: var(--font-mono); font-size: 0.6875rem;
+  color: var(--text-disabled); background: var(--base--1);
+  padding: 12px 16px; text-align: left;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  border-bottom: 1px solid var(--border-tertiary);
+  font-weight: 600;
+}
+
+.perm-table td {
+  padding: 12px 16px; color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-tertiary);
+  background: var(--base-0);
+}
+
+.perm-table tr:last-child td { border-bottom: none; }
+
+.perm-level {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  padding: 3px 8px; border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.perm-level.auto { color: var(--success); background: var(--success-opacity1); }
+.perm-level.suggest { color: #FF8C38; background: rgba(255, 107, 0, 0.1); }
+.perm-level.manual { color: var(--text-disabled); background: rgba(108, 108, 137, 0.08); }
+
+/* ═══ INTEGRATION FLOW ═══ */
+.flow-steps {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0; margin: 40px 0;
+  flex-wrap: wrap;
+}
+
+.flow-step {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 8px; padding: 20px;
+  flex: 0 0 auto;
+}
+
+.flow-step .flow-num {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 107, 0, 0.12), rgba(110, 69, 255, 0.12));
+  border: 1px solid rgba(255, 107, 0, 0.15);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 14px; font-weight: 700;
+  color: #FF8C38;
+}
+
+.flow-step .flow-label {
+  font-size: 12px; font-weight: 600; color: var(--text-primary);
+  text-align: center;
+}
+
+.flow-step .flow-detail {
+  font-size: 11px; color: var(--text-tertiary);
+  text-align: center; max-width: 120px;
+}
+
+.flow-arrow {
+  font-size: 18px; color: var(--text-disabled);
+  padding: 0 4px;
+  margin-top: -20px;
+}
+
+/* ═══ CTA SECTION ═══ */
+.cta-section {
+  padding: 80px 0;
+  text-align: center;
+  border-top: 1px solid var(--border-tertiary);
+  position: relative;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 800px; height: 400px;
+  background: radial-gradient(ellipse, rgba(255, 107, 0, 0.06) 0%, rgba(110, 69, 255, 0.04) 40%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ═══ ROADMAP ═══ */
+.roadmap {
+  margin: 32px 0;
+  position: relative;
+}
+
+.roadmap::before {
+  content: '';
+  position: absolute;
+  left: 19px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, #FF8C38, var(--border-tertiary));
+}
+
+.roadmap-item {
+  display: flex; gap: 20px;
+  padding: 16px 0;
+  position: relative;
+}
+
+.roadmap-dot {
+  width: 40px; height: 40px; border-radius: 50%;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  z-index: 1;
+}
+
+.roadmap-dot.now {
+  background: linear-gradient(135deg, #FF6B00, #FF8C38);
+  color: #fff;
+  box-shadow: 0 0 20px rgba(255, 107, 0, 0.3);
+}
+
+.roadmap-dot.next {
+  background: rgba(255, 107, 0, 0.1);
+  border: 2px solid rgba(255, 107, 0, 0.3);
+  color: #FF8C38;
+}
+
+.roadmap-dot.later {
+  background: var(--base-0);
+  border: 2px solid var(--border-tertiary);
+  color: var(--text-disabled);
+}
+
+.roadmap-content h4 {
+  font-size: 0.9375rem; font-weight: 600; color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.roadmap-content p {
+  font-size: 0.8125rem; color: var(--text-tertiary);
+  margin: 0; line-height: 1.6;
+}
+
+.roadmap-content .roadmap-tags {
+  display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px;
+}
+
+.roadmap-tag {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-disabled); background: var(--base-1);
+  padding: 2px 8px; border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+/* ═══ FOUNDER JOURNEY ═══ */
+.journey-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 24px 0;
+}
+
+.journey-card {
+  padding: 24px; border-radius: 12px;
+  border: 1px solid var(--border-tertiary);
+  background: var(--base-0);
+}
+
+.journey-card.you { border-left: 3px solid var(--primary-400); }
+.journey-card.agent { border-left: 3px solid #FF8C38; }
+
+.journey-card-header { margin-bottom: 12px; }
+
+.journey-who {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  padding: 3px 10px; border-radius: 4px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+}
+
+.you-tag { color: var(--primary-400); background: var(--primary-tint-100); }
+.agent-tag { color: #FF8C38; background: rgba(255, 107, 0, 0.1); }
+
+.journey-list {
+  list-style: none; padding: 0; margin: 0;
+}
+
+.journey-list li {
+  font-size: 0.8125rem; color: var(--text-secondary);
+  padding: 6px 0; border-bottom: 1px solid var(--border-tertiary);
+  line-height: 1.6;
+}
+
+.journey-list li:last-child { border-bottom: none; }
+
+@media (max-width: 600px) { .journey-grid { grid-template-columns: 1fr; } }
+
+/* Journey timeline */
+.journey-timeline { margin: 16px 0; }
+
+.jt-item {
+  padding: 14px 16px;
+  border: 1px solid var(--border-tertiary);
+  border-radius: 10px;
+  margin: 6px 0;
+  background: var(--base-0);
+  transition: all 0.3s;
+}
+
+.jt-item:hover {
+  border-color: rgba(255, 107, 0, 0.15);
+  background: rgba(255, 107, 0, 0.02);
+}
+
+.jt-task {
+  font-size: 0.875rem; font-weight: 500; color: var(--text-primary);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; margin-bottom: 4px;
+}
+
+.jt-owner { display: inline-flex; }
+
+.jt-detail {
+  font-size: 0.75rem; color: var(--text-tertiary); line-height: 1.6;
+}
+
+/* ═══ BEFORE & AFTER ═══ */
+.compare-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 24px 0;
+}
+
+@media (max-width: 600px) { .compare-grid { grid-template-columns: 1fr; } }
+
+.compare-card {
+  border-radius: 12px; overflow: hidden;
+  border: 1px solid var(--border-tertiary);
+  background: var(--base-0);
+}
+
+.compare-header {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border-tertiary);
+}
+
+.compare-label {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+}
+
+.without-label { color: var(--danger); }
+.with-label { color: var(--success); }
+
+.compare-list {
+  list-style: none; padding: 0; margin: 0;
+}
+
+.compare-item {
+  padding: 10px 20px;
+  font-size: 0.8125rem; line-height: 1.6;
+  border-bottom: 1px solid var(--border-tertiary);
+  display: flex; align-items: flex-start; gap: 10px;
+}
+
+.compare-item:last-child { border-bottom: none; }
+
+.compare-item.bad { color: var(--text-tertiary); }
+.compare-item.good { color: var(--text-secondary); }
+
+.compare-item.bad::before {
+  content: '\2717'; color: var(--danger); font-weight: 700;
+  flex-shrink: 0; margin-top: 1px;
+}
+
+.compare-item.good::before {
+  content: '\2713'; color: var(--success); font-weight: 700;
+  flex-shrink: 0; margin-top: 1px;
+}
+
+.compare-card.without { border-top: 2px solid var(--danger); }
+.compare-card.with { border-top: 2px solid var(--success); }
+
+/* ═══ MEDIA / PODCASTS ═══ */
+.podcast-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 16px 0;
+}
+
+@media (max-width: 600px) { .podcast-grid { grid-template-columns: 1fr; } }
+
+.podcast-card {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 16px;
+  background: var(--base-0);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 10px;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+
+.podcast-card:hover {
+  border-color: rgba(110, 69, 255, 0.2);
+  background: var(--primary-tint-100);
+  transform: translateY(-1px);
+}
+
+.podcast-handle {
+  font-family: var(--font-mono); font-size: 0.75rem;
+  color: var(--primary-500); font-weight: 500;
+  white-space: nowrap;
+  min-width: 140px;
+}
+
+.podcast-desc {
+  font-size: 0.75rem; color: var(--text-tertiary); line-height: 1.5;
+}
+
+/* ═══ STATS BAR ═══ */
+.stats-bar {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 0; margin: 48px 0 0;
+  border: 1px solid var(--border-tertiary);
+  border-radius: 14px; overflow: hidden;
+  background: var(--base-0);
+}
+
+@media (max-width: 600px) { .stats-bar { grid-template-columns: repeat(2, 1fr); } }
+
+.stat-item {
+  padding: 24px 20px; text-align: center;
+  border-right: 1px solid var(--border-tertiary);
+  position: relative;
+}
+
+.stat-item:last-child { border-right: none; }
+
+@media (max-width: 600px) {
+  .stat-item { border-bottom: 1px solid var(--border-tertiary); }
+  .stat-item:nth-child(2) { border-right: none; }
+  .stat-item:nth-child(3), .stat-item:nth-child(4) { border-bottom: none; }
+}
+
+.stat-num {
+  font-family: var(--font-display); font-size: 2rem; font-weight: 400;
+  line-height: 1;
+}
+
+.stat-num.bad { color: var(--danger); }
+.stat-num.good { color: var(--success); }
+.stat-num.accent { color: #FF8C38; }
+.stat-num.purple { color: var(--primary-500); }
+
+.stat-label {
+  font-size: 0.6875rem; color: var(--text-disabled);
+  margin-top: 6px; font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+/* ═══ QUICK START ═══ */
+.quickstart-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 24px 0;
+}
+
+@media (max-width: 600px) { .quickstart-grid { grid-template-columns: 1fr; } }
+
+.qs-card {
+  padding: 24px;
+  background: var(--base-0);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 12px;
+  position: relative;
+}
+
+.qs-card h4 {
+  font-size: 0.875rem; font-weight: 600; color: var(--text-primary);
+  margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+}
+
+.qs-step {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 6px;
+  background: linear-gradient(135deg, rgba(255, 107, 0, 0.15), rgba(110, 69, 255, 0.15));
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  color: #FF8C38; flex-shrink: 0;
+}
+
+.qs-code {
+  display: block; padding: 12px 14px; margin: 8px 0;
+  background: var(--base--1); border: 1px solid var(--border-tertiary);
+  border-radius: 8px; font-family: var(--font-mono); font-size: 0.75rem;
+  color: #FF8C38; overflow-x: auto; white-space: nowrap;
+  position: relative;
+}
+
+.qs-card p {
+  font-size: 0.8125rem; color: var(--text-tertiary); margin: 0; line-height: 1.6;
+}
+
+/* ═══ USE CASE TABS ═══ */
+.usecase-tabs {
+  display: flex; gap: 0; border: 1px solid var(--border-tertiary);
+  border-radius: 10px; overflow: hidden; margin: 24px 0 16px;
+}
+
+.usecase-tab {
+  flex: 1; padding: 12px 16px; font-size: 12px; font-weight: 600;
+  color: var(--text-disabled); background: var(--base--1);
+  border: none; cursor: pointer; transition: all 0.3s;
+  font-family: var(--font-sans);
+  border-right: 1px solid var(--border-tertiary);
+}
+
+.usecase-tab:last-child { border-right: none; }
+.usecase-tab:hover { color: var(--text-secondary); background: var(--base-0); }
+
+.usecase-tab.active {
+  color: #FF8C38; background: rgba(255, 107, 0, 0.05);
+  box-shadow: inset 0 -2px 0 #FF8C38;
+}
+
+.usecase-content {
+  display: none;
+  padding: 24px;
+  background: var(--base-0);
+  border: 1px solid var(--border-tertiary);
+  border-radius: 12px;
+}
+
+.usecase-content.active { display: block; }
+
+.usecase-content h4 {
+  font-size: 0.9375rem; font-weight: 600; color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.usecase-content p {
+  font-size: 0.8125rem; color: var(--text-secondary);
+  margin-bottom: 12px; line-height: 1.7;
+}
+
+.usecase-content .qs-code { margin: 12px 0; }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="ambient"></div>
+
+<nav id="phase-nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">PLAYBOOK</a>
+    <div class="nav-phases">
+      <a href="index.html" class="phase-link">Playbook</a>
+      <a href="#" class="phase-link active" style="color: #FF8C38">Ignite</a>
+    </div>
+    <div class="readiness-badge" style="color: #FF8C38; border-color: rgba(255,107,0,0.3); background: rgba(255,107,0,0.08)">PROTOTYPE</div>
+  </div>
+</nav>
+
+<div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+
+<!-- ═══ HERO ═══ -->
+<section class="ignite-hero">
+  <div class="container">
+    <div class="ignite-badge"><span class="dot"></span> METEORA IGNITE</div>
+    <h1 class="hero-title ignite-glow">Your AI<br><span class="ignite-gradient">Cofounder.</span></h1>
+    <p class="ignite-subtitle">Production-ready agentic AI for teams launching in the Meteora ecosystem. Plug in, launch smarter.</p>
+    <div class="ignite-formats">
+      <span class="format-pill">Telegram Bot</span>
+      <span class="format-pill">CLI Skills</span>
+      <span class="format-pill">MCP Server</span>
+      <span class="format-pill">API</span>
+    </div>
+    <div class="hero-actions">
+      <a href="#start" class="btn-primary" style="background: linear-gradient(135deg, #FF6B00, #E44D8A)">Get Started</a>
+      <a href="#demo" class="btn-secondary" style="color: #FF8C38; border-color: rgba(255,107,0,0.2); background: rgba(255,107,0,0.06)">See It In Action</a>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-num bad">98%</div>
+        <div class="stat-label">of launchpad tokens fail</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num accent">50+</div>
+        <div class="stat-label">tasks to launch properly</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num good">25+</div>
+        <div class="stat-label">handled by Ignite</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num purple">0</div>
+        <div class="stat-label">cost to get started</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<div class="phase-marker"><div class="container"><span class="phase-num">01</span><h2 class="phase-title">How It Works</h2><p class="phase-sub">Add the bot. It handles the rest.</p></div></div>
+
+<section class="section"><div class="container">
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div class="flow-label">Add Bot</div>
+      <div class="flow-detail">Add Ignite to your Telegram group</div>
+    </div>
+    <span class="flow-arrow">&rarr;</span>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-label">Configure</div>
+      <div class="flow-detail">Token address, launch date, preferences</div>
+    </div>
+    <span class="flow-arrow">&rarr;</span>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div class="flow-label">Launch</div>
+      <div class="flow-detail">Agent handles setup, monitoring, ops</div>
+    </div>
+    <span class="flow-arrow">&rarr;</span>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div class="flow-label">Grow</div>
+      <div class="flow-detail">Ongoing content, alerts, optimization</div>
+    </div>
+  </div>
+
+  <div class="callout callout-insight">
+    <strong>Not a chatbot. A cofounder.</strong> Ignite doesn't just answer questions. It monitors your pool, drafts your content, suggests when to boost on DexScreener, sets up your Telegram, and tells you the hard truth when something's off. It acts, or it asks for permission to act.
+  </div>
+</div></section>
+
+<!-- ═══ FOUNDER JOURNEY ═══ -->
+<div id="journey" class="phase-marker"><div class="container"><span class="phase-num">02</span><h2 class="phase-title">The Founder Journey</h2><p class="phase-sub">Everything you need to launch. What Ignite handles for you.</p></div></div>
+
+<section class="section"><div class="container">
+
+  <p>Launching a token is 50+ tasks across infrastructure, community, marketing, liquidity, and compliance. Most founders miss half of them. Ignite tracks all of them.</p>
+
+  <h3 class="section-title">Before You Start</h3>
+  <p>What you bring. What Ignite brings.</p>
+  <div class="journey-grid">
+    <div class="journey-card you">
+      <div class="journey-card-header"><span class="journey-who you-tag">YOU</span></div>
+      <ul class="journey-list">
+        <li>Your idea and vision</li>
+        <li>A Solana wallet with SOL</li>
+        <li>Your X (Twitter) account</li>
+        <li>Willingness to show your face</li>
+      </ul>
+    </div>
+    <div class="journey-card agent">
+      <div class="journey-card-header"><span class="journey-who agent-tag">IGNITE</span></div>
+      <ul class="journey-list">
+        <li>Launch strategy and sequencing</li>
+        <li>Tokenomics review and optimization</li>
+        <li>Community and channel setup</li>
+        <li>Content, monitoring, and operations</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 class="section-title">Phase 1: Foundation</h3>
+  <div class="journey-timeline">
+    <div class="jt-item">
+      <div class="jt-task">Create SPL token (mint, metadata, logo)</div>
+      <div class="jt-owner"><span class="perm-level suggest">GUIDED</span></div>
+      <div class="jt-detail">Ignite walks you through token creation, validates parameters, checks for common mistakes</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Design token branding (logo, colors, visual identity)</div>
+      <div class="jt-owner"><span class="perm-level suggest">GUIDED</span></div>
+      <div class="jt-detail">Generates brand guidelines, DexScreener banner specs (1500x500), profile image templates</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Set up treasury wallet and multisig</div>
+      <div class="jt-owner"><span class="perm-level manual">MANUAL</span></div>
+      <div class="jt-detail">Recommends Squads multisig setup, explains why single-signer treasury is a red flag</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Design tokenomics (supply, distribution, vesting)</div>
+      <div class="jt-owner"><span class="perm-level suggest">GUIDED</span></div>
+      <div class="jt-detail">Reviews your plan, benchmarks against successful launches, flags red flags</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Burn mint authority (optional but builds trust)</div>
+      <div class="jt-owner"><span class="perm-level manual">MANUAL</span></div>
+      <div class="jt-detail">Explains trade-offs, reminds you before launch if not done</div>
+    </div>
+  </div>
+
+  <h3 class="section-title">Phase 2: Infrastructure</h3>
+  <div class="journey-timeline">
+    <div class="jt-item">
+      <div class="jt-task">Create Telegram group with moderation</div>
+      <div class="jt-owner"><span class="perm-level auto">AUTO</span></div>
+      <div class="jt-detail">Creates group, adds anti-spam bot, sets welcome message, pins rules, creates announcement channel</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Set up X profile (bio, pinned post, header)</div>
+      <div class="jt-owner"><span class="perm-level suggest">GUIDED</span></div>
+      <div class="jt-detail">Drafts bio using your pitch, creates pinned thread, specs header image</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Create landing page or docs site</div>
+      <div class="jt-owner"><span class="perm-level suggest">GUIDED</span></div>
+      <div class="jt-detail">Generates a one-pager with tokenomics, team, vision, and links</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Lock dev supply on Streamflow</div>
+      <div class="jt-owner"><span class="perm-level suggest">GUIDED</span></div>
+      <div class="jt-detail">Walks through Streamflow lock, verifies on-chain, won't let you skip it</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Set up Meteora pool (DLMM / DAMM / DBC)</div>
+      <div class="jt-owner"><span class="perm-level suggest">GUIDED</span></div>
+      <div class="jt-detail">Recommends pool type, bin step, fee tier. Tests on devnet first. Guides mainnet deployment.</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Submit DexScreener token verification</div>
+      <div class="jt-owner"><span class="perm-level auto">AUTO</span></div>
+      <div class="jt-detail">Fills and submits verification form, uploads banner, tracks approval status</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">List on aggregators (Jupiter, Birdeye, CoinGecko)</div>
+      <div class="jt-owner"><span class="perm-level auto">AUTO</span></div>
+      <div class="jt-detail">Submits to all major aggregators, tracks each listing status, notifies when live</div>
+    </div>
+  </div>
+
+  <h3 class="section-title">Phase 3: Community & Content</h3>
+  <div class="journey-timeline">
+    <div class="jt-item">
+      <div class="jt-task">Build early community (first 50 genuine members)</div>
+      <div class="jt-owner"><span class="perm-level suggest">GUIDED</span></div>
+      <div class="jt-detail">Identifies target communities, drafts outreach messages, tracks member quality</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Script launch day content (thread, video, posts)</div>
+      <div class="jt-owner"><span class="perm-level auto">AUTO</span></div>
+      <div class="jt-detail">Generates launch thread (8-12 tweets), first-week content calendar, video script</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Record 60-90 second video introduction</div>
+      <div class="jt-owner"><span class="perm-level manual">MANUAL</span></div>
+      <div class="jt-detail">Provides script, talking points, and what to show on screen. You record it.</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Line up early backers and RT commitments</div>
+      <div class="jt-owner"><span class="perm-level suggest">GUIDED</span></div>
+      <div class="jt-detail">Drafts network outreach messages, tracks who's confirmed, sequences announcements</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Schedule X Space for launch day</div>
+      <div class="jt-owner"><span class="perm-level auto">AUTO</span></div>
+      <div class="jt-detail">Creates Space, drafts talking points, sets reminder 15min before</div>
+    </div>
+  </div>
+
+  <h3 class="section-title">Phase 4: Legal & Compliance</h3>
+  <div class="journey-timeline">
+    <div class="jt-item">
+      <div class="jt-task">Evaluate Bedrock Foundation incorporation</div>
+      <div class="jt-owner"><span class="perm-level suggest">GUIDED</span></div>
+      <div class="jt-detail">Assesses your situation, recommends timing, explains economics and trade-offs</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Review all content for compliance</div>
+      <div class="jt-owner"><span class="perm-level auto">AUTO</span></div>
+      <div class="jt-detail">Scans every post for "investment" language, return promises, and compliance violations before publishing</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Set up transparency reporting cadence</div>
+      <div class="jt-owner"><span class="perm-level auto">AUTO</span></div>
+      <div class="jt-detail">Generates weekly token holder updates with real data, drafts them for your review</div>
+    </div>
+  </div>
+
+  <h3 class="section-title">Phase 5: Launch & Beyond</h3>
+  <div class="journey-timeline">
+    <div class="jt-item">
+      <div class="jt-task">Execute launch day timeline (T-30m to T+3h)</div>
+      <div class="jt-owner"><span class="perm-level auto">AUTO</span></div>
+      <div class="jt-detail">Queues and posts content on schedule, monitors pool in real-time, sends you updates</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Get on trading bots (BonkBot, Trojan, Photon)</div>
+      <div class="jt-owner"><span class="perm-level suggest">GUIDED</span></div>
+      <div class="jt-detail">Checks which bots already list you, submits where needed, verifies routing</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Monitor pool health 24/7</div>
+      <div class="jt-owner"><span class="perm-level auto">AUTO</span></div>
+      <div class="jt-detail">Tracks TVL, volume, LP count, whale movements. Color-coded alerts to your TG.</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Evaluate and time DexScreener trending boost</div>
+      <div class="jt-owner"><span class="perm-level suggest">SUGGEST</span></div>
+      <div class="jt-detail">Analyzes volume trends, suggests optimal timing and budget, calculates expected ROI</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Maintain content cadence (Mon/Wed/Fri)</div>
+      <div class="jt-owner"><span class="perm-level auto">AUTO</span></div>
+      <div class="jt-detail">Drafts posts using templates, pulls real metrics, queues for your approval</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Rebalance LP positions when price drifts</div>
+      <div class="jt-owner"><span class="perm-level suggest">SUGGEST</span></div>
+      <div class="jt-detail">Detects when bins are out of range, proposes new distribution, executes on approval</div>
+    </div>
+    <div class="jt-item">
+      <div class="jt-task">Weekly retro and token holder update</div>
+      <div class="jt-owner"><span class="perm-level auto">AUTO</span></div>
+      <div class="jt-detail">Pulls all metrics, drafts transparent update, posts to TG and X after your review</div>
+    </div>
+  </div>
+
+  <div class="callout callout-key" style="margin-top: 32px">
+    <strong>That's 25+ tasks Ignite handles or guides you through.</strong> Without it, founders miss critical steps, launch unprepared, and burn out trying to do everything manually. With Ignite, you focus on your product and community. The agent handles the ops.
+  </div>
+
+</div></section>
+
+<!-- ═══ BEFORE & AFTER ═══ -->
+<div class="phase-marker"><div class="container"><span class="phase-num">03</span><h2 class="phase-title">Without vs. With</h2><p class="phase-sub">Same founder. Different outcomes.</p></div></div>
+
+<section class="section"><div class="container">
+  <div class="compare-grid">
+    <div class="compare-card without">
+      <div class="compare-header">
+        <span class="compare-label without-label">WITHOUT IGNITE</span>
+      </div>
+      <ul class="compare-list">
+        <li class="compare-item bad">Forgets to lock dev supply. Community notices. Trust gone.</li>
+        <li class="compare-item bad">Launches Friday night. No one's watching.</li>
+        <li class="compare-item bad">No DexScreener verification. Token looks unverified for 3 days.</li>
+        <li class="compare-item bad">Posts once on launch day, then silence for a week.</li>
+        <li class="compare-item bad">Largest LP exits. Founder finds out 6 hours later on CT.</li>
+        <li class="compare-item bad">Spends $500 on DexScreener boost at the wrong time.</li>
+        <li class="compare-item bad">No weekly updates. Holders assume project is dead.</li>
+        <li class="compare-item bad">Burns out in 3 weeks trying to do everything solo.</li>
+      </ul>
+    </div>
+    <div class="compare-card with">
+      <div class="compare-header">
+        <span class="compare-label with-label">WITH IGNITE</span>
+      </div>
+      <ul class="compare-list">
+        <li class="compare-item good">Agent blocks launch until dev supply is locked.</li>
+        <li class="compare-item good">Agent recommends Mon-Thu, 10am-8pm ET. Schedules accordingly.</li>
+        <li class="compare-item good">Verification submitted automatically before launch.</li>
+        <li class="compare-item good">Content queued: T+0, T+15m, T+1h, T+3h, then daily for a week.</li>
+        <li class="compare-item good">Alert hits TG in 30 seconds. Rebalance suggested in 60.</li>
+        <li class="compare-item good">Agent waits for optimal timing, projects ROI, asks for approval.</li>
+        <li class="compare-item good">Weekly updates drafted with real data. Founder just approves.</li>
+        <li class="compare-item good">Founder focuses on product and community. Agent handles ops.</li>
+      </ul>
+    </div>
+  </div>
+</div></section>
+
+<!-- ═══ LIVE DEMO ═══ -->
+<div id="demo" class="phase-marker"><div class="container"><span class="phase-num">04</span><h2 class="phase-title">See It In Action</h2><p class="phase-sub">What the agent says at each phase of your launch</p></div></div>
+
+<section class="section"><div class="container">
+  <div class="chat-demo">
+    <div class="chat-header">
+      <div class="chat-avatar">I</div>
+      <div>
+        <div class="chat-name">Ignite Agent</div>
+        <div class="chat-status">Online</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <!-- Populated by JS -->
+    </div>
+    <div class="chat-phase-tabs">
+      <button class="chat-phase-tab active" data-chat="setup">Setup</button>
+      <button class="chat-phase-tab" data-chat="prelaunch">Pre-Launch</button>
+      <button class="chat-phase-tab" data-chat="launchday">Launch Day</button>
+      <button class="chat-phase-tab" data-chat="growth">Growth</button>
+      <button class="chat-phase-tab" data-chat="alert">Alert</button>
+    </div>
+  </div>
+</div></section>
+
+<!-- ═══ CAPABILITIES ═══ -->
+<div id="capabilities" class="phase-marker"><div class="container"><span class="phase-num">05</span><h2 class="phase-title">Capabilities</h2><p class="phase-sub">What your AI cofounder can do today, and what's coming</p></div></div>
+
+<section class="section"><div class="container">
+  <h3 class="section-title">Advisory (Live)</h3>
+  <p>Strategic thinking powered by Meteora's ecosystem knowledge. Available now as CLI skills.</p>
+  <div class="cap-grid">
+    <div class="cap-card">
+      <span class="cap-status live">LIVE</span>
+      <div class="cap-icon">&#9634;</div>
+      <h4>Launch Readiness</h4>
+      <p>Scores your prep across 7 dimensions. Flags gaps before they become problems.</p>
+    </div>
+    <div class="cap-card">
+      <span class="cap-status live">LIVE</span>
+      <div class="cap-icon">&#9670;</div>
+      <h4>Tokenomics Review</h4>
+      <p>Analyzes supply, distribution, vesting, fee models. Benchmarks against successful launches.</p>
+    </div>
+    <div class="cap-card">
+      <span class="cap-status live">LIVE</span>
+      <div class="cap-icon">&#9711;</div>
+      <h4>Liquidity Strategy</h4>
+      <p>DLMM bin step, fee tier, position strategy. Knows Meteora's infrastructure deeply.</p>
+    </div>
+    <div class="cap-card">
+      <span class="cap-status live">LIVE</span>
+      <div class="cap-icon">&#9733;</div>
+      <h4>Community Playbook</h4>
+      <p>Pre-launch to post-launch community building. Based on LP Army methodology (50% retention).</p>
+    </div>
+    <div class="cap-card">
+      <span class="cap-status live">LIVE</span>
+      <div class="cap-icon">&#9650;</div>
+      <h4>Growth Framework</h4>
+      <p>ICE-scored growth initiatives. Loops over funnels. Channel prioritization.</p>
+    </div>
+    <div class="cap-card">
+      <span class="cap-status live">LIVE</span>
+      <div class="cap-icon">&#9632;</div>
+      <h4>Legal Checklist</h4>
+      <p>Bedrock Foundation integration. Compliance frameworks. Content do's and don'ts.</p>
+    </div>
+    <div class="cap-card">
+      <span class="cap-status live">LIVE</span>
+      <div class="cap-icon">&#9672;</div>
+      <h4>Pitch Review</h4>
+      <p>Founder mode stress test. The cofounder who tells you the hard truth before launch.</p>
+    </div>
+    <div class="cap-card">
+      <span class="cap-status live">LIVE</span>
+      <div class="cap-icon">&#9744;</div>
+      <h4>Weekly Retros</h4>
+      <p>Token holder update templates. Internal retro framework. Transparency as retention.</p>
+    </div>
+  </div>
+
+  <h3 class="section-title">Operational (Building)</h3>
+  <p>Skills that take action, not just give advice. The agent does the work.</p>
+  <div class="cap-grid">
+    <div class="cap-card">
+      <span class="cap-status building">BUILDING</span>
+      <div class="cap-icon">&#9993;</div>
+      <h4>Telegram Setup</h4>
+      <p>Creates group, configures anti-spam, sets welcome message, pins rules. Ready-to-go community.</p>
+    </div>
+    <div class="cap-card">
+      <span class="cap-status building">BUILDING</span>
+      <div class="cap-icon">&#9883;</div>
+      <h4>DexScreener Boost</h4>
+      <p>Evaluates timing and ROI for trending. Suggests budget. Walks through or executes payment.</p>
+    </div>
+    <div class="cap-card">
+      <span class="cap-status building">BUILDING</span>
+      <div class="cap-icon">&#10064;</div>
+      <h4>Aggregator Listings</h4>
+      <p>Submits token to Jupiter, Birdeye, DexScreener, CoinGecko. Tracks submission status.</p>
+    </div>
+    <div class="cap-card">
+      <span class="cap-status building">BUILDING</span>
+      <div class="cap-icon">&#9998;</div>
+      <h4>Content Engine</h4>
+      <p>Generates launch thread, first-week calendar, weekly updates. Ready-to-post drafts.</p>
+    </div>
+    <div class="cap-card">
+      <span class="cap-status building">BUILDING</span>
+      <div class="cap-icon">&#9888;</div>
+      <h4>Live Monitoring</h4>
+      <p>24/7 pool health, whale tracking, volume alerts. Color-coded alerts to TG.</p>
+    </div>
+    <div class="cap-card">
+      <span class="cap-status building">BUILDING</span>
+      <div class="cap-icon">&#9851;</div>
+      <h4>Position Rebalancing</h4>
+      <p>Monitors LP bins. Suggests rebalancing when price drifts. Execute with approval.</p>
+    </div>
+  </div>
+
+  <h3 class="section-title">Ecosystem (Planned)</h3>
+  <p>Partner integrations and platform-specific skills.</p>
+  <div class="cap-grid">
+    <div class="cap-card">
+      <span class="cap-status planned">PLANNED</span>
+      <div class="cap-icon">&#10070;</div>
+      <h4>Pool Deployment</h4>
+      <p>Walk through and execute Meteora pool creation. Devnet test, then mainnet.</p>
+    </div>
+    <div class="cap-card">
+      <span class="cap-status planned">PLANNED</span>
+      <div class="cap-icon">&#9881;</div>
+      <h4>Treasury Dashboard</h4>
+      <p>Tracks balance, burn rate, runway. Alerts when runway drops below threshold.</p>
+    </div>
+    <div class="cap-card">
+      <span class="cap-status planned">PLANNED</span>
+      <div class="cap-icon">&#9741;</div>
+      <h4>KOL Vetting</h4>
+      <p>Analyzes follower quality, past performance. Drafts outreach. Flags red flags.</p>
+    </div>
+    <div class="cap-card">
+      <span class="cap-status planned">PLANNED</span>
+      <div class="cap-icon">&#10022;</div>
+      <h4>Partner Plugins</h4>
+      <p>EasyA, Bags, custom platforms fork and extend with their own skills.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- ═══ PERMISSION MODEL ═══ -->
+<div class="phase-marker"><div class="container"><span class="phase-num">06</span><h2 class="phase-title">Permission Model</h2><p class="phase-sub">The founder is always in control</p></div></div>
+
+<section class="section"><div class="container">
+  <p>Every action has a permission level. Founders can promote or demote any action. "Just handle DexScreener for me" moves it from Suggest to Auto.</p>
+  <table class="perm-table">
+    <thead>
+      <tr>
+        <th>Level</th>
+        <th>What It Means</th>
+        <th>Examples</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="perm-level auto">AUTO</span></td>
+        <td>Agent does it without asking</td>
+        <td>Monitor pools, track metrics, draft content, send alerts</td>
+      </tr>
+      <tr>
+        <td><span class="perm-level suggest">SUGGEST</span></td>
+        <td>Agent asks before acting</td>
+        <td>DexScreener boost, rebalancing, content posting, KOL outreach</td>
+      </tr>
+      <tr>
+        <td><span class="perm-level manual">MANUAL</span></td>
+        <td>Founder handles it</td>
+        <td>Pool creation, treasury moves, exchange listings</td>
+      </tr>
+    </tbody>
+  </table>
+</div></section>
+
+<!-- ═══ DELIVERY FORMATS ═══ -->
+<div class="phase-marker"><div class="container"><span class="phase-num">07</span><h2 class="phase-title">Plug In Anywhere</h2><p class="phase-sub">Use Ignite however your team works</p></div></div>
+
+<section class="section"><div class="container">
+  <div class="cap-grid">
+    <div class="cap-card">
+      <h4>Telegram Bot</h4>
+      <p>Add to your group. The agent lives where your community lives. Proactive monitoring, alerts, and actions.</p>
+    </div>
+    <div class="cap-card">
+      <h4>CLI Skills</h4>
+      <p>Slash commands for Claude Code and compatible agents. <code style="font-size:11px;color:#FF8C38">/ignite-prep</code>, <code style="font-size:11px;color:#FF8C38">/ignite-liquidity</code>, etc.</p>
+    </div>
+    <div class="cap-card">
+      <h4>MCP Server</h4>
+      <p>Model Context Protocol for any LLM. Plug Meteora's knowledge into your own AI stack.</p>
+    </div>
+    <div class="cap-card">
+      <h4>API</h4>
+      <p>Programmatic access for platforms and partners. Build your own integrations on top of Ignite.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- ═══ MEDIA & PODCASTS ═══ -->
+<div id="media" class="phase-marker"><div class="container"><span class="phase-num">08</span><h2 class="phase-title">Get On The Mic</h2><p class="phase-sub">Solana podcasts, shows, and media your agent can pitch you to</p></div></div>
+
+<section class="section"><div class="container">
+  <p>Visibility is oxygen for a new token. These are the shows, podcasts, and media outlets that matter in Solana. Ignite can draft your pitch, prep talking points, and track outreach.</p>
+
+  <h3 class="section-title">Solana Podcasts</h3>
+  <p>The shows builders and investors actually listen to.</p>
+  <div class="podcast-grid">
+    <a class="podcast-card" href="https://x.com/Austin_Federa" target="_blank">
+      <span class="podcast-handle">@Austin_Federa</span>
+      <span class="podcast-desc">Validated (former host) - now co-founder of DoubleZero</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/Lightspeedpodhq" target="_blank">
+      <span class="podcast-handle">@Lightspeedpodhq</span>
+      <span class="podcast-desc">Lightspeed - Blockworks' Solana weekly show</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/SolfatePod" target="_blank">
+      <span class="podcast-handle">@SolfatePod</span>
+      <span class="podcast-desc">Solfate Podcast - Solana builder interviews</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/SolanaFloor" target="_blank">
+      <span class="podcast-handle">@SolanaFloor</span>
+      <span class="podcast-desc">Solana Floor - Ecosystem news and analysis</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/SuperteamDAO" target="_blank">
+      <span class="podcast-handle">@SuperteamDAO</span>
+      <span class="podcast-desc">Superteam - Global Solana community, regular Spaces</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/SolBrothersPod" target="_blank">
+      <span class="podcast-handle">@SolBrothersPod</span>
+      <span class="podcast-desc">Sol Brothers Pod - Weekly Solana ecosystem coverage</span>
+    </a>
+  </div>
+
+  <h3 class="section-title">Crypto Media</h3>
+  <p>Major outlets that cover Solana launches and DeFi.</p>
+  <div class="podcast-grid">
+    <a class="podcast-card" href="https://x.com/blockworks_" target="_blank">
+      <span class="podcast-handle">@blockworks_</span>
+      <span class="podcast-desc">Blockworks - Research, podcasts, events</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/theblock__" target="_blank">
+      <span class="podcast-handle">@theblock__</span>
+      <span class="podcast-desc">The Block - Crypto research and news</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/CoinDesk" target="_blank">
+      <span class="podcast-handle">@CoinDesk</span>
+      <span class="podcast-desc">CoinDesk - Tier 1 crypto journalism</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/decryptmedia" target="_blank">
+      <span class="podcast-handle">@decryptmedia</span>
+      <span class="podcast-desc">Decrypt - Accessible crypto coverage</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/BanklessHQ" target="_blank">
+      <span class="podcast-handle">@BanklessHQ</span>
+      <span class="podcast-desc">Bankless - DeFi-native podcast and media</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/MessariCrypto" target="_blank">
+      <span class="podcast-handle">@MessariCrypto</span>
+      <span class="podcast-desc">Messari - Institutional research and analysis</span>
+    </a>
+  </div>
+
+  <h3 class="section-title">Ecosystem Voices</h3>
+  <p>Influential accounts that amplify Solana projects. Getting a mention or RT matters.</p>
+  <div class="podcast-grid">
+    <a class="podcast-card" href="https://x.com/aeyakovenko" target="_blank">
+      <span class="podcast-handle">@aeyakovenko</span>
+      <span class="podcast-desc">Anatoly Yakovenko - Solana co-founder</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/rajgokal" target="_blank">
+      <span class="podcast-handle">@rajgokal</span>
+      <span class="podcast-desc">Raj Gokal - Solana co-founder</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/mattytay" target="_blank">
+      <span class="podcast-handle">@mattytay</span>
+      <span class="podcast-desc">Matty Taylor - Colosseum, Solana accelerator</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/jacobvcreech" target="_blank">
+      <span class="podcast-handle">@jacobvcreech</span>
+      <span class="podcast-desc">Jacob Creech - Solana DevRel lead</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/weremeow" target="_blank">
+      <span class="podcast-handle">@weremeow</span>
+      <span class="podcast-desc">Meow - Jupiter founder, Meteora co-founder</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/SOLBigBrain" target="_blank">
+      <span class="podcast-handle">@SOLBigBrain</span>
+      <span class="podcast-desc">SOL Big Brain - Ecosystem analysis and VC</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/_Dean_Machine" target="_blank">
+      <span class="podcast-handle">@_Dean_Machine</span>
+      <span class="podcast-desc">Dean - Dean's List DAO, Solana governance builder</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/vibhu" target="_blank">
+      <span class="podcast-handle">@vibhu</span>
+      <span class="podcast-desc">Vibhu Norby - DRiP founder, ex-Solana Foundation</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/lagunacarta" target="_blank">
+      <span class="podcast-handle">@lagunacarta</span>
+      <span class="podcast-desc">Laguna - Solana Foundation Ecosystem Marketing</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/MeteoraAG" target="_blank">
+      <span class="podcast-handle">@MeteoraAG</span>
+      <span class="podcast-desc">Meteora - Tag us. We amplify ecosystem launches.</span>
+    </a>
+  </div>
+
+  <h3 class="section-title">YouTube Channels</h3>
+  <p>Video content that drives retail discovery.</p>
+  <div class="podcast-grid">
+    <a class="podcast-card" href="https://x.com/AltcoinDaily" target="_blank">
+      <span class="podcast-handle">@AltcoinDaily</span>
+      <span class="podcast-desc">Altcoin Daily - 1.3M+ YouTube subscribers, daily crypto</span>
+    </a>
+    <a class="podcast-card" href="https://x.com/crypto_banter" target="_blank">
+      <span class="podcast-handle">@crypto_banter</span>
+      <span class="podcast-desc">Crypto Banter - Live trading show, Solana coverage</span>
+    </a>
+  </div>
+
+  <div class="callout callout-insight" style="margin-top: 32px">
+    <strong>Ignite can draft your media pitch.</strong> Tell the agent which shows you want to target. It'll research the host, draft a personalized pitch, and prep your talking points. You just show up and deliver.
+  </div>
+</div></section>
+
+<!-- ═══ ROADMAP ═══ -->
+<div class="phase-marker"><div class="container"><span class="phase-num">09</span><h2 class="phase-title">Roadmap</h2><p class="phase-sub">Where we're headed</p></div></div>
+
+<section class="section"><div class="container">
+  <div class="roadmap">
+    <div class="roadmap-item">
+      <div class="roadmap-dot now">v1</div>
+      <div class="roadmap-content">
+        <h4>Advisory Skills (Now)</h4>
+        <p>8 CLI skills covering the full launch lifecycle. Strategic thinking from Meteora's ecosystem team, packaged as slash commands.</p>
+        <div class="roadmap-tags">
+          <span class="roadmap-tag">prep</span>
+          <span class="roadmap-tag">tokenomics</span>
+          <span class="roadmap-tag">liquidity</span>
+          <span class="roadmap-tag">community</span>
+          <span class="roadmap-tag">growth</span>
+          <span class="roadmap-tag">legal</span>
+          <span class="roadmap-tag">pitch</span>
+          <span class="roadmap-tag">weekly</span>
+        </div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-dot next">v2</div>
+      <div class="roadmap-content">
+        <h4>Telegram Agent (Next)</h4>
+        <p>Always-on bot in your TG group. Monitors pools, sends alerts, drafts content, suggests actions. The cofounder that never sleeps.</p>
+        <div class="roadmap-tags">
+          <span class="roadmap-tag">telegram bot</span>
+          <span class="roadmap-tag">monitoring</span>
+          <span class="roadmap-tag">alerts</span>
+          <span class="roadmap-tag">content drafts</span>
+        </div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-dot next">v3</div>
+      <div class="roadmap-content">
+        <h4>Action Layer</h4>
+        <p>Agent executes: creates TG groups, submits to DexScreener, deploys pools, posts content. From advisor to operator.</p>
+        <div class="roadmap-tags">
+          <span class="roadmap-tag">dexscreener</span>
+          <span class="roadmap-tag">pool deploy</span>
+          <span class="roadmap-tag">tg setup</span>
+          <span class="roadmap-tag">listings</span>
+        </div>
+      </div>
+    </div>
+    <div class="roadmap-item">
+      <div class="roadmap-dot later">v4</div>
+      <div class="roadmap-content">
+        <h4>Partner Ecosystem</h4>
+        <p>Partners fork and extend. EasyA, Bags, and custom platforms build on Ignite's base layer. MCP server for universal LLM access.</p>
+        <div class="roadmap-tags">
+          <span class="roadmap-tag">partner sdk</span>
+          <span class="roadmap-tag">mcp server</span>
+          <span class="roadmap-tag">api</span>
+          <span class="roadmap-tag">forkable</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<!-- ═══ GET STARTED ═══ -->
+<div id="start" class="phase-marker"><div class="container"><span class="phase-num">10</span><h2 class="phase-title">Get Started Now</h2><p class="phase-sub">Pick your path. Be running in under 5 minutes.</p></div></div>
+
+<section class="section"><div class="container">
+  <div class="usecase-tabs">
+    <button class="usecase-tab active" data-uc="founder">I'm a Founder</button>
+    <button class="usecase-tab" data-uc="launchpad">I'm a Launchpad</button>
+    <button class="usecase-tab" data-uc="developer">I'm a Developer</button>
+  </div>
+
+  <div class="usecase-content active" id="uc-founder">
+    <h4>Launch your token with an AI cofounder</h4>
+    <p>Install Ignite's skills into Claude Code. Run any skill to get started. No API keys, no setup, no cost.</p>
+
+    <div class="quickstart-grid">
+      <div class="qs-card">
+        <h4><span class="qs-step">1</span> Install</h4>
+        <code class="qs-code">git clone https://github.com/MetClaw/meteora-ignite.git ~/.claude/skills/ignite</code>
+        <p>One command. Skills are instantly available as slash commands.</p>
+      </div>
+      <div class="qs-card">
+        <h4><span class="qs-step">2</span> Run your first check</h4>
+        <code class="qs-code">/ignite-prep</code>
+        <p>Scores your launch readiness across 7 dimensions. Takes 2 minutes.</p>
+      </div>
+      <div class="qs-card">
+        <h4><span class="qs-step">3</span> Get your liquidity strategy</h4>
+        <code class="qs-code">/ignite-liquidity</code>
+        <p>DLMM bin step, fee tier, position strategy tailored to your token.</p>
+      </div>
+      <div class="qs-card">
+        <h4><span class="qs-step">4</span> Stress test your idea</h4>
+        <code class="qs-code">/ignite-pitch</code>
+        <p>Founder mode. The hard questions you need to answer before launch.</p>
+      </div>
+    </div>
+
+    <div class="callout callout-key">
+      <strong>All 8 skills available today:</strong> <code style="font-size:11px;color:#FF8C38">/ignite-prep</code> <code style="font-size:11px;color:#FF8C38">/ignite-token</code> <code style="font-size:11px;color:#FF8C38">/ignite-liquidity</code> <code style="font-size:11px;color:#FF8C38">/ignite-community</code> <code style="font-size:11px;color:#FF8C38">/ignite-growth</code> <code style="font-size:11px;color:#FF8C38">/ignite-legal</code> <code style="font-size:11px;color:#FF8C38">/ignite-pitch</code> <code style="font-size:11px;color:#FF8C38">/ignite-weekly</code>
+    </div>
+  </div>
+
+  <div class="usecase-content" id="uc-launchpad">
+    <h4>Give your founders an AI cofounder on day one</h4>
+    <p>Fork Ignite, add your platform-specific skills, and ship a customized agent to every team that launches through you. Your founders get Meteora's ecosystem intelligence plus your platform's unique value.</p>
+
+    <div class="quickstart-grid">
+      <div class="qs-card">
+        <h4><span class="qs-step">1</span> Fork the repo</h4>
+        <code class="qs-code">gh repo fork MetClaw/meteora-ignite --clone</code>
+        <p>Start with all 8 base skills. Add your own on top.</p>
+      </div>
+      <div class="qs-card">
+        <h4><span class="qs-step">2</span> Add your skills</h4>
+        <code class="qs-code">mkdir skills/your-platform-onboard</code>
+        <p>Create platform-specific skills: onboarding flows, custom pool configs, partner integrations.</p>
+      </div>
+      <div class="qs-card">
+        <h4><span class="qs-step">3</span> Ship to your founders</h4>
+        <code class="qs-code">git clone https://github.com/you/meteora-ignite ~/.claude/skills/ignite</code>
+        <p>One install command for every founder in your program.</p>
+      </div>
+      <div class="qs-card">
+        <h4><span class="qs-step">4</span> Contribute back</h4>
+        <code class="qs-code">gh pr create --title "Add [Platform] skills"</code>
+        <p>Your best skills can become part of the base layer for everyone.</p>
+      </div>
+    </div>
+
+    <div class="callout callout-insight">
+      <strong>Partner examples:</strong> EasyA could add hackathon-to-launch pipeline skills. Bags could add bonding curve optimization. Any launchpad can plug in their unique flow and give founders a smarter experience.
+    </div>
+  </div>
+
+  <div class="usecase-content" id="uc-developer">
+    <h4>Build on Ignite's knowledge layer</h4>
+    <p>Ignite skills are plain markdown files. No framework, no SDK, no lock-in. Works with any LLM that supports system prompts or tool use. Build agents, bots, dashboards, or entirely new products on top.</p>
+
+    <div class="quickstart-grid">
+      <div class="qs-card">
+        <h4><span class="qs-step">1</span> Use as CLI skills</h4>
+        <code class="qs-code">~/.claude/skills/ignite/skills/*/SKILL.md</code>
+        <p>Each skill is a self-contained SKILL.md file. Drop into any Claude Code compatible agent.</p>
+      </div>
+      <div class="qs-card">
+        <h4><span class="qs-step">2</span> Use as system prompts</h4>
+        <code class="qs-code">cat skills/ignite-liquidity/SKILL.md | your-llm-api</code>
+        <p>Feed any skill directly to GPT-4, Claude, Gemini, or local models as a system prompt.</p>
+      </div>
+      <div class="qs-card">
+        <h4><span class="qs-step">3</span> Build a Telegram bot</h4>
+        <code class="qs-code">npm install telegraf @anthropic-ai/sdk</code>
+        <p>Wire Ignite skills into a Telegram bot. The always-on cofounder that lives in your group chat.</p>
+      </div>
+      <div class="qs-card">
+        <h4><span class="qs-step">4</span> Build an MCP server</h4>
+        <code class="qs-code">npm install @modelcontextprotocol/sdk</code>
+        <p>Expose Ignite capabilities as MCP tools. Any MCP-compatible client gets Meteora intelligence.</p>
+      </div>
+    </div>
+
+    <div class="callout callout-insight">
+      <strong>Architecture is intentionally simple.</strong> Skills are markdown. No dependencies, no build step, no runtime. Fork it, extend it, ship it. The knowledge is the product.
+    </div>
+  </div>
+
+</div></section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta-section">
+  <div class="container">
+    <h2 class="hero-title" style="font-size: clamp(2rem, 5vw, 3.5rem); margin-bottom: 20px;">Ready to <span class="ignite-gradient">Ignite?</span></h2>
+    <p class="ignite-subtitle">Get your AI cofounder today. Start with the advisory skills, grow into the full agent.</p>
+    <div class="hero-actions">
+      <a href="https://github.com/MetClaw/meteora-ignite" class="btn-primary" style="background: linear-gradient(135deg, #FF6B00, #E44D8A)" target="_blank">Install Skills</a>
+      <a href="index.html" class="btn-secondary" style="color: #FF8C38; border-color: rgba(255,107,0,0.2); background: rgba(255,107,0,0.06)">Read the Playbook</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer"><div class="container"><div class="footer-inner">
+  <div><span class="footer-brand">Meteora Ignite</span> <span style="color: var(--text-disabled); margin: 0 8px">/</span> <a href="index.html" style="color: var(--text-disabled); text-decoration: none; font-size: 0.8125rem">Solana Launch Playbook</a></div>
+</div></div></footer>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── CHAT DEMO DATA ──
+  const chatData = {
+    setup: [
+      { type: 'bot', text: "Hey! I'm your Ignite cofounder. Let's get your launch ready. What's your token mint address and target launch date?" },
+      { type: 'user', text: "Mint: 7xK...9fQ. We're targeting Thursday April 3rd." },
+      { type: 'bot', text: "Got it. I've pulled your token data. 1B supply, no freeze authority (good). Let me run a full readiness check.", action: 'ANALYZING' },
+      { type: 'bot', text: "Readiness: 4/10. Three blockers:\n\n1. No liquidity plan yet\n2. Telegram group doesn't exist\n3. No DexScreener verification\n\nWant me to start setting up your Telegram and draft a liquidity strategy?" },
+    ],
+    prelaunch: [
+      { type: 'bot', text: "3 days to launch. Status update:\n\n\u2705 Telegram group created (42 members)\n\u2705 DexScreener banner submitted\n\u2705 Liquidity strategy locked (DLMM, 80bps, Curve)\n\u26a0\ufe0f Dev supply not locked yet\n\u274c No launch thread drafted", action: 'STATUS', actionDone: true },
+      { type: 'bot', text: "I've drafted your launch thread (8 tweets). Want to review it? Also, you need to lock dev supply with Streamflow before launch. This is non-negotiable." },
+      { type: 'user', text: "Show me the thread. And yeah, I'll lock tonight." },
+      { type: 'bot', text: "Thread ready for review in your drafts. I also prepped 3 DM templates for your early backers. Sending you the Streamflow link now.", action: 'CONTENT DRAFTED', actionDone: true },
+    ],
+    launchday: [
+      { type: 'bot', text: "Launch in 30 minutes. Final check:\n\n\u2705 Pool created (DLMM, $85K initial)\n\u2705 Thread queued\n\u2705 TG announcement channel ready\n\u2705 X Space scheduled (T+1h)\n\u2705 Dev supply locked\n\nEverything green. You ready?" },
+      { type: 'user', text: "Let's go." },
+      { type: 'bot', text: "T+0. Announcement posted. Pinned in TG.\n\nFirst 15 minutes: 23 buys, $12K volume, 8 new TG members. Looking healthy.\n\nPosting update #2 at T+15m. X Space starts in 45 minutes. I'll ping you.", action: 'LIVE MONITORING' },
+      { type: 'bot', text: "T+3h update: $94K volume, 147 holders, 3 LPs providing $42K depth. Strong start. Your proof-of-work post goes out now.", action: 'POST QUEUED', actionDone: true },
+    ],
+    growth: [
+      { type: 'bot', text: "Week 2 report:\n\n\u2022 Holders: 1,247 (+18% WoW)\n\u2022 Volume: $340K (7d)\n\u2022 LP Fees: $4.2K earned\n\u2022 TG: 312 members, 89 DAU\n\u2022 X: 23K impressions\n\nContent performing well. Wednesday deep-dive got 3x avg engagement." },
+      { type: 'bot', text: "DexScreener trending costs $299 right now. Based on your volume and holder growth, I'd recommend boosting this Thursday between 2-4pm ET. Expected ROI: 2.4x in new holders. Approve?", action: 'SUGGEST' },
+      { type: 'user', text: "Do it." },
+      { type: 'bot', text: "Queued DexScreener boost for Thursday 2pm ET. I'll draft 3 posts to coincide with the visibility spike. Also: your token holder update is due. I've drafted it with this week's numbers. Review in TG pinned.", action: 'SCHEDULED', actionDone: true },
+    ],
+    alert: [
+      { type: 'bot', text: "\u26a0\ufe0f YELLOW ALERT: Your largest LP just removed 38% of their position. TVL dropped from $180K to $112K.\n\nPool depth is now thin above $0.0042. Next large buy could cause 8%+ slippage.", action: 'ALERT' },
+      { type: 'bot', text: "Recommended actions:\n\n1. Rebalance your bins to cover the new range\n2. Post a transparency update (don't ignore it)\n3. Consider adding $15K liquidity to fill the gap\n\nI can rebalance your bins and draft the update. Want me to proceed?" },
+      { type: 'user', text: "Rebalance the bins and draft the update." },
+      { type: 'bot', text: "Bins rebalanced: shifted range to $0.0028-$0.0058 (Curve distribution). Update drafted and posted to TG. Monitoring for further LP exits.", action: 'EXECUTED', actionDone: true },
+    ]
+  };
+
+  // ── RENDER CHAT ──
+  const chatContainer = document.getElementById('chat-messages');
+  const tabs = document.querySelectorAll('.chat-phase-tab');
+
+  function renderChat(phase) {
+    const messages = chatData[phase];
+    chatContainer.innerHTML = '';
+    messages.forEach((msg, i) => {
+      setTimeout(() => {
+        const el = document.createElement('div');
+        el.className = 'chat-msg ' + msg.type;
+        let html = msg.text.replace(/\n/g, '<br>');
+        if (msg.action) {
+          const cls = msg.actionDone ? 'action-tag done' : 'action-tag';
+          const prefix = msg.actionDone ? '\u2713 ' : '\u25cf ';
+          html += '<br><span class="' + cls + '">' + prefix + msg.action + '</span>';
+        }
+        el.innerHTML = html;
+        chatContainer.appendChild(el);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }, i * 300);
+    });
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      renderChat(tab.dataset.chat);
+    });
+  });
+
+  renderChat('setup');
+
+  // ── USE CASE TABS ──
+  const ucTabs = document.querySelectorAll('.usecase-tab');
+  const ucContents = document.querySelectorAll('.usecase-content');
+  ucTabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      ucTabs.forEach(t => t.classList.remove('active'));
+      ucContents.forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('uc-' + tab.dataset.uc).classList.add('active');
+    });
+  });
+
+  // ── BLUR-IN REVEAL ──
+  const revealEls = document.querySelectorAll('.section, .phase-marker, .callout, .cap-card, .chat-demo, .flow-steps, .roadmap-item, .cta-section, .perm-table, .ignite-hero, .stats-bar, .journey-card, .jt-item, .compare-card, .podcast-card, .qs-card, .usecase-tabs');
+  revealEls.forEach(el => el.classList.add('reveal-element'));
+  const revealObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        revealObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  revealEls.forEach(el => revealObserver.observe(el));
+
+  // ── SCROLL PROGRESS ──
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        const fill = document.querySelector('.progress-fill');
+        if (fill && h > 0) fill.style.width = (window.scrollY / h * 100) + '%';
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+
+  // ── SMOOTH SCROLL ──
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  });
+
+})();
+</script>
+</body>
+</html>
