@@ -405,6 +405,15 @@
     }, 700);
   }
 
+  // ── PAUSE PARTICLES WHEN TAB IS HIDDEN ──
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      cancelAnimationFrame(animFrame);
+    } else {
+      animateParticles();
+    }
+  });
+
   // ── REDUCE MOTION PREFERENCE ──
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     cancelAnimationFrame(animFrame);
