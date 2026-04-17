@@ -3,744 +3,389 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Meteora Ecosystem On The Frontier — Workshop Registration</title>
+<title>Meteora Ecosystem — Founder Workshop with Unfungible</title>
 <meta name="description" content="Free workshop for Meteora ecosystem founders. Content strategy, founder funnel, marketing & distribution. Hosted by Leon Abboud of Unfungible.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --bg-abyss: #08080c;
-    --bg-deep: #0c0c14;
-    --bg-panel: #12121c;
-    --bg-card: #181825;
-    --bg-input: #1a1a2e;
-    --bg-elevated: #1e1e32;
+    --bg: #0a0a0f;
+    --bg-raised: #111118;
+    --bg-card: #16161f;
+    --bg-input: #13131b;
+    --bg-hover: #1a1a24;
 
     --orange: #f54b00;
-    --orange-dim: rgba(245, 75, 0, 0.08);
-    --orange-glow: rgba(245, 75, 0, 0.25);
-    --purple: #6e45ff;
-    --purple-dim: rgba(110, 69, 255, 0.06);
-    --purple-glow: rgba(110, 69, 255, 0.15);
-    --green: #24c98d;
-    --danger: #f04438;
-    --gold: #d4a042;
-    --gold-dim: rgba(212, 160, 66, 0.08);
+    --orange-soft: rgba(245, 75, 0, 0.08);
+    --orange-mid: rgba(245, 75, 0, 0.15);
+    --purple: #7c5cfc;
+    --green: #34d399;
+    --gold: #e5a93d;
 
-    --ignite: linear-gradient(135deg, #f54b00 0%, #E44D8A 50%, #6e45ff 100%);
+    --border: rgba(255,255,255,0.06);
+    --border-hover: rgba(255,255,255,0.1);
+    --border-focus: rgba(245, 75, 0, 0.4);
 
-    --border-dim: rgba(255, 255, 255, 0.04);
-    --border-subtle: rgba(255, 255, 255, 0.07);
-    --border-focus: rgba(245, 75, 0, 0.5);
+    --t1: #f0f0f4;
+    --t2: #a0a3b8;
+    --t3: #636580;
+    --t4: #3d3f54;
 
-    --text-primary: #e8eaed;
-    --text-secondary: #8a8fa8;
-    --text-tertiary: #555a74;
-    --text-muted: #3a3f58;
-
-    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-
-    --radius: 8px;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --mono: 'Space Mono', monospace;
+    --r: 10px;
   }
 
   html {
-    background: var(--bg-abyss);
-    color: var(--text-primary);
-    font-family: var(--font-body);
+    background: var(--bg);
+    color: var(--t1);
+    font-family: var(--sans);
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     scroll-behavior: smooth;
   }
 
   body {
     min-height: 100vh;
-    position: relative;
     overflow-x: hidden;
   }
 
-  /* ═══════════════════════════════════════════
-     ATMOSPHERIC LAYERS
-     ═══════════════════════════════════════════ */
-
-  .atmosphere {
+  /* ── Ambient — minimal, just enough depth ── */
+  .ambient {
     position: fixed;
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    overflow: hidden;
   }
 
-  /* Topographic contour lines — frontier exploration motif */
-  .topo-lines {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    opacity: 0.025;
-  }
-
-  .topo-lines svg {
-    width: 100%;
-    height: 100%;
-  }
-
-  /* Warm orange glow — top left, like a distant signal fire */
-  .atmo-fire {
+  .ambient::before {
+    content: '';
     position: absolute;
-    top: -20%;
-    left: -10%;
-    width: 60vw;
-    height: 60vw;
-    border-radius: 50%;
-    background: radial-gradient(ellipse, rgba(245, 75, 0, 0.06) 0%, rgba(228, 77, 138, 0.03) 40%, transparent 70%);
-    filter: blur(80px);
-    animation: atmo-drift-1 35s ease-in-out infinite alternate;
-  }
-
-  /* Purple ambient — mid right */
-  .atmo-void {
-    position: absolute;
-    top: 30%;
-    right: -15%;
-    width: 55vw;
-    height: 55vw;
-    border-radius: 50%;
-    background: radial-gradient(ellipse, rgba(110, 69, 255, 0.05) 0%, transparent 70%);
-    filter: blur(100px);
-    animation: atmo-drift-2 40s ease-in-out infinite alternate;
-  }
-
-  /* Deep purple — bottom */
-  .atmo-deep {
-    position: absolute;
-    bottom: -25%;
-    left: 20%;
+    top: -15%;
+    left: -5%;
     width: 50vw;
     height: 50vw;
     border-radius: 50%;
-    background: radial-gradient(ellipse, rgba(110, 69, 255, 0.04) 0%, rgba(245, 75, 0, 0.02) 50%, transparent 70%);
-    filter: blur(100px);
-    animation: atmo-drift-3 30s ease-in-out infinite alternate;
+    background: radial-gradient(ellipse, rgba(245,75,0,0.04) 0%, transparent 65%);
+    filter: blur(80px);
   }
 
-  @keyframes atmo-drift-1 {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(3vw, 4vh) scale(1.1); }
-  }
-  @keyframes atmo-drift-2 {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(-4vw, -3vh) scale(1.15); }
-  }
-  @keyframes atmo-drift-3 {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(2vw, -5vh) scale(1.08); }
-  }
-
-  /* Mountain silhouettes — parallax layers */
-  .mountains {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 35vh;
-    z-index: 0;
-    pointer-events: none;
-    overflow: hidden;
-  }
-
-  .mountains svg {
+  .ambient::after {
+    content: '';
     position: absolute;
-    bottom: 0;
-    left: -5%;
-    width: 110%;
-  }
-
-  /* Star field */
-  .stars {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-  }
-
-  .star {
-    position: absolute;
-    width: 2px;
-    height: 2px;
+    bottom: -10%;
+    right: -10%;
+    width: 45vw;
+    height: 45vw;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    animation: twinkle var(--dur) ease-in-out infinite;
-    animation-delay: var(--delay);
+    background: radial-gradient(ellipse, rgba(124,92,252,0.03) 0%, transparent 65%);
+    filter: blur(80px);
   }
 
-  @keyframes twinkle {
-    0%, 100% { opacity: 0.1; }
-    50% { opacity: 0.6; }
-  }
-
-  /* Grain texture */
-  .grain {
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    opacity: 0.02;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    background-size: 200px;
-  }
-
-  /* ═══════════════════════════════════════════
-     LAYOUT
-     ═══════════════════════════════════════════ */
-
+  /* ── Layout ── */
   .page {
     position: relative;
-    z-index: 3;
-    max-width: 780px;
+    z-index: 2;
+    max-width: 720px;
     margin: 0 auto;
-    padding: 3.5rem 1.5rem 5rem;
+    padding: 4rem 1.5rem 6rem;
   }
 
-  /* ═══════════════════════════════════════════
-     CAMPAIGN BADGE
-     ═══════════════════════════════════════════ */
-
-  .campaign-badge {
+  /* ── Overline badge ── */
+  .overline {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.4rem 1rem;
-    border-radius: 100px;
-    background: var(--orange-dim);
-    border: 1px solid rgba(245, 75, 0, 0.12);
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    font-weight: 500;
-    letter-spacing: 0.1em;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--orange);
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
   }
 
-  .pulse-dot {
+  .overline .dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
     background: var(--orange);
-    animation: pulse-glow 2s ease-in-out infinite;
+    animation: blink 2.5s ease-in-out infinite;
   }
 
-  @keyframes pulse-glow {
-    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(245, 75, 0, 0.4); }
-    50% { opacity: 0.4; box-shadow: 0 0 8px 2px rgba(245, 75, 0, 0.2); }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.25; }
   }
 
-  /* ═══════════════════════════════════════════
-     HERO
-     ═══════════════════════════════════════════ */
-
-  .hero {
-    margin-bottom: 3.5rem;
-    position: relative;
-  }
-
-  /* Orange signal glow behind headline */
-  .hero::before {
-    content: '';
-    position: absolute;
-    top: -80px;
-    left: 30%;
-    width: 300px;
-    height: 250px;
-    background: radial-gradient(ellipse, rgba(245, 75, 0, 0.08) 0%, rgba(228, 77, 138, 0.04) 40%, transparent 70%);
-    filter: blur(60px);
-    pointer-events: none;
-    z-index: -1;
-  }
-
-  .hero-eyebrow {
-    font-family: var(--font-mono);
-    font-size: 0.6rem;
-    font-weight: 500;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 1.5rem;
-  }
+  /* ── Hero ── */
+  .hero { margin-bottom: 3.5rem; }
 
   .hero h1 {
-    font-family: var(--font-body);
-    font-weight: 800;
-    font-size: clamp(2.4rem, 6.5vw, 3.8rem);
-    line-height: 1.08;
-    letter-spacing: -0.03em;
+    font-size: clamp(2.6rem, 7vw, 4rem);
+    font-weight: 700;
+    line-height: 1.06;
+    letter-spacing: -0.035em;
     margin-bottom: 1.5rem;
   }
 
-  .hero h1 .gradient-text {
-    background: var(--ignite);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+  .hero h1 em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--t2);
   }
 
-  .hero-sub {
-    font-size: 1.05rem;
+  .hero-desc {
+    font-size: 1.1rem;
     font-weight: 400;
-    color: var(--text-secondary);
+    color: var(--t2);
     line-height: 1.7;
-    max-width: 580px;
+    max-width: 560px;
   }
 
-  .hero-sub a {
+  .hero-desc a {
     color: var(--orange);
     text-decoration: none;
-    font-weight: 500;
-    transition: opacity 0.2s;
+    border-bottom: 1px solid rgba(245,75,0,0.25);
+    transition: border-color 0.2s;
   }
 
-  .hero-sub a:hover {
-    opacity: 0.8;
-  }
+  .hero-desc a:hover { border-color: var(--orange); }
 
-  .hero-context {
-    margin-top: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-family: var(--font-mono);
-    font-size: 0.65rem;
-    letter-spacing: 0.06em;
-    color: var(--text-tertiary);
-  }
-
-  .hero-context a {
-    color: var(--purple);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .hero-context a:hover {
-    color: #8b6aff;
-  }
-
-  .hero-context .sep {
-    opacity: 0.3;
-  }
-
-  /* ═══════════════════════════════════════════
-     HOST CARD — Leon Abboud / Unfungible
-     ═══════════════════════════════════════════ */
-
-  .host-card {
-    margin-bottom: 3rem;
-    padding: 1.75rem;
-    border-radius: var(--radius);
-    background: var(--bg-panel);
-    border: 1px solid var(--border-subtle);
-    position: relative;
+  /* ── Info bar — the critical details ── */
+  .info-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
     overflow: hidden;
-    transition: border-color 0.3s ease;
+    margin-bottom: 3rem;
+    background: var(--bg-raised);
   }
 
-  .host-card:hover {
-    border-color: rgba(245, 75, 0, 0.15);
+  .info-bar .cell {
+    padding: 1.25rem 1.2rem;
+    border-right: 1px solid var(--border);
   }
 
-  /* Warm glow behind host card */
-  .host-card::before {
-    content: '';
-    position: absolute;
-    top: -30px;
-    right: -30px;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(ellipse, rgba(245, 75, 0, 0.04) 0%, transparent 70%);
-    pointer-events: none;
-  }
+  .info-bar .cell:last-child { border-right: none; }
 
-  .host-eyebrow {
-    font-family: var(--font-mono);
-    font-size: 0.55rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
+  .info-bar .cell-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--text-tertiary);
-    margin-bottom: 1rem;
+    color: var(--t4);
+    margin-bottom: 6px;
+  }
+
+  .info-bar .cell-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--t1);
+  }
+
+  .info-bar .cell-value.highlight {
+    color: var(--orange);
+  }
+
+  @media (max-width: 580px) {
+    .info-bar { grid-template-columns: 1fr 1fr; }
+    .info-bar .cell:nth-child(2) { border-right: none; }
+  }
+
+  /* ── Host strip ── */
+  .host {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--r);
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    margin-bottom: 2rem;
+    transition: border-color 0.3s;
   }
 
-  .host-eyebrow .pulse-dot {
-    width: 5px;
-    height: 5px;
-  }
-
-  .host-body {
-    display: flex;
-    align-items: flex-start;
-    gap: 1.25rem;
-  }
+  .host:hover { border-color: var(--border-hover); }
 
   .host-avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: var(--radius);
-    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
-    border: 1px solid var(--border-subtle);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--bg-card), var(--bg-hover));
+    border: 1px solid var(--border);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: var(--font-body);
     font-weight: 700;
-    font-size: 1.1rem;
+    font-size: 0.9rem;
     color: var(--orange);
     flex-shrink: 0;
-    position: relative;
   }
 
-  /* Orange accent corner on avatar */
-  .host-avatar::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    right: -1px;
-    width: 12px;
-    height: 12px;
-    background: var(--orange);
-    border-radius: 0 0 var(--radius) 0;
-    clip-path: polygon(100% 0, 0% 100%, 100% 100%);
-  }
+  .host-meta { flex: 1; min-width: 0; }
 
-  .host-info h3 {
-    font-size: 1rem;
+  .host-meta h3 {
+    font-size: 0.95rem;
     font-weight: 600;
-    margin-bottom: 0.2rem;
+    margin-bottom: 2px;
   }
 
-  .host-info .host-title {
+  .host-meta p {
     font-size: 0.82rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.6rem;
+    color: var(--t3);
+    line-height: 1.5;
   }
 
-  .host-info .host-title a {
+  .host-meta a {
     color: var(--orange);
     text-decoration: none;
     font-weight: 500;
-    transition: opacity 0.2s;
   }
 
-  .host-info .host-title a:hover {
-    opacity: 0.8;
-  }
-
-  .host-info .host-desc {
-    font-size: 0.82rem;
-    color: var(--text-tertiary);
-    line-height: 1.6;
-  }
-
-  /* ═══════════════════════════════════════════
-     DETAILS STRIP
-     ═══════════════════════════════════════════ */
-
-  .details-strip {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1px;
-    background: var(--border-dim);
-    border-radius: var(--radius);
-    overflow: hidden;
+  /* ── Topics — clean pills ── */
+  .topics {
     margin-bottom: 3rem;
   }
 
-  .detail-cell {
-    background: var(--bg-panel);
-    padding: 1.25rem 1.25rem;
-    transition: background 0.3s ease;
-  }
-
-  .detail-cell:hover {
-    background: var(--bg-card);
-  }
-
-  .detail-cell .label {
-    font-family: var(--font-mono);
-    font-size: 0.55rem;
-    font-weight: 500;
-    letter-spacing: 0.14em;
+  .topics-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 0.4rem;
+    color: var(--t4);
+    margin-bottom: 12px;
   }
 
-  .detail-cell .value {
-    font-family: var(--font-mono);
-    font-size: 0.88rem;
-    font-weight: 500;
-    color: var(--text-primary);
-  }
-
-  .detail-cell .value.fire {
-    color: var(--orange);
-    text-shadow: 0 0 20px rgba(245, 75, 0, 0.3);
-  }
-
-  @media (max-width: 600px) {
-    .details-strip { grid-template-columns: 1fr 1fr; }
-  }
-
-  /* ═══════════════════════════════════════════
-     TOPICS
-     ═══════════════════════════════════════════ */
-
-  .topics {
-    margin-bottom: 2.5rem;
-  }
-
-  .section-header {
-    font-family: var(--font-mono);
-    font-size: 0.55rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 1rem;
-  }
-
-  .topics-grid {
+  .pills {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.45rem;
+    gap: 8px;
   }
 
-  .topic-tag {
-    padding: 0.5rem 1rem;
+  .pill {
+    padding: 8px 16px;
     border-radius: 100px;
-    background: var(--purple-dim);
-    border: 1px solid rgba(110, 69, 255, 0.06);
-    font-size: 0.8rem;
-    font-weight: 400;
-    color: var(--text-secondary);
-    transition: all 0.25s ease;
+    background: rgba(124,92,252,0.06);
+    border: 1px solid rgba(124,92,252,0.08);
+    font-size: 0.82rem;
+    color: var(--t2);
+    transition: all 0.2s;
   }
 
-  .topic-tag:hover {
-    border-color: rgba(110, 69, 255, 0.2);
-    color: var(--text-primary);
-    background: rgba(110, 69, 255, 0.1);
-    box-shadow: 0 0 20px rgba(110, 69, 255, 0.06);
+  .pill:hover {
+    border-color: rgba(124,92,252,0.2);
+    color: var(--t1);
   }
 
-  /* ═══════════════════════════════════════════
-     PARTNERSHIP STRIP
-     ═══════════════════════════════════════════ */
-
+  /* ── Partners row ── */
   .partners {
     display: flex;
     align-items: center;
     gap: 1.5rem;
-    padding: 1.25rem 1.5rem;
-    border-radius: var(--radius);
-    background: var(--bg-panel);
-    border: 1px solid var(--border-dim);
-    margin-bottom: 3rem;
-  }
-
-  .partners-label {
-    font-family: var(--font-mono);
-    font-size: 0.55rem;
-    font-weight: 500;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    white-space: nowrap;
-  }
-
-  .partner-links {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
+    padding: 1rem 0;
+    margin-bottom: 2.5rem;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
     flex-wrap: wrap;
   }
 
-  .partner-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    font-size: 0.78rem;
+  .partners-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--t4);
+  }
+
+  .partners a {
+    font-size: 0.82rem;
     font-weight: 500;
-    color: var(--text-secondary);
+    color: var(--t3);
     text-decoration: none;
     transition: color 0.2s;
   }
 
-  .partner-link:hover {
-    color: var(--text-primary);
-  }
+  .partners a:hover { color: var(--t1); }
+  .partners .sep { color: var(--t4); font-size: 0.7rem; }
 
-  .partner-link .p-icon {
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.6rem;
-    font-weight: 700;
-    flex-shrink: 0;
-  }
+  /* ══════════════════════════════════════
+     FORM
+     ══════════════════════════════════════ */
 
-  .partner-link .p-icon.meteora {
-    background: var(--orange-dim);
-    color: var(--orange);
-    border: 1px solid rgba(245, 75, 0, 0.15);
-  }
-
-  .partner-link .p-icon.colosseum {
-    background: var(--purple-dim);
-    color: var(--purple);
-    border: 1px solid rgba(110, 69, 255, 0.12);
-  }
-
-  .partner-link .p-icon.unfungible {
-    background: var(--gold-dim);
-    color: var(--gold);
-    border: 1px solid rgba(212, 160, 66, 0.15);
-  }
-
-  .partner-sep {
-    width: 1px;
-    height: 16px;
-    background: var(--border-dim);
-  }
-
-  @media (max-width: 600px) {
-    .partners { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
-  }
-
-  /* ═══════════════════════════════════════════
-     SECTION DIVIDER
-     ═══════════════════════════════════════════ */
-
-  .section-divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border-subtle) 20%, rgba(245, 75, 0, 0.06) 50%, var(--border-subtle) 80%, transparent);
-    margin: 0.5rem 0 3rem;
-  }
-
-  /* ═══════════════════════════════════════════
-     FORM FRAME
-     ═══════════════════════════════════════════ */
-
-  .form-frame {
-    position: relative;
+  .form-wrap {
+    background: var(--bg-raised);
+    border: 1px solid var(--border);
+    border-radius: 14px;
     padding: 2.5rem;
-    border-radius: 12px;
-    background: linear-gradient(180deg, rgba(18, 18, 28, 0.8) 0%, rgba(18, 18, 28, 0.4) 100%);
-    backdrop-filter: blur(12px);
-    border: 1px solid var(--border-subtle);
-    overflow: hidden;
+    position: relative;
   }
 
-  /* Ignite gradient border — animated */
-  .form-frame::before {
+  /* Top accent line */
+  .form-wrap::before {
     content: '';
     position: absolute;
-    inset: -1px;
-    border-radius: 13px;
-    background: linear-gradient(135deg, rgba(245, 75, 0, 0.12) 0%, transparent 25%, rgba(110, 69, 255, 0.08) 50%, transparent 75%, rgba(245, 75, 0, 0.12) 100%);
-    background-size: 200% 200%;
-    z-index: -1;
-    animation: ignite-border 10s ease infinite;
+    top: 0;
+    left: 2rem;
+    right: 2rem;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--orange) 30%, var(--purple) 70%, transparent);
+    opacity: 0.3;
   }
 
-  @keyframes ignite-border {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+  @media (max-width: 580px) {
+    .form-wrap { padding: 1.5rem; border-radius: var(--r); }
   }
-
-  /* Orange accent bar top */
-  .form-frame::after {
-    content: '';
-    position: absolute;
-    top: -1px;
-    left: 28px;
-    width: 50px;
-    height: 2px;
-    background: var(--ignite);
-    border-radius: 0 0 2px 2px;
-    opacity: 0.6;
-  }
-
-  @media (max-width: 600px) {
-    .form-frame { padding: 1.5rem; border-radius: var(--radius); }
-  }
-
-  /* ═══════════════════════════════════════════
-     FORM ELEMENTS
-     ═══════════════════════════════════════════ */
 
   .form-title {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 700;
     letter-spacing: -0.02em;
-    margin-bottom: 0.35rem;
+    margin-bottom: 6px;
   }
 
-  .form-subtitle {
+  .form-sub {
     font-size: 0.88rem;
-    color: var(--text-secondary);
+    color: var(--t3);
     margin-bottom: 2.5rem;
   }
 
-  .section-label {
-    font-family: var(--font-mono);
-    font-size: 0.55rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
+  .section-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    color: var(--text-muted);
-    margin-bottom: 1.5rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border-dim);
+    color: var(--t4);
+    margin-bottom: 1.25rem;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
   }
 
-  .field-group {
-    margin-bottom: 1.75rem;
-  }
+  .field { margin-bottom: 1.5rem; }
 
   .field-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
+    margin-bottom: 1.5rem;
   }
 
   @media (max-width: 540px) {
     .field-row { grid-template-columns: 1fr; }
   }
 
-  label.field-label {
+  .field-label {
     display: block;
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     font-weight: 500;
-    color: var(--text-secondary);
-    margin-bottom: 0.45rem;
-    letter-spacing: 0.01em;
+    color: var(--t2);
+    margin-bottom: 8px;
   }
 
-  label.field-label .req {
-    color: var(--orange);
-    margin-left: 2px;
-  }
+  .field-label .req { color: var(--orange); }
+  .field-label .hint { color: var(--t4); font-weight: 400; }
 
   input[type="text"],
   input[type="email"],
@@ -748,110 +393,99 @@
   textarea,
   select {
     width: 100%;
-    padding: 0.78rem 0.9rem;
+    padding: 12px 14px;
     background: var(--bg-input);
-    border: 1px solid var(--border-dim);
-    border-radius: var(--radius);
-    color: var(--text-primary);
-    font-family: var(--font-body);
-    font-size: 0.88rem;
-    transition: all 0.2s ease;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--t1);
+    font-family: var(--sans);
+    font-size: 0.9rem;
     outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
 
   input::placeholder, textarea::placeholder {
-    color: var(--text-muted);
+    color: var(--t4);
   }
 
   input:focus, textarea:focus, select:focus {
     border-color: var(--border-focus);
-    box-shadow: 0 0 0 3px rgba(245, 75, 0, 0.06), 0 0 20px rgba(245, 75, 0, 0.04);
+    box-shadow: 0 0 0 3px rgba(245,75,0,0.06);
   }
 
-  textarea {
-    resize: vertical;
-    min-height: 90px;
-  }
+  textarea { resize: vertical; min-height: 88px; }
 
   select {
     appearance: none;
     cursor: pointer;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%233a3f58' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23636580' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 0.9rem center;
+    background-position: right 12px center;
     padding-right: 2.5rem;
   }
 
-  select option {
-    background: var(--bg-card);
-    color: var(--text-primary);
-  }
+  select option { background: var(--bg-card); color: var(--t1); }
 
   /* ── Checkboxes ── */
-
-  .checkbox-section { margin-bottom: 1.75rem; }
-
-  .checkbox-grid {
+  .check-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.4rem;
+    gap: 6px;
+    margin-bottom: 1.5rem;
   }
 
-  @media (max-width: 540px) {
-    .checkbox-grid { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 540px) { .check-grid { grid-template-columns: 1fr; } }
 
-  .checkbox-item { position: relative; }
+  .check-item { position: relative; }
 
-  .checkbox-item input[type="checkbox"] {
+  .check-item input {
     position: absolute;
     opacity: 0;
     width: 0;
     height: 0;
   }
 
-  .checkbox-item .check-label {
+  .check-item label {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    padding: 0.65rem 0.9rem;
-    border-radius: var(--radius);
-    border: 1px solid var(--border-dim);
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
     background: var(--bg-input);
     cursor: pointer;
-    font-size: 0.82rem;
-    color: var(--text-secondary);
-    transition: all 0.2s ease;
+    font-size: 0.84rem;
+    color: var(--t2);
+    transition: all 0.15s;
     user-select: none;
   }
 
-  .checkbox-item .check-label:hover {
-    border-color: var(--border-subtle);
-    color: var(--text-primary);
+  .check-item label:hover {
+    border-color: var(--border-hover);
+    color: var(--t1);
   }
 
-  .checkbox-item input:checked + .check-label {
-    border-color: rgba(245, 75, 0, 0.25);
-    background: rgba(245, 75, 0, 0.04);
-    color: var(--text-primary);
+  .check-item input:checked + label {
+    border-color: var(--orange-mid);
+    background: var(--orange-soft);
+    color: var(--t1);
   }
 
   .check-box {
     width: 16px;
     height: 16px;
     border-radius: 4px;
-    border: 1.5px solid var(--text-muted);
+    border: 1.5px solid var(--t4);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: all 0.2s ease;
+    transition: all 0.15s;
   }
 
-  .checkbox-item input:checked + .check-label .check-box {
+  .check-item input:checked + label .check-box {
     background: var(--orange);
     border-color: var(--orange);
-    box-shadow: 0 0 8px rgba(245, 75, 0, 0.25);
   }
 
   .check-box svg {
@@ -859,70 +493,69 @@
     height: 10px;
     opacity: 0;
     transform: scale(0);
-    transition: all 0.15s ease;
+    transition: all 0.12s;
   }
 
-  .checkbox-item input:checked + .check-label .check-box svg {
+  .check-item input:checked + label .check-box svg {
     opacity: 1;
     transform: scale(1);
   }
 
-  /* ── Radios ── */
-
-  .radio-group {
+  /* ── Radio pills ── */
+  .radio-row {
     display: flex;
-    gap: 0.4rem;
+    gap: 6px;
     flex-wrap: wrap;
   }
 
   .radio-item { position: relative; }
 
-  .radio-item input[type="radio"] {
+  .radio-item input {
     position: absolute;
     opacity: 0;
     width: 0;
     height: 0;
   }
 
-  .radio-item .radio-label {
+  .radio-item label {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
-    padding: 0.6rem 1rem;
+    gap: 8px;
+    padding: 10px 16px;
     border-radius: 100px;
-    border: 1px solid var(--border-dim);
+    border: 1px solid var(--border);
     background: var(--bg-input);
     cursor: pointer;
-    font-size: 0.82rem;
-    color: var(--text-secondary);
-    transition: all 0.2s ease;
+    font-size: 0.84rem;
+    color: var(--t2);
+    transition: all 0.15s;
     user-select: none;
   }
 
-  .radio-item .radio-label:hover {
-    border-color: var(--border-subtle);
-    color: var(--text-primary);
+  .radio-item label:hover {
+    border-color: var(--border-hover);
+    color: var(--t1);
   }
 
-  .radio-item input:checked + .radio-label {
-    border-color: rgba(245, 75, 0, 0.3);
-    background: rgba(245, 75, 0, 0.05);
-    color: var(--text-primary);
+  .radio-item input:checked + label {
+    border-color: var(--orange-mid);
+    background: var(--orange-soft);
+    color: var(--t1);
   }
 
   .radio-dot {
     width: 14px;
     height: 14px;
     border-radius: 50%;
-    border: 1.5px solid var(--text-muted);
+    border: 1.5px solid var(--t4);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transition: all 0.2s ease;
+    transition: all 0.15s;
   }
 
-  .radio-item input:checked + .radio-label .radio-dot {
+  .radio-item input:checked + label .radio-dot {
     border-color: var(--orange);
   }
 
@@ -933,468 +566,289 @@
     border-radius: 50%;
     background: var(--orange);
     transform: scale(0);
-    transition: transform 0.15s ease;
+    transition: transform 0.12s;
   }
 
-  .radio-item input:checked + .radio-label .radio-dot::after {
+  .radio-item input:checked + label .radio-dot::after {
     transform: scale(1);
   }
 
   /* ── Divider ── */
-
-  .divider {
+  .sep-line {
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--border-dim) 20%, rgba(245, 75, 0, 0.04) 50%, var(--border-dim) 80%, transparent);
-    margin: 2.25rem 0;
+    background: var(--border);
+    margin: 2rem 0;
   }
 
-  /* ═══════════════════════════════════════════
-     SUBMIT
-     ═══════════════════════════════════════════ */
+  /* ── Offer card ── */
+  .offer {
+    padding: 1.25rem 1.5rem;
+    border-radius: 8px;
+    background: rgba(229,169,61,0.04);
+    border: 1px solid rgba(229,169,61,0.1);
+    margin-bottom: 1.5rem;
+  }
 
+  .offer-tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .offer p {
+    font-size: 0.86rem;
+    color: var(--t3);
+    line-height: 1.65;
+  }
+
+  .offer a {
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  /* ── Submit ── */
   .submit-area {
     margin-top: 2.5rem;
     text-align: center;
   }
 
   .submit-btn {
-    position: relative;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 1rem 2.5rem;
+    gap: 8px;
+    padding: 14px 36px;
     border: none;
-    border-radius: var(--radius);
+    border-radius: 8px;
     background: var(--orange);
     color: #fff;
-    font-family: var(--font-body);
+    font-family: var(--sans);
     font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
-    letter-spacing: 0.01em;
+    transition: all 0.2s;
+    position: relative;
     overflow: hidden;
   }
 
-  /* Glow behind button */
-  .submit-btn::before {
-    content: '';
-    position: absolute;
-    inset: -3px;
-    border-radius: 11px;
-    background: var(--orange);
-    filter: blur(16px);
-    opacity: 0.3;
-    z-index: -1;
-    animation: btn-breathe 3s ease-in-out infinite;
-  }
-
-  @keyframes btn-breathe {
-    0%, 100% { opacity: 0.25; }
-    50% { opacity: 0.45; }
-  }
-
-  /* Shimmer */
-  .submit-btn::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-    transition: left 0.4s ease;
-  }
-
-  .submit-btn:hover::after { left: 100%; }
-
   .submit-btn:hover {
-    transform: translateY(-1px) scale(1.02);
-    box-shadow: 0 8px 32px rgba(245, 75, 0, 0.25);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 30px rgba(245,75,0,0.25);
   }
 
-  .submit-btn:active {
-    transform: translateY(0) scale(1);
-  }
+  .submit-btn:active { transform: translateY(0); }
 
   .submit-btn svg {
     width: 16px;
     height: 16px;
-    transition: transform 0.2s ease;
+    transition: transform 0.2s;
   }
 
-  .submit-btn:hover svg {
-    transform: translateX(2px);
-  }
+  .submit-btn:hover svg { transform: translateX(2px); }
 
   .submit-note {
-    margin-top: 0.8rem;
-    font-size: 0.7rem;
-    color: var(--text-muted);
+    margin-top: 10px;
+    font-size: 0.72rem;
+    color: var(--t4);
   }
 
-  /* ═══════════════════════════════════════════
-     L2 OFFER CARD — Gold premium treatment
-     ═══════════════════════════════════════════ */
-
-  .offer-card {
-    margin: 0.5rem 0 1.75rem;
-    padding: 1.5rem;
-    border-radius: var(--radius);
-    background: linear-gradient(135deg, rgba(212, 160, 66, 0.04) 0%, rgba(245, 75, 0, 0.03) 50%, rgba(110, 69, 255, 0.03) 100%);
-    border: 1px solid rgba(212, 160, 66, 0.1);
-    position: relative;
-    transition: border-color 0.3s ease;
-  }
-
-  .offer-card:hover {
-    border-color: rgba(212, 160, 66, 0.2);
-  }
-
-  .offer-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-family: var(--font-mono);
-    font-size: 0.55rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--gold);
-    background: rgba(212, 160, 66, 0.08);
-    padding: 0.3rem 0.7rem;
-    border-radius: 4px;
-    margin-bottom: 0.75rem;
-    border: 1px solid rgba(212, 160, 66, 0.1);
-  }
-
-  .offer-card p {
-    font-size: 0.84rem;
-    color: var(--text-secondary);
-    line-height: 1.65;
-  }
-
-  .offer-card a {
-    color: var(--gold);
-    text-decoration: none;
-    font-weight: 500;
-    transition: opacity 0.2s;
-  }
-
-  .offer-card a:hover { opacity: 0.8; }
-
-  /* ═══════════════════════════════════════════
-     SUCCESS STATE
-     ═══════════════════════════════════════════ */
-
-  .success-state {
+  /* ── Success ── */
+  .success {
     display: none;
     text-align: center;
     padding: 5rem 2rem;
   }
 
-  .success-state.active {
+  .success.active {
     display: block;
-    animation: fadeUp 0.5s ease-out both;
+    animation: fadeIn 0.4s ease-out;
   }
 
-  .success-ring {
-    width: 80px;
-    height: 80px;
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .success-icon {
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
-    background: rgba(245, 75, 0, 0.06);
+    background: var(--orange-soft);
+    border: 2px solid var(--orange-mid);
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 1.5rem;
-    border: 2px solid rgba(245, 75, 0, 0.2);
-    box-shadow: 0 0 40px rgba(245, 75, 0, 0.08);
   }
 
-  .success-ring svg {
-    width: 32px;
-    height: 32px;
-    color: var(--orange);
-  }
+  .success-icon svg { width: 28px; height: 28px; color: var(--orange); }
 
-  .success-state h2 {
+  .success h2 {
     font-size: 2rem;
     font-weight: 700;
     letter-spacing: -0.02em;
-    margin-bottom: 0.5rem;
+    margin-bottom: 8px;
   }
 
-  .success-state h2 .gradient-text {
-    background: var(--ignite);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .success-state p {
-    color: var(--text-secondary);
-    font-size: 0.92rem;
-    max-width: 420px;
+  .success p {
+    color: var(--t3);
+    font-size: 0.95rem;
+    max-width: 400px;
     margin: 0 auto;
     line-height: 1.6;
   }
 
-  .success-details {
+  .success-recap {
     margin-top: 2rem;
     display: inline-flex;
     align-items: center;
-    gap: 1.5rem;
-    padding: 1rem 1.5rem;
-    border-radius: var(--radius);
-    background: var(--bg-panel);
-    border: 1px solid var(--border-dim);
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--text-secondary);
+    gap: 2rem;
+    padding: 14px 20px;
+    border-radius: var(--r);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    font-family: var(--mono);
+    font-size: 0.75rem;
   }
 
-  .success-details .sd-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-  }
+  .success-recap .rc { display: flex; flex-direction: column; gap: 3px; }
+  .success-recap .rc-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--t4); }
+  .success-recap .rc-val { color: var(--t1); font-weight: 700; }
 
-  .success-details .sd-label {
-    font-size: 0.55rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-  }
-
-  .success-details .sd-value {
-    color: var(--text-primary);
-    font-weight: 500;
-  }
-
-  /* ═══════════════════════════════════════════
-     FOOTER
-     ═══════════════════════════════════════════ */
-
-  .footer {
+  /* ── Footer ── */
+  .foot {
     margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
     text-align: center;
-    padding: 2rem 0;
-    border-top: 1px solid var(--border-dim);
   }
 
-  .footer-row {
+  .foot-links {
     display: flex;
-    align-items: center;
     justify-content: center;
-    gap: 0.6rem;
-    margin-bottom: 0.6rem;
+    gap: 1rem;
     flex-wrap: wrap;
+    margin-bottom: 8px;
   }
 
-  .footer-row a, .footer-row span {
-    font-family: var(--font-mono);
-    font-size: 0.62rem;
-    letter-spacing: 0.08em;
+  .foot-links a {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--t4);
     text-decoration: none;
     transition: color 0.2s;
   }
 
-  .footer-row a:hover { color: var(--text-secondary); }
+  .foot-links a:hover { color: var(--t2); }
 
-  .footer-row .sep { opacity: 0.3; }
-
-  .footer p {
-    font-size: 0.65rem;
-    color: var(--text-muted);
+  .foot p {
+    font-size: 0.72rem;
+    color: var(--t4);
     opacity: 0.6;
   }
 
-  /* ═══════════════════════════════════════════
-     ANIMATIONS
-     ═══════════════════════════════════════════ */
-
-  [data-reveal] {
+  /* ── Scroll reveal ── */
+  [data-r] {
     opacity: 0;
-    transform: translateY(16px);
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-  }
-
-  [data-reveal].visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* Stagger children */
-  [data-reveal-stagger] > * {
-    opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(14px);
     transition: opacity 0.5s ease-out, transform 0.5s ease-out;
   }
 
-  [data-reveal-stagger].visible > *:nth-child(1) { transition-delay: 0s; opacity: 1; transform: translateY(0); }
-  [data-reveal-stagger].visible > *:nth-child(2) { transition-delay: 0.05s; opacity: 1; transform: translateY(0); }
-  [data-reveal-stagger].visible > *:nth-child(3) { transition-delay: 0.1s; opacity: 1; transform: translateY(0); }
-  [data-reveal-stagger].visible > *:nth-child(4) { transition-delay: 0.15s; opacity: 1; transform: translateY(0); }
-  [data-reveal-stagger].visible > *:nth-child(5) { transition-delay: 0.2s; opacity: 1; transform: translateY(0); }
-  [data-reveal-stagger].visible > *:nth-child(6) { transition-delay: 0.25s; opacity: 1; transform: translateY(0); }
-  [data-reveal-stagger].visible > *:nth-child(7) { transition-delay: 0.3s; opacity: 1; transform: translateY(0); }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
+  [data-r].v {
+    opacity: 1;
+    transform: translateY(0);
   }
 </style>
 </head>
 <body>
 
-<!-- ══════════ ATMOSPHERE ══════════ -->
-<div class="atmosphere">
-  <div class="atmo-fire"></div>
-  <div class="atmo-void"></div>
-  <div class="atmo-deep"></div>
-</div>
+<div class="ambient"></div>
 
-<!-- Topographic contour lines -->
-<div class="topo-lines">
-  <svg viewBox="0 0 1440 900" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0 200 Q360 160 720 220 T1440 180" stroke="rgba(110,69,255,0.04)" stroke-width="1" fill="none"/>
-    <path d="M0 280 Q360 240 720 300 T1440 260" stroke="rgba(110,69,255,0.03)" stroke-width="1" fill="none"/>
-    <path d="M0 360 Q360 320 720 380 T1440 340" stroke="rgba(245,75,0,0.02)" stroke-width="1" fill="none"/>
-    <path d="M0 440 Q360 400 720 460 T1440 420" stroke="rgba(110,69,255,0.025)" stroke-width="1" fill="none"/>
-    <path d="M0 520 Q360 480 720 540 T1440 500" stroke="rgba(245,75,0,0.015)" stroke-width="1" fill="none"/>
-    <path d="M0 600 Q360 560 720 620 T1440 580" stroke="rgba(110,69,255,0.02)" stroke-width="1" fill="none"/>
-    <path d="M0 680 Q360 640 720 700 T1440 660" stroke="rgba(110,69,255,0.015)" stroke-width="1" fill="none"/>
-    <path d="M0 760 Q360 720 720 780 T1440 740" stroke="rgba(245,75,0,0.01)" stroke-width="1" fill="none"/>
-  </svg>
-</div>
-
-<!-- Mountain silhouettes -->
-<div class="mountains">
-  <svg viewBox="0 0 1440 300" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <!-- Far mountains — purple tint -->
-    <path d="M0 300 L0 200 L120 160 L240 190 L360 130 L480 170 L600 100 L720 150 L840 80 L960 140 L1080 90 L1200 155 L1320 110 L1440 165 L1440 300Z" fill="rgba(110,69,255,0.015)"/>
-    <!-- Near mountains — orange tint -->
-    <path d="M0 300 L0 230 L160 195 L320 220 L480 170 L640 210 L800 155 L960 200 L1120 165 L1280 195 L1440 180 L1440 300Z" fill="rgba(245,75,0,0.01)"/>
-    <!-- Horizon line -->
-    <line x1="0" y1="299" x2="1440" y2="299" stroke="rgba(245,75,0,0.04)" stroke-width="1"/>
-  </svg>
-</div>
-
-<!-- Stars -->
-<div class="stars" id="starField"></div>
-
-<div class="grain"></div>
-
-<!-- ══════════ PAGE CONTENT ══════════ -->
 <div class="page">
 
-  <!-- Campaign Badge -->
-  <div class="campaign-badge" data-reveal>
-    <span class="pulse-dot"></span>
-    On The Frontier
+  <!-- Overline -->
+  <div class="overline" data-r>
+    <span class="dot"></span>
+    On The Frontier &mdash; Hackathon Season 2025
   </div>
 
   <!-- Hero -->
-  <div class="hero" data-reveal>
-    <div class="hero-eyebrow">Free Workshop &middot; Meteora Ecosystem</div>
-    <h1>Backing builders<br>on <span class="gradient-text">the frontier</span></h1>
-    <p class="hero-sub">
-      A free, hands-on workshop for Meteora ecosystem founders. Content strategy, founder presence, marketing &amp; distribution &mdash; hosted by <a href="https://unfungible.xyz" target="_blank" rel="noopener">Leon Abboud</a> of Unfungible during hackathon season.
+  <div class="hero" data-r>
+    <h1>Founder workshop:<br><em>content, presence<br>& distribution</em></h1>
+    <p class="hero-desc">
+      A free, hands-on session for Meteora ecosystem founders — covering content strategy, founder personal brand, marketing funnels, and distribution. Hosted by <a href="https://unfungible.xyz" target="_blank" rel="noopener">Leon Abboud</a> of Unfungible.
     </p>
-    <div class="hero-context">
-      <a href="https://colosseum.com/frontier" target="_blank" rel="noopener">Colosseum Frontier</a>
-      <span class="sep">/</span>
-      <span>Hackathon Season 2025</span>
+  </div>
+
+  <!-- Info bar -->
+  <div class="info-bar" data-r>
+    <div class="cell">
+      <div class="cell-label">Date</div>
+      <div class="cell-value">Wed, Apr 22</div>
+    </div>
+    <div class="cell">
+      <div class="cell-label">Time</div>
+      <div class="cell-value">10 AM EST</div>
+    </div>
+    <div class="cell">
+      <div class="cell-label">Duration</div>
+      <div class="cell-value">60 min</div>
+    </div>
+    <div class="cell">
+      <div class="cell-label">Cost</div>
+      <div class="cell-value highlight">Free</div>
     </div>
   </div>
 
-  <!-- Host Card -->
-  <div class="host-card" data-reveal>
-    <div class="host-eyebrow">
-      <span class="pulse-dot"></span>
-      Hosted by
-    </div>
-    <div class="host-body">
-      <div class="host-avatar">LA</div>
-      <div class="host-info">
-        <h3>Leon Abboud</h3>
-        <div class="host-title">Founder, <a href="https://unfungible.xyz" target="_blank" rel="noopener">Unfungible</a></div>
-        <p class="host-desc">Content production, founder funnel architecture, and distribution strategy for Web3 projects. Helping founders build presence and convert attention into community.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Details Strip -->
-  <div class="details-strip" data-reveal>
-    <div class="detail-cell">
-      <div class="label">Date</div>
-      <div class="value">Wed, April 22</div>
-    </div>
-    <div class="detail-cell">
-      <div class="label">Time</div>
-      <div class="value">10:00 AM EST</div>
-    </div>
-    <div class="detail-cell">
-      <div class="label">Duration</div>
-      <div class="value">60 min</div>
-    </div>
-    <div class="detail-cell">
-      <div class="label">Cost</div>
-      <div class="value fire">Free</div>
+  <!-- Host -->
+  <div class="host" data-r>
+    <div class="host-avatar">LA</div>
+    <div class="host-meta">
+      <h3>Leon Abboud</h3>
+      <p>Founder of <a href="https://unfungible.xyz" target="_blank" rel="noopener">Unfungible</a> — content production, founder funnels & distribution for Web3 projects.</p>
     </div>
   </div>
 
   <!-- Topics -->
-  <div class="topics" data-reveal>
-    <div class="section-header">What we'll cover</div>
-    <div class="topics-grid" data-reveal-stagger>
-      <span class="topic-tag">Content Strategy</span>
-      <span class="topic-tag">Founder Personal Brand</span>
-      <span class="topic-tag">Marketing & Distribution</span>
-      <span class="topic-tag">Community Building</span>
-      <span class="topic-tag">Short-form & Clipping</span>
-      <span class="topic-tag">Founder Funnel</span>
+  <div class="topics" data-r>
+    <div class="topics-label">What we'll cover</div>
+    <div class="pills">
+      <span class="pill">Content Strategy</span>
+      <span class="pill">Founder Personal Brand</span>
+      <span class="pill">Marketing & Distribution</span>
+      <span class="pill">Community Building</span>
+      <span class="pill">Short-form & Clipping</span>
+      <span class="pill">Founder Funnel</span>
     </div>
   </div>
 
-  <!-- Partnership strip -->
-  <div class="partners" data-reveal>
-    <div class="partners-label">Part of</div>
-    <div class="partner-links">
-      <a class="partner-link" href="https://x.com/meteoraeco" target="_blank" rel="noopener">
-        <span class="p-icon meteora">M</span>
-        Meteora Ecosystem
-      </a>
-      <div class="partner-sep"></div>
-      <a class="partner-link" href="https://colosseum.com/frontier" target="_blank" rel="noopener">
-        <span class="p-icon colosseum">C</span>
-        Colosseum Frontier
-      </a>
-      <div class="partner-sep"></div>
-      <a class="partner-link" href="https://unfungible.xyz" target="_blank" rel="noopener">
-        <span class="p-icon unfungible">U</span>
-        Unfungible
-      </a>
-    </div>
+  <!-- Partners -->
+  <div class="partners" data-r>
+    <span class="partners-label">Part of</span>
+    <a href="https://x.com/meteoraeco" target="_blank" rel="noopener">Meteora Ecosystem</a>
+    <span class="sep">/</span>
+    <a href="https://colosseum.com/frontier" target="_blank" rel="noopener">Colosseum Frontier</a>
+    <span class="sep">/</span>
+    <a href="https://unfungible.xyz" target="_blank" rel="noopener">Unfungible</a>
   </div>
 
-  <!-- Section divider -->
-  <div class="section-divider"></div>
-
-  <!-- ══════════ FORM ══════════ -->
-  <div class="form-frame" data-reveal>
-    <div class="form-section" id="formSection">
+  <!-- ═══════ FORM ═══════ -->
+  <div class="form-wrap" data-r>
+    <div id="formSection">
       <h2 class="form-title">Register for the workshop</h2>
-      <p class="form-subtitle">Fill this out so we can tailor the session to your needs.</p>
+      <p class="form-sub">Fill this out so we can tailor the session to what you actually need.</p>
 
       <form id="workshopForm" onsubmit="handleSubmit(event)">
 
-        <!-- 01 — About You -->
-        <div class="section-label">01 &mdash; About you</div>
+        <div class="section-num">01 — About you</div>
 
-        <div class="field-row field-group">
+        <div class="field-row">
           <div>
             <label class="field-label">Your name <span class="req">*</span></label>
             <input type="text" name="name" placeholder="e.g. Vesper" required>
@@ -1402,7 +856,7 @@
           <div>
             <label class="field-label">Your role</label>
             <select name="role">
-              <option value="" disabled selected>Select your role</option>
+              <option value="" disabled selected>Select</option>
               <option value="founder">Founder</option>
               <option value="cofounder">Co-founder</option>
               <option value="marketing">Marketing Lead</option>
@@ -1413,145 +867,115 @@
           </div>
         </div>
 
-        <div class="field-row field-group">
+        <div class="field-row">
           <div>
             <label class="field-label">Project name <span class="req">*</span></label>
-            <input type="text" name="project" placeholder="e.g. Meteora Ecosystem" required>
+            <input type="text" name="project" placeholder="e.g. Meteora" required>
           </div>
           <div>
-            <label class="field-label">Project website or Twitter</label>
+            <label class="field-label">Website or Twitter</label>
             <input type="url" name="website" placeholder="https:// or @handle">
           </div>
         </div>
 
-        <div class="field-group">
-          <label class="field-label">Current project stage</label>
-          <div class="radio-group">
+        <div class="field">
+          <label class="field-label">Project stage</label>
+          <div class="radio-row">
             <div class="radio-item">
-              <input type="radio" name="stage" id="stage-pre" value="pre-launch">
-              <label class="radio-label" for="stage-pre"><span class="radio-dot"></span> Pre-launch</label>
+              <input type="radio" name="stage" id="s1" value="pre-launch">
+              <label for="s1"><span class="radio-dot"></span> Pre-launch</label>
             </div>
             <div class="radio-item">
-              <input type="radio" name="stage" id="stage-just" value="just-launched">
-              <label class="radio-label" for="stage-just"><span class="radio-dot"></span> Just launched</label>
+              <input type="radio" name="stage" id="s2" value="just-launched">
+              <label for="s2"><span class="radio-dot"></span> Just launched</label>
             </div>
             <div class="radio-item">
-              <input type="radio" name="stage" id="stage-grow" value="growing">
-              <label class="radio-label" for="stage-grow"><span class="radio-dot"></span> Growing</label>
+              <input type="radio" name="stage" id="s3" value="growing">
+              <label for="s3"><span class="radio-dot"></span> Growing</label>
             </div>
             <div class="radio-item">
-              <input type="radio" name="stage" id="stage-est" value="established">
-              <label class="radio-label" for="stage-est"><span class="radio-dot"></span> Established</label>
+              <input type="radio" name="stage" id="s4" value="established">
+              <label for="s4"><span class="radio-dot"></span> Established</label>
             </div>
           </div>
         </div>
 
-        <div class="divider"></div>
+        <div class="sep-line"></div>
 
-        <!-- 02 — Your Needs -->
-        <div class="section-label">02 &mdash; Your needs</div>
+        <div class="section-num">02 — Your needs</div>
 
-        <div class="checkbox-section">
+        <div class="field">
           <label class="field-label">What do you need the most help with? <span class="req">*</span></label>
-          <div class="checkbox-grid">
-            <div class="checkbox-item">
-              <input type="checkbox" name="help" id="help-content" value="content-strategy">
-              <label class="check-label" for="help-content">
-                <span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#08080c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                Content strategy
-              </label>
+        </div>
+        <div class="check-grid">
+          <div class="check-item">
+            <input type="checkbox" name="help" id="h1" value="content-strategy">
+            <label for="h1"><span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#0a0a0f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Content strategy</label>
+          </div>
+          <div class="check-item">
+            <input type="checkbox" name="help" id="h2" value="marketing-distribution">
+            <label for="h2"><span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#0a0a0f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Marketing & distribution</label>
+          </div>
+          <div class="check-item">
+            <input type="checkbox" name="help" id="h3" value="founder-brand">
+            <label for="h3"><span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#0a0a0f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Founder personal brand</label>
+          </div>
+          <div class="check-item">
+            <input type="checkbox" name="help" id="h4" value="community">
+            <label for="h4"><span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#0a0a0f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Community building</label>
+          </div>
+          <div class="check-item">
+            <input type="checkbox" name="help" id="h5" value="clipping">
+            <label for="h5"><span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#0a0a0f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Clipping & short-form</label>
+          </div>
+          <div class="check-item">
+            <input type="checkbox" name="help" id="h6" value="founder-funnel">
+            <label for="h6"><span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#0a0a0f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Founder funnel</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Biggest challenge right now? <span class="req">*</span></label>
+          <textarea name="challenge" placeholder="Be specific — helps us customize the session for you." required></textarea>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Questions you want answered</label>
+          <textarea name="questions" placeholder="Content, growth, strategy, distribution — anything goes."></textarea>
+        </div>
+
+        <div class="sep-line"></div>
+
+        <div class="section-num">03 — One more thing</div>
+
+        <div class="offer">
+          <div class="offer-tag">Exclusive — Meteora Ecosystem</div>
+          <p><a href="https://unfungible.xyz" target="_blank" rel="noopener">Unfungible</a> offers content production, founder funnel builds & clipping as distribution. Workshop attendees get a special offer as a benefit of being in the Meteora Ecosystem.</p>
+        </div>
+
+        <div class="field">
+          <label class="field-label">Interested in the L2 package?</label>
+          <div class="radio-row">
+            <div class="radio-item">
+              <input type="radio" name="l2interest" id="l1" value="yes">
+              <label for="l1"><span class="radio-dot"></span> Yes, tell me more</label>
             </div>
-            <div class="checkbox-item">
-              <input type="checkbox" name="help" id="help-marketing" value="marketing-distribution">
-              <label class="check-label" for="help-marketing">
-                <span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#08080c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                Marketing & distribution
-              </label>
+            <div class="radio-item">
+              <input type="radio" name="l2interest" id="l2" value="maybe">
+              <label for="l2"><span class="radio-dot"></span> Maybe</label>
             </div>
-            <div class="checkbox-item">
-              <input type="checkbox" name="help" id="help-brand" value="founder-brand">
-              <label class="check-label" for="help-brand">
-                <span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#08080c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                Founder personal brand
-              </label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" name="help" id="help-community" value="community">
-              <label class="check-label" for="help-community">
-                <span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#08080c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                Community building
-              </label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" name="help" id="help-clipping" value="clipping">
-              <label class="check-label" for="help-clipping">
-                <span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#08080c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                Clipping & short-form content
-              </label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" name="help" id="help-funnel" value="founder-funnel">
-              <label class="check-label" for="help-funnel">
-                <span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#08080c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                Founder funnel optimization
-              </label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" name="help" id="help-other" value="other">
-              <label class="check-label" for="help-other">
-                <span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#08080c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-                Other
-              </label>
+            <div class="radio-item">
+              <input type="radio" name="l2interest" id="l3" value="no">
+              <label for="l3"><span class="radio-dot"></span> Not right now</label>
             </div>
           </div>
         </div>
 
-        <div class="field-group">
-          <label class="field-label">What's your biggest challenge right now? <span class="req">*</span></label>
-          <textarea name="challenge" placeholder="Be specific — this helps us customize the workshop for you." required></textarea>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label">What questions do you want answered in the workshop?</label>
-          <textarea name="questions" placeholder="Anything goes — content, growth, strategy, presence, distribution..."></textarea>
-        </div>
-
-        <div class="divider"></div>
-
-        <!-- 03 — One More Thing -->
-        <div class="section-label">03 &mdash; One more thing</div>
-
-        <div class="offer-card">
-          <div class="offer-badge">Exclusive for Meteora Ecosystem</div>
-          <p>
-            <a href="https://unfungible.xyz" target="_blank" rel="noopener">Unfungible</a> offers an L2 content production &amp; distribution package &mdash; including done-for-you content, founder funnel builds, and clipping as distribution. Workshop attendees get a special offer as a benefit of being part of the Meteora Ecosystem.
-          </p>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label">Interested in learning more about the L2 package?</label>
-          <div class="radio-group">
-            <div class="radio-item">
-              <input type="radio" name="l2interest" id="l2-yes" value="yes">
-              <label class="radio-label" for="l2-yes"><span class="radio-dot"></span> Yes, tell me more</label>
-            </div>
-            <div class="radio-item">
-              <input type="radio" name="l2interest" id="l2-maybe" value="maybe">
-              <label class="radio-label" for="l2-maybe"><span class="radio-dot"></span> Maybe</label>
-            </div>
-            <div class="radio-item">
-              <input type="radio" name="l2interest" id="l2-no" value="no">
-              <label class="radio-label" for="l2-no"><span class="radio-dot"></span> Not right now</label>
-            </div>
-          </div>
-        </div>
-
-        <div class="field-group">
-          <label class="field-label">Your email <span class="req">*</span> <span style="color: var(--text-muted); font-weight: 400;">&mdash; for calendar invite</span></label>
+        <div class="field">
+          <label class="field-label">Your email <span class="req">*</span> <span class="hint">— for calendar invite</span></label>
           <input type="email" name="email" placeholder="you@project.xyz" required>
         </div>
 
-        <!-- Submit -->
         <div class="submit-area">
           <button type="submit" class="submit-btn" id="submitBtn">
             Register for Workshop
@@ -1564,93 +988,65 @@
     </div>
   </div>
 
-  <!-- ══════════ SUCCESS STATE ══════════ -->
-  <div class="success-state" id="successState">
-    <div class="success-ring">
+  <!-- Success -->
+  <div class="success" id="successState">
+    <div class="success-icon">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
     </div>
-    <h2>You're <span class="gradient-text">in.</span></h2>
+    <h2>You're in.</h2>
     <p>Check your email for a calendar invite. We'll send pre-workshop materials before April 22nd.</p>
-    <div class="success-details">
-      <div class="sd-item">
-        <span class="sd-label">Date</span>
-        <span class="sd-value">Wed, April 22</span>
+    <div class="success-recap">
+      <div class="rc">
+        <span class="rc-label">Date</span>
+        <span class="rc-val">Wed, Apr 22</span>
       </div>
-      <div class="sd-item">
-        <span class="sd-label">Time</span>
-        <span class="sd-value">10:00 AM EST</span>
+      <div class="rc">
+        <span class="rc-label">Time</span>
+        <span class="rc-val">10 AM EST</span>
       </div>
-      <div class="sd-item">
-        <span class="sd-label">Host</span>
-        <span class="sd-value">Leon Abboud</span>
+      <div class="rc">
+        <span class="rc-label">Host</span>
+        <span class="rc-val">Leon Abboud</span>
       </div>
     </div>
   </div>
 
   <!-- Footer -->
-  <div class="footer" data-reveal>
-    <div class="footer-row">
+  <div class="foot" data-r>
+    <div class="foot-links">
       <a href="https://x.com/meteoraeco" target="_blank" rel="noopener">Meteora Ecosystem</a>
-      <span class="sep">/</span>
-      <span>On The Frontier</span>
-      <span class="sep">/</span>
       <a href="https://colosseum.com/frontier" target="_blank" rel="noopener">Colosseum Frontier</a>
-      <span class="sep">/</span>
       <a href="https://unfungible.xyz" target="_blank" rel="noopener">Unfungible</a>
     </div>
-    <p>Backing builders during hackathon season &middot; April 15 &mdash; May 11, 2025</p>
+    <p>On The Frontier &middot; April 15 — May 11, 2025</p>
   </div>
 
 </div>
 
 <script>
-// ── Star field generation ──
-(function() {
-  const field = document.getElementById('starField');
-  const count = 40;
-  for (let i = 0; i < count; i++) {
-    const star = document.createElement('div');
-    star.className = 'star';
-    star.style.left = Math.random() * 100 + '%';
-    star.style.top = Math.random() * 100 + '%';
-    star.style.setProperty('--dur', (3 + Math.random() * 4) + 's');
-    star.style.setProperty('--delay', (Math.random() * 5) + 's');
-    if (Math.random() > 0.7) {
-      star.style.width = '3px';
-      star.style.height = '3px';
-    }
-    field.appendChild(star);
-  }
-})();
-
-// ── Scroll reveal ──
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-      revealObserver.unobserve(entry.target);
+// Scroll reveal
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('v');
+      obs.unobserve(e.target);
     }
   });
-}, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+}, { threshold: 0.08, rootMargin: '0px 0px -20px 0px' });
 
-document.querySelectorAll('[data-reveal], [data-reveal-stagger]').forEach(el => {
-  revealObserver.observe(el);
-});
+document.querySelectorAll('[data-r]').forEach(el => obs.observe(el));
 
-// ── Google Sheets backend ──
+// Google Sheets backend
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7TcIEkmW6wLGRy13iQH-_NhIrSxj8mIf90e4eaRvQhz3vB_YBfTE95cr2BN6_wkFF/exec';
 
 function handleSubmit(e) {
   e.preventDefault();
-
   const form = e.target;
   const btn = document.getElementById('submitBtn');
   const data = new FormData(form);
 
   const helpNeeds = [];
-  form.querySelectorAll('input[name="help"]:checked').forEach(cb => {
-    helpNeeds.push(cb.value);
-  });
+  form.querySelectorAll('input[name="help"]:checked').forEach(cb => helpNeeds.push(cb.value));
 
   const submission = {
     name: data.get('name'),
@@ -1668,7 +1064,7 @@ function handleSubmit(e) {
 
   btn.disabled = true;
   btn.textContent = 'Submitting...';
-  btn.style.opacity = '0.7';
+  btn.style.opacity = '0.6';
 
   fetch(GOOGLE_SCRIPT_URL, {
     method: 'POST',
@@ -1678,8 +1074,7 @@ function handleSubmit(e) {
   })
   .then(() => {
     document.getElementById('formSection').parentElement.style.display = 'none';
-    const success = document.getElementById('successState');
-    success.classList.add('active');
+    document.getElementById('successState').classList.add('active');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   })
   .catch(err => {
