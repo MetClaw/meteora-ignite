@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meteora Ecosystem On The Frontier — Workshop Registration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-deep: #050510;
+    --bg-card: #0a0a1e;
+    --bg-input: #0e0e28;
+    --bg-elevated: #111133;
+    --border-dim: rgba(100, 120, 255, 0.07);
+    --border-glow: rgba(56, 217, 245, 0.12);
+    --border-focus: rgba(80, 200, 255, 0.4);
+    --cyan: #38d9f5;
+    --cyan-dim: rgba(56, 217, 245, 0.12);
+    --cyan-glow: rgba(56, 217, 245, 0.25);
+    --purple: #8b5cf6;
+    --purple-dim: rgba(139, 92, 246, 0.1);
+    --magenta: #c471f5;
+    --text-primary: #e8eaed;
+    --text-secondary: #8a8fa8;
+    --text-muted: #4a5070;
+    --accent-gradient: linear-gradient(135deg, #38d9f5 0%, #8b5cf6 50%, #c471f5 100%);
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  html {
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* — Deep space atmosphere — multiple layered orbs — */
+  .atmosphere {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .atmosphere .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+  }
+
+  .atmosphere .orb-1 {
+    top: -15%;
+    left: 15%;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(ellipse, rgba(56, 217, 245, 0.07) 0%, transparent 70%);
+    animation: orb-drift-1 30s ease-in-out infinite alternate;
+  }
+
+  .atmosphere .orb-2 {
+    bottom: -20%;
+    right: -5%;
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(ellipse, rgba(139, 92, 246, 0.06) 0%, transparent 70%);
+    animation: orb-drift-2 35s ease-in-out infinite alternate;
+  }
+
+  .atmosphere .orb-3 {
+    top: 40%;
+    left: -20%;
+    width: 40vw;
+    height: 40vw;
+    background: radial-gradient(ellipse, rgba(196, 113, 245, 0.04) 0%, transparent 70%);
+    animation: orb-drift-3 25s ease-in-out infinite alternate;
+  }
+
+  @keyframes orb-drift-1 {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(4vw, 5vh) scale(1.15); }
+  }
+  @keyframes orb-drift-2 {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-6vw, -4vh) scale(1.1); }
+  }
+  @keyframes orb-drift-3 {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(3vw, -6vh) scale(1.2); }
+  }
+
+  /* — Floating geometric shapes — */
+  .floaters {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .floater {
+    position: absolute;
+    opacity: 0;
+    animation: floater-in 2s ease-out forwards;
+  }
+
+  .floater-diamond {
+    width: 14px;
+    height: 14px;
+    border: 1px solid rgba(56, 217, 245, 0.12);
+    transform: rotate(45deg);
+    top: 18%;
+    left: 8%;
+    animation: float-slow 20s ease-in-out infinite alternate, floater-in 2s ease-out forwards;
+    animation-delay: 0.5s, 0.5s;
+  }
+
+  .floater-triangle {
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 14px solid rgba(139, 92, 246, 0.1);
+    top: 35%;
+    right: 6%;
+    animation: float-med 18s ease-in-out infinite alternate, floater-in 2s ease-out forwards;
+    animation-delay: 1s, 1s;
+  }
+
+  .floater-circle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid rgba(196, 113, 245, 0.1);
+    top: 55%;
+    left: 5%;
+    animation: float-fast 15s ease-in-out infinite alternate, floater-in 2s ease-out forwards;
+    animation-delay: 1.5s, 1.5s;
+  }
+
+  .floater-diamond-2 {
+    width: 8px;
+    height: 8px;
+    border: 1px solid rgba(56, 217, 245, 0.08);
+    transform: rotate(45deg);
+    top: 72%;
+    right: 10%;
+    animation: float-slow 22s ease-in-out infinite alternate-reverse, floater-in 2s ease-out forwards;
+    animation-delay: 2s, 2s;
+  }
+
+  .floater-circle-2 {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(56, 217, 245, 0.06);
+    top: 12%;
+    right: 18%;
+    animation: float-med 16s ease-in-out infinite alternate, floater-in 2s ease-out forwards;
+    animation-delay: 0.8s, 0.8s;
+  }
+
+  .floater-line {
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.12), transparent);
+    top: 45%;
+    right: 4%;
+    transform: rotate(-30deg);
+    animation: float-fast 20s ease-in-out infinite alternate-reverse, floater-in 2s ease-out forwards;
+    animation-delay: 1.2s, 1.2s;
+  }
+
+  .floater-dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: rgba(56, 217, 245, 0.15);
+  }
+
+  .floater-dot:nth-child(7) { top: 8%; left: 30%; animation: twinkle 4s ease-in-out infinite, floater-in 2s ease-out forwards; animation-delay: 0.3s, 0.3s; }
+  .floater-dot:nth-child(8) { top: 22%; right: 25%; animation: twinkle 5s ease-in-out infinite, floater-in 2s ease-out forwards; animation-delay: 1.1s, 1.1s; }
+  .floater-dot:nth-child(9) { top: 50%; left: 15%; animation: twinkle 3.5s ease-in-out infinite, floater-in 2s ease-out forwards; animation-delay: 0.7s, 0.7s; }
+  .floater-dot:nth-child(10) { top: 65%; right: 20%; animation: twinkle 4.5s ease-in-out infinite, floater-in 2s ease-out forwards; animation-delay: 1.8s, 1.8s; }
+  .floater-dot:nth-child(11) { top: 80%; left: 25%; animation: twinkle 5.5s ease-in-out infinite, floater-in 2s ease-out forwards; animation-delay: 2.2s, 2.2s; }
+
+  @keyframes float-slow {
+    0% { transform: rotate(45deg) translate(0, 0); }
+    100% { transform: rotate(45deg) translate(15px, -20px); }
+  }
+  @keyframes float-med {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-10px, 15px); }
+  }
+  @keyframes float-fast {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(8px, -12px); }
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0.5; }
+  }
+  @keyframes floater-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* — Grain overlay — */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 200px;
+  }
+
+  /* — Layout — */
+  .page {
+    position: relative;
+    z-index: 3;
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 5rem;
+  }
+
+  /* — Top badge — */
+  .campaign-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    background: var(--cyan-dim);
+    border: 1px solid rgba(56, 217, 245, 0.15);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .campaign-badge.visible {
+    animation: fadeUp 0.8s ease-out forwards;
+  }
+
+  .campaign-badge .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--cyan);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* — Hero — */
+  .hero {
+    margin-bottom: 4rem;
+    position: relative;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .hero.visible {
+    animation: fadeUp 0.9s ease-out 0.1s forwards;
+  }
+
+  /* Glowing orb behind headline */
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    height: 300px;
+    background: radial-gradient(ellipse, rgba(56, 217, 245, 0.1) 0%, rgba(139, 92, 246, 0.05) 40%, transparent 70%);
+    filter: blur(40px);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .hero-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2.8rem, 7vw, 4.2rem);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    max-width: 560px;
+  }
+
+  /* — Mountain silhouette divider — */
+  .mountain-divider {
+    position: relative;
+    height: 80px;
+    margin-bottom: 3rem;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .mountain-divider.visible {
+    animation: fadeUp 0.8s ease-out forwards;
+  }
+
+  .mountain-divider svg {
+    position: absolute;
+    bottom: 0;
+    left: -5%;
+    width: 110%;
+    height: 100%;
+  }
+
+  /* — Workshop details strip — */
+  .details-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border-dim);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 3rem;
+    position: relative;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .details-strip.visible {
+    animation: fadeUp 0.8s ease-out forwards;
+  }
+
+  /* Subtle glow frame around strip */
+  .details-strip::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 15px;
+    background: linear-gradient(135deg, rgba(56, 217, 245, 0.08), rgba(139, 92, 246, 0.05), rgba(56, 217, 245, 0.08));
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .details-strip:hover::before {
+    opacity: 1;
+  }
+
+  .detail-cell {
+    background: var(--bg-card);
+    padding: 1.4rem 1.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+
+  .detail-cell:hover {
+    background: rgba(10, 10, 35, 0.9);
+  }
+
+  .detail-cell .label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.45rem;
+  }
+
+  .detail-cell .value {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .detail-cell .value.highlight {
+    color: var(--cyan);
+    text-shadow: 0 0 20px rgba(56, 217, 245, 0.3);
+  }
+
+  @media (max-width: 600px) {
+    .details-strip { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* — Topics covered — */
+  .topics {
+    margin-bottom: 3.5rem;
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .topics.visible {
+    animation: fadeUp 0.8s ease-out forwards;
+  }
+
+  .topics-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+
+  .topics-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .topic-tag {
+    padding: 0.5rem 1.1rem;
+    border-radius: 100px;
+    background: var(--purple-dim);
+    border: 1px solid rgba(139, 92, 246, 0.08);
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+  }
+
+  .topic-tag:hover {
+    border-color: rgba(139, 92, 246, 0.35);
+    color: var(--text-primary);
+    background: rgba(139, 92, 246, 0.16);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.08);
+  }
+
+  /* — Diagonal section break — */
+  .diagonal-break {
+    position: relative;
+    height: 60px;
+    margin: 1rem 0 2rem;
+    overflow: hidden;
+  }
+
+  .diagonal-break::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: -10%;
+    width: 120%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--border-glow) 15%, rgba(139, 92, 246, 0.12) 50%, var(--border-glow) 85%, transparent 100%);
+    transform: rotate(-1.5deg);
+  }
+
+  .diagonal-break::after {
+    content: '';
+    position: absolute;
+    top: calc(50% + 8px);
+    left: -10%;
+    width: 120%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(56, 217, 245, 0.04) 30%, rgba(56, 217, 245, 0.06) 50%, rgba(56, 217, 245, 0.04) 70%, transparent 100%);
+    transform: rotate(-1.5deg);
+  }
+
+  /* — Form frame — glowing border container — */
+  .form-frame {
+    position: relative;
+    padding: 2.5rem;
+    border-radius: 20px;
+    background: linear-gradient(180deg, rgba(10, 10, 30, 0.6) 0%, rgba(10, 10, 30, 0.3) 100%);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(56, 217, 245, 0.06);
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .form-frame.visible {
+    animation: fadeUp 0.8s ease-out forwards;
+  }
+
+  /* Animated glow border */
+  .form-frame::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 21px;
+    background: linear-gradient(
+      135deg,
+      rgba(56, 217, 245, 0.1) 0%,
+      transparent 25%,
+      rgba(139, 92, 246, 0.08) 50%,
+      transparent 75%,
+      rgba(56, 217, 245, 0.1) 100%
+    );
+    z-index: -1;
+    animation: glow-rotate 8s linear infinite;
+    background-size: 200% 200%;
+  }
+
+  @keyframes glow-rotate {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* Corner accents */
+  .form-frame::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 30px;
+    width: 60px;
+    height: 2px;
+    background: var(--accent-gradient);
+    border-radius: 0 0 4px 4px;
+    opacity: 0.5;
+  }
+
+  @media (max-width: 600px) {
+    .form-frame { padding: 1.5rem; border-radius: 16px; }
+  }
+
+  /* — Form — */
+  .form-section {}
+
+  .form-title {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-subtitle {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    margin-bottom: 2.5rem;
+  }
+
+  .field-group {
+    margin-bottom: 2rem;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media (max-width: 540px) {
+    .field-row { grid-template-columns: 1fr; }
+  }
+
+  label.field-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.02em;
+  }
+
+  label.field-label .required {
+    color: var(--cyan);
+    margin-left: 2px;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="url"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border-dim);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    outline: none;
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: var(--text-muted);
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(56, 217, 245, 0.06), 0 0 25px rgba(56, 217, 245, 0.04), inset 0 0 20px rgba(56, 217, 245, 0.02);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  select {
+    appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%234a5070' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+  }
+
+  select option {
+    background: var(--bg-card);
+    color: var(--text-primary);
+  }
+
+  /* — Checkbox group — */
+  .checkbox-section {
+    margin-bottom: 2rem;
+  }
+
+  .checkbox-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  @media (max-width: 540px) {
+    .checkbox-grid { grid-template-columns: 1fr; }
+  }
+
+  .checkbox-item {
+    position: relative;
+  }
+
+  .checkbox-item input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .checkbox-item .check-label {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--border-dim);
+    background: var(--bg-input);
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    user-select: none;
+  }
+
+  .checkbox-item .check-label:hover {
+    border-color: rgba(100, 120, 255, 0.15);
+    color: var(--text-primary);
+    box-shadow: 0 0 15px rgba(56, 217, 245, 0.03);
+  }
+
+  .checkbox-item input:checked + .check-label {
+    border-color: rgba(56, 217, 245, 0.3);
+    background: rgba(56, 217, 245, 0.06);
+    color: var(--text-primary);
+    box-shadow: 0 0 20px rgba(56, 217, 245, 0.05);
+  }
+
+  .check-box {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.25s ease;
+  }
+
+  .checkbox-item input:checked + .check-label .check-box {
+    background: var(--cyan);
+    border-color: var(--cyan);
+    box-shadow: 0 0 8px rgba(56, 217, 245, 0.3);
+  }
+
+  .check-box svg {
+    width: 10px;
+    height: 10px;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.2s ease;
+  }
+
+  .checkbox-item input:checked + .check-label .check-box svg {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  /* — Radio group — */
+  .radio-group {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .radio-item {
+    position: relative;
+  }
+
+  .radio-item input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .radio-item .radio-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.2rem;
+    border-radius: 100px;
+    border: 1px solid var(--border-dim);
+    background: var(--bg-input);
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    transition: all 0.3s ease;
+    user-select: none;
+  }
+
+  .radio-item .radio-label:hover {
+    border-color: rgba(100, 120, 255, 0.15);
+    color: var(--text-primary);
+  }
+
+  .radio-item input:checked + .radio-label {
+    border-color: rgba(139, 92, 246, 0.4);
+    background: rgba(139, 92, 246, 0.1);
+    color: var(--text-primary);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.08);
+  }
+
+  .radio-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.25s ease;
+  }
+
+  .radio-item input:checked + .radio-label .radio-dot {
+    border-color: var(--purple);
+  }
+
+  .radio-dot::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--purple);
+    transform: scale(0);
+    transition: transform 0.2s ease;
+  }
+
+  .radio-item input:checked + .radio-label .radio-dot::after {
+    transform: scale(1);
+  }
+
+  /* — Section divider inside form — */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--border-dim) 20%, rgba(100, 120, 255, 0.1) 50%, var(--border-dim) 80%, transparent 100%);
+    margin: 2.5rem 0;
+  }
+
+  /* — Submit — */
+  .submit-area {
+    margin-top: 3rem;
+    text-align: center;
+  }
+
+  .submit-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1.1rem 3rem;
+    border: none;
+    border-radius: 14px;
+    background: var(--accent-gradient);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.01em;
+    overflow: hidden;
+  }
+
+  /* Animated glow pulse behind button */
+  .submit-btn::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 17px;
+    background: var(--accent-gradient);
+    filter: blur(15px);
+    opacity: 0.35;
+    z-index: -1;
+    animation: btn-pulse 3s ease-in-out infinite;
+  }
+
+  /* Shimmer sweep */
+  .submit-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent);
+    transition: left 0.5s ease;
+  }
+
+  .submit-btn:hover::after {
+    left: 100%;
+  }
+
+  @keyframes btn-pulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.05); }
+  }
+
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 40px rgba(56, 217, 245, 0.2), 0 4px 15px rgba(139, 92, 246, 0.15);
+  }
+
+  .submit-btn:active {
+    transform: translateY(0);
+  }
+
+  .submit-btn svg {
+    width: 18px;
+    height: 18px;
+    transition: transform 0.3s ease;
+  }
+
+  .submit-btn:hover svg {
+    transform: translateX(3px);
+  }
+
+  .submit-note {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+
+  /* — L2 offer card — prize frame treatment — */
+  .offer-card {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    padding: 1.75rem;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.07) 0%, rgba(56, 217, 245, 0.04) 50%, rgba(196, 113, 245, 0.05) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Prize frame glow corners */
+  .offer-card::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    border-radius: 17px;
+    background: linear-gradient(135deg, rgba(196, 113, 245, 0.15), transparent 30%, transparent 70%, rgba(56, 217, 245, 0.1));
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .offer-card:hover::before {
+    opacity: 1;
+  }
+
+  /* Diagonal accent stripe */
+  .offer-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, transparent 50%, rgba(139, 92, 246, 0.04) 50%);
+    pointer-events: none;
+  }
+
+  .offer-card .offer-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--magenta);
+    background: rgba(196, 113, 245, 0.1);
+    padding: 0.35rem 0.8rem;
+    border-radius: 6px;
+    margin-bottom: 0.85rem;
+    border: 1px solid rgba(196, 113, 245, 0.12);
+  }
+
+  .offer-card p {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* — Footer — */
+  .footer {
+    margin-top: 4rem;
+    text-align: center;
+    padding: 2rem 0;
+    border-top: 1px solid var(--border-dim);
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  .footer.visible {
+    animation: fadeUp 0.8s ease-out forwards;
+  }
+
+  .footer-logos {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .footer-logos span {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .footer-logos .sep {
+    color: var(--text-muted);
+    opacity: 0.4;
+  }
+
+  .footer p {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  /* — Success state — */
+  .success-state {
+    display: none;
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+
+  .success-state.active {
+    display: block;
+    animation: fadeUp 0.6s ease-out both;
+  }
+
+  .success-icon {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: var(--cyan-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    border: 1px solid rgba(56, 217, 245, 0.2);
+    box-shadow: 0 0 40px rgba(56, 217, 245, 0.1);
+  }
+
+  .success-icon svg {
+    width: 30px;
+    height: 30px;
+    color: var(--cyan);
+  }
+
+  .success-state h2 {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .success-state p {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    max-width: 400px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* — Animations — */
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* — Section spacing — */
+  .section-label {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-dim);
+  }
+</style>
+</head>
+<body>
+
+<!-- Layered atmosphere -->
+<div class="atmosphere">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<!-- Floating geometric shapes -->
+<div class="floaters">
+  <div class="floater floater-diamond"></div>
+  <div class="floater floater-triangle"></div>
+  <div class="floater floater-circle"></div>
+  <div class="floater floater-diamond-2"></div>
+  <div class="floater floater-circle-2"></div>
+  <div class="floater floater-line"></div>
+  <div class="floater floater-dot"></div>
+  <div class="floater floater-dot"></div>
+  <div class="floater floater-dot"></div>
+  <div class="floater floater-dot"></div>
+  <div class="floater floater-dot"></div>
+</div>
+
+<div class="grain"></div>
+
+<div class="page">
+
+  <!-- Campaign Badge -->
+  <div class="campaign-badge" data-animate>
+    <span class="dot"></span>
+    Meteora Ecosystem · On The Frontier
+  </div>
+
+  <!-- Hero -->
+  <div class="hero" data-animate>
+    <div class="hero-label">Free Workshop · Limited Spots</div>
+    <h1>Backing builders on<br><em>the frontier</em></h1>
+    <p class="hero-sub">
+      A free, hands-on workshop for Meteora ecosystem founders — covering content strategy, founder presence, marketing, and distribution during hackathon season.
+    </p>
+  </div>
+
+  <!-- Mountain silhouette -->
+  <div class="mountain-divider" data-animate>
+    <svg viewBox="0 0 1200 80" preserveAspectRatio="none" fill="none">
+      <path d="M0 80 L0 55 L80 40 L180 52 L300 25 L380 45 L480 15 L560 38 L650 8 L720 30 L800 18 L880 35 L960 12 L1040 28 L1120 20 L1200 42 L1200 80Z" fill="rgba(56,217,245,0.03)"/>
+      <path d="M0 80 L0 60 L100 48 L220 55 L340 35 L440 50 L540 28 L640 45 L720 22 L800 40 L900 30 L1000 42 L1100 25 L1200 50 L1200 80Z" fill="rgba(139,92,246,0.02)"/>
+      <line x1="0" y1="79" x2="1200" y2="79" stroke="rgba(56,217,245,0.06)" stroke-width="1"/>
+    </svg>
+  </div>
+
+  <!-- Details Strip -->
+  <div class="details-strip" data-animate>
+    <div class="detail-cell">
+      <div class="label">Date</div>
+      <div class="value">Wed, April 22</div>
+    </div>
+    <div class="detail-cell">
+      <div class="label">Time</div>
+      <div class="value">10:00 AM EST</div>
+    </div>
+    <div class="detail-cell">
+      <div class="label">Duration</div>
+      <div class="value">60 minutes</div>
+    </div>
+    <div class="detail-cell">
+      <div class="label">Cost</div>
+      <div class="value highlight">Free</div>
+    </div>
+  </div>
+
+  <!-- Topics Covered -->
+  <div class="topics" data-animate>
+    <div class="topics-label">What we'll cover</div>
+    <div class="topics-grid">
+      <span class="topic-tag">Content Strategy</span>
+      <span class="topic-tag">Founder Personal Brand</span>
+      <span class="topic-tag">Marketing & Distribution</span>
+      <span class="topic-tag">Community Building</span>
+      <span class="topic-tag">Short-form & Clipping</span>
+      <span class="topic-tag">Founder Funnel</span>
+    </div>
+  </div>
+
+  <!-- Diagonal section break -->
+  <div class="diagonal-break"></div>
+
+  <!-- Form inside glowing frame -->
+  <div class="form-frame" data-animate>
+    <div class="form-section" id="formSection">
+      <h2 class="form-title">Register for the workshop</h2>
+      <p class="form-subtitle">Fill this out so we can tailor the session to your actual needs.</p>
+
+      <form id="workshopForm" onsubmit="handleSubmit(event)">
+
+        <!-- Section: About You -->
+        <div class="section-label">01 — About you</div>
+
+        <div class="field-row field-group">
+          <div>
+            <label class="field-label">Your name <span class="required">*</span></label>
+            <input type="text" name="name" placeholder="e.g. Vesper" required>
+          </div>
+          <div>
+            <label class="field-label">Your role</label>
+            <select name="role">
+              <option value="" disabled selected>Select your role</option>
+              <option value="founder">Founder</option>
+              <option value="cofounder">Co-founder</option>
+              <option value="marketing">Marketing Lead</option>
+              <option value="community">Community Lead</option>
+              <option value="dev">Developer</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-row field-group">
+          <div>
+            <label class="field-label">Project name <span class="required">*</span></label>
+            <input type="text" name="project" placeholder="e.g. Meteora Ecosystem" required>
+          </div>
+          <div>
+            <label class="field-label">Project website or Twitter</label>
+            <input type="url" name="website" placeholder="https:// or @handle">
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Current project stage</label>
+          <div class="radio-group">
+            <div class="radio-item">
+              <input type="radio" name="stage" id="stage-pre" value="pre-launch">
+              <label class="radio-label" for="stage-pre">
+                <span class="radio-dot"></span>
+                Pre-launch
+              </label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" name="stage" id="stage-just" value="just-launched">
+              <label class="radio-label" for="stage-just">
+                <span class="radio-dot"></span>
+                Just launched
+              </label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" name="stage" id="stage-grow" value="growing">
+              <label class="radio-label" for="stage-grow">
+                <span class="radio-dot"></span>
+                Growing
+              </label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" name="stage" id="stage-est" value="established">
+              <label class="radio-label" for="stage-est">
+                <span class="radio-dot"></span>
+                Established
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Section: Your Needs -->
+        <div class="section-label">02 — Your needs</div>
+
+        <div class="checkbox-section">
+          <label class="field-label">What do you need the most help with? <span class="required">*</span></label>
+          <div class="checkbox-grid">
+            <div class="checkbox-item">
+              <input type="checkbox" name="help" id="help-content" value="content-strategy">
+              <label class="check-label" for="help-content">
+                <span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#050510" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                Content strategy
+              </label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" name="help" id="help-marketing" value="marketing-distribution">
+              <label class="check-label" for="help-marketing">
+                <span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#050510" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                Marketing & distribution
+              </label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" name="help" id="help-brand" value="founder-brand">
+              <label class="check-label" for="help-brand">
+                <span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#050510" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                Founder personal brand
+              </label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" name="help" id="help-community" value="community">
+              <label class="check-label" for="help-community">
+                <span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#050510" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                Community building
+              </label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" name="help" id="help-clipping" value="clipping">
+              <label class="check-label" for="help-clipping">
+                <span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#050510" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                Clipping & short-form content
+              </label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" name="help" id="help-funnel" value="founder-funnel">
+              <label class="check-label" for="help-funnel">
+                <span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#050510" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                Founder funnel optimization
+              </label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" name="help" id="help-other" value="other">
+              <label class="check-label" for="help-other">
+                <span class="check-box"><svg viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#050510" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                Other
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">What's your biggest challenge right now? <span class="required">*</span></label>
+          <textarea name="challenge" placeholder="Be specific — this helps us customize the workshop for you." required></textarea>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">What questions do you want answered in the workshop?</label>
+          <textarea name="questions" placeholder="Anything goes — content, growth, strategy, presence, distribution..."></textarea>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Section: Extras -->
+        <div class="section-label">03 — One more thing</div>
+
+        <div class="offer-card">
+          <div class="offer-badge">Exclusive for Meteora Ecosystem</div>
+          <p>
+            Our workshop partner offers an L2 content production & distribution package — including done-for-you content, founder funnel builds, and clipping as distribution. Workshop attendees get a special offer as a benefit of being part of the Meteora Ecosystem.
+          </p>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Interested in learning more about the L2 package?</label>
+          <div class="radio-group">
+            <div class="radio-item">
+              <input type="radio" name="l2interest" id="l2-yes" value="yes">
+              <label class="radio-label" for="l2-yes">
+                <span class="radio-dot"></span>
+                Yes, tell me more
+              </label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" name="l2interest" id="l2-maybe" value="maybe">
+              <label class="radio-label" for="l2-maybe">
+                <span class="radio-dot"></span>
+                Maybe
+              </label>
+            </div>
+            <div class="radio-item">
+              <input type="radio" name="l2interest" id="l2-no" value="no">
+              <label class="radio-label" for="l2-no">
+                <span class="radio-dot"></span>
+                Not right now
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Your email <span class="required">*</span> <span style="color: var(--text-muted); font-weight: 400;">— for calendar invite</span></label>
+          <input type="email" name="email" placeholder="you@project.xyz" required>
+        </div>
+
+        <!-- Submit -->
+        <div class="submit-area">
+          <button type="submit" class="submit-btn">
+            Register for Workshop
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+          <p class="submit-note">You'll receive a calendar invite and pre-workshop materials via email.</p>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Success State -->
+  <div class="success-state" id="successState">
+    <div class="success-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+    </div>
+    <h2>You're in.</h2>
+    <p>Check your email for a calendar invite. We'll send pre-workshop materials a few days before April 22nd.</p>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer" data-animate>
+    <div class="footer-logos">
+      <span>Meteora Ecosystem</span>
+      <span class="sep">/</span>
+      <span>On The Frontier</span>
+    </div>
+    <p>Backing builders during hackathon season · April 15 — May 11, 2025</p>
+  </div>
+
+</div>
+
+<script>
+// Scroll-triggered animations via IntersectionObserver
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, {
+  threshold: 0.15,
+  rootMargin: '0px 0px -40px 0px'
+});
+
+document.querySelectorAll('[data-animate]').forEach(el => {
+  observer.observe(el);
+});
+
+// ── Google Sheets backend ──
+// Replace this URL with your deployed Google Apps Script web app URL
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7TcIEkmW6wLGRy13iQH-_NhIrSxj8mIf90e4eaRvQhz3vB_YBfTE95cr2BN6_wkFF/exec';
+
+function handleSubmit(e) {
+  e.preventDefault();
+
+  const form = e.target;
+  const btn = form.querySelector('.submit-btn');
+  const data = new FormData(form);
+
+  // Collect checkbox values
+  const helpNeeds = [];
+  form.querySelectorAll('input[name="help"]:checked').forEach(cb => {
+    helpNeeds.push(cb.value);
+  });
+
+  const submission = {
+    name: data.get('name'),
+    role: data.get('role'),
+    project: data.get('project'),
+    website: data.get('website'),
+    stage: data.get('stage'),
+    helpNeeds: helpNeeds.join(', '),
+    challenge: data.get('challenge'),
+    questions: data.get('questions'),
+    l2interest: data.get('l2interest'),
+    email: data.get('email'),
+    timestamp: new Date().toISOString()
+  };
+
+  // Disable button while submitting
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+
+  fetch(GOOGLE_SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(submission)
+  })
+  .then(() => {
+    // Show success state
+    document.getElementById('formSection').parentElement.style.display = 'none';
+    const success = document.getElementById('successState');
+    success.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  })
+  .catch(err => {
+    console.error('Submission error:', err);
+    btn.disabled = false;
+    btn.innerHTML = 'Register for Workshop <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+    alert('Something went wrong. Please try again.');
+  });
+}
+</script>
+
+</body>
+</html>
