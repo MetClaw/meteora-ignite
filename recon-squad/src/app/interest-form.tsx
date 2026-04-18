@@ -8,16 +8,16 @@ type Role = "trader" | "creator" | "";
 
 export default function InterestForm() {
   const [role, setRole] = useState<Role>("");
-  const [wallet, setWallet] = useState("");
   const [twitter, setTwitter] = useState("");
   const [products, setProducts] = useState("");
-  const [pitch, setPitch] = useState("");
+  const [improve, setImprove] = useState("");
+  const [wallet, setWallet] = useState("");
   const [status, setStatus] = useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");
 
   const canSubmit =
-    role && wallet.trim() && products.trim() && status !== "submitting";
+    role && twitter.trim() && products.trim() && wallet.trim() && status !== "submitting";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -28,10 +28,10 @@ export default function InterestForm() {
     const payload = {
       timestamp: new Date().toISOString(),
       role,
-      wallet: wallet.trim(),
       twitter: twitter.trim(),
       products: products.trim(),
-      pitch: pitch.trim(),
+      improve: improve.trim(),
+      wallet: wallet.trim(),
     };
 
     try {
@@ -124,28 +124,7 @@ export default function InterestForm() {
         </div>
       </div>
 
-      {/* Wallet */}
-      <div>
-        <label
-          htmlFor="wallet"
-          className="block mb-2.5 text-[12px] font-medium tracking-[0.5px] uppercase"
-          style={{ color: "var(--color-text-secondary)" }}
-        >
-          Wallet address
-        </label>
-        <input
-          id="wallet"
-          type="text"
-          value={wallet}
-          onChange={(e) => setWallet(e.target.value)}
-          placeholder="Solana public key"
-          className="form-field w-full px-4 py-3 text-[14px]"
-          style={{ fontFamily: "var(--font-mono)" }}
-          required
-        />
-      </div>
-
-      {/* Twitter */}
+      {/* X handle */}
       <div>
         <label
           htmlFor="twitter"
@@ -153,31 +132,26 @@ export default function InterestForm() {
           style={{ color: "var(--color-text-secondary)" }}
         >
           X handle
-          <span
-            className="ml-2 text-[11px] font-normal normal-case tracking-normal"
-            style={{ color: "var(--color-text-dim)" }}
-          >
-            optional
-          </span>
         </label>
         <input
           id="twitter"
           type="text"
           value={twitter}
           onChange={(e) => setTwitter(e.target.value)}
-          placeholder="@"
+          placeholder="@yourhandle"
           className="form-field w-full px-4 py-3 text-[14px]"
+          required
         />
       </div>
 
-      {/* Products */}
+      {/* Products used */}
       <div>
         <label
           htmlFor="products"
           className="block mb-2.5 text-[12px] font-medium tracking-[0.5px] uppercase"
           style={{ color: "var(--color-text-secondary)" }}
         >
-          What do you use on Meteora?
+          Which Meteora products do you actively use?
         </label>
         <textarea
           id="products"
@@ -190,28 +164,55 @@ export default function InterestForm() {
         />
       </div>
 
-      {/* Pitch */}
+      {/* Product critique -- the real filter */}
       <div>
         <label
-          htmlFor="pitch"
+          htmlFor="improve"
           className="block mb-2.5 text-[12px] font-medium tracking-[0.5px] uppercase"
           style={{ color: "var(--color-text-secondary)" }}
         >
-          Why you?
+          What would you change about a Meteora product?
           <span
             className="ml-2 text-[11px] font-normal normal-case tracking-normal"
             style={{ color: "var(--color-text-dim)" }}
           >
-            optional
+            optional but helps
           </span>
         </label>
         <textarea
-          id="pitch"
-          value={pitch}
-          onChange={(e) => setPitch(e.target.value)}
-          placeholder="What makes you a good tester?"
-          rows={2}
+          id="improve"
+          value={improve}
+          onChange={(e) => setImprove(e.target.value)}
+          placeholder="Pick any product. What's one thing you'd improve and why?"
+          rows={3}
           className="form-field w-full px-4 py-3 text-[14px] resize-none"
+        />
+      </div>
+
+      {/* Wallet */}
+      <div>
+        <label
+          htmlFor="wallet"
+          className="block mb-2.5 text-[12px] font-medium tracking-[0.5px] uppercase"
+          style={{ color: "var(--color-text-secondary)" }}
+        >
+          Wallet address
+          <span
+            className="ml-2 text-[11px] font-normal normal-case tracking-normal"
+            style={{ color: "var(--color-text-dim)" }}
+          >
+            for compensation
+          </span>
+        </label>
+        <input
+          id="wallet"
+          type="text"
+          value={wallet}
+          onChange={(e) => setWallet(e.target.value)}
+          placeholder="Solana public key"
+          className="form-field w-full px-4 py-3 text-[14px]"
+          style={{ fontFamily: "var(--font-mono)" }}
+          required
         />
       </div>
 
