@@ -9,15 +9,26 @@ type Role = "trader" | "creator" | "";
 export default function InterestForm() {
   const [role, setRole] = useState<Role>("");
   const [twitter, setTwitter] = useState("");
-  const [products, setProducts] = useState("");
-  const [improve, setImprove] = useState("");
+  // Trader fields
+  const [traderProducts, setTraderProducts] = useState("");
+  const [traderStrategy, setTraderStrategy] = useState("");
+  const [traderImprove, setTraderImprove] = useState("");
+  // Creator fields
+  const [creatorLaunched, setCreatorLaunched] = useState("");
+  const [creatorTools, setCreatorTools] = useState("");
+  const [creatorHardest, setCreatorHardest] = useState("");
+  // Shared
   const [wallet, setWallet] = useState("");
   const [status, setStatus] = useState<
     "idle" | "submitting" | "success" | "error"
   >("idle");
 
+  const traderReady = traderProducts.trim() && traderStrategy.trim();
+  const creatorReady = creatorLaunched.trim() && creatorTools.trim();
+  const roleFieldsReady = role === "trader" ? traderReady : role === "creator" ? creatorReady : false;
+
   const canSubmit =
-    role && twitter.trim() && products.trim() && wallet.trim() && status !== "submitting";
+    role && twitter.trim() && roleFieldsReady && wallet.trim() && status !== "submitting";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,8 +40,17 @@ export default function InterestForm() {
       timestamp: new Date().toISOString(),
       role,
       twitter: twitter.trim(),
-      products: products.trim(),
-      improve: improve.trim(),
+      ...(role === "trader"
+        ? {
+            products: traderProducts.trim(),
+            strategy: traderStrategy.trim(),
+            improve: traderImprove.trim(),
+          }
+        : {
+            launched_before: creatorLaunched.trim(),
+            tools_used: creatorTools.trim(),
+            hardest_part: creatorHardest.trim(),
+          }),
       wallet: wallet.trim(),
     };
 
@@ -144,50 +164,139 @@ export default function InterestForm() {
         />
       </div>
 
-      {/* Products used */}
-      <div>
-        <label
-          htmlFor="products"
-          className="block mb-2.5 text-[12px] font-medium tracking-[0.5px] uppercase"
-          style={{ color: "var(--color-text-secondary)" }}
-        >
-          Which Meteora products do you actively use?
-        </label>
-        <textarea
-          id="products"
-          value={products}
-          onChange={(e) => setProducts(e.target.value)}
-          placeholder="DLMM, Dynamic Pools, Vaults..."
-          rows={2}
-          className="form-field w-full px-4 py-3 text-[14px] resize-none"
-          required
-        />
-      </div>
+      {/* Trader-specific questions */}
+      {role === "trader" && (
+        <>
+          <div>
+            <label
+              htmlFor="traderProducts"
+              className="block mb-2.5 text-[12px] font-medium tracking-[0.5px] uppercase"
+              style={{ color: "var(--color-text-secondary)" }}
+            >
+              Which Meteora products do you actively LP on?
+            </label>
+            <textarea
+              id="traderProducts"
+              value={traderProducts}
+              onChange={(e) => setTraderProducts(e.target.value)}
+              placeholder="DLMM, Dynamic Pools, Dynamic Vaults..."
+              rows={2}
+              className="form-field w-full px-4 py-3 text-[14px] resize-none"
+              required
+            />
+          </div>
 
-      {/* Product critique -- the real filter */}
-      <div>
-        <label
-          htmlFor="improve"
-          className="block mb-2.5 text-[12px] font-medium tracking-[0.5px] uppercase"
-          style={{ color: "var(--color-text-secondary)" }}
-        >
-          What would you change about a Meteora product?
-          <span
-            className="ml-2 text-[11px] font-normal normal-case tracking-normal"
-            style={{ color: "var(--color-text-dim)" }}
-          >
-            optional but helps
-          </span>
-        </label>
-        <textarea
-          id="improve"
-          value={improve}
-          onChange={(e) => setImprove(e.target.value)}
-          placeholder="Pick any product. What's one thing you'd improve and why?"
-          rows={3}
-          className="form-field w-full px-4 py-3 text-[14px] resize-none"
-        />
-      </div>
+          <div>
+            <label
+              htmlFor="traderStrategy"
+              className="block mb-2.5 text-[12px] font-medium tracking-[0.5px] uppercase"
+              style={{ color: "var(--color-text-secondary)" }}
+            >
+              What&apos;s your typical LP strategy?
+            </label>
+            <textarea
+              id="traderStrategy"
+              value={traderStrategy}
+              onChange={(e) => setTraderStrategy(e.target.value)}
+              placeholder="Concentrated ranges, wide bins, vault-and-forget, active rebalancing..."
+              rows={2}
+              className="form-field w-full px-4 py-3 text-[14px] resize-none"
+              required
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="traderImprove"
+              className="block mb-2.5 text-[12px] font-medium tracking-[0.5px] uppercase"
+              style={{ color: "var(--color-text-secondary)" }}
+            >
+              What&apos;s one thing about Meteora&apos;s LP experience you&apos;d change?
+              <span
+                className="ml-2 text-[11px] font-normal normal-case tracking-normal"
+                style={{ color: "var(--color-text-dim)" }}
+              >
+                optional but this is the real filter
+              </span>
+            </label>
+            <textarea
+              id="traderImprove"
+              value={traderImprove}
+              onChange={(e) => setTraderImprove(e.target.value)}
+              placeholder="Fee structure, position management, analytics, bin UX..."
+              rows={3}
+              className="form-field w-full px-4 py-3 text-[14px] resize-none"
+            />
+          </div>
+        </>
+      )}
+
+      {/* Creator-specific questions */}
+      {role === "creator" && (
+        <>
+          <div>
+            <label
+              htmlFor="creatorLaunched"
+              className="block mb-2.5 text-[12px] font-medium tracking-[0.5px] uppercase"
+              style={{ color: "var(--color-text-secondary)" }}
+            >
+              Have you launched a token before? If so, where?
+            </label>
+            <textarea
+              id="creatorLaunched"
+              value={creatorLaunched}
+              onChange={(e) => setCreatorLaunched(e.target.value)}
+              placeholder="Pump.fun, Meteora DBC, Raydium, no prior launches..."
+              rows={2}
+              className="form-field w-full px-4 py-3 text-[14px] resize-none"
+              required
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="creatorTools"
+              className="block mb-2.5 text-[12px] font-medium tracking-[0.5px] uppercase"
+              style={{ color: "var(--color-text-secondary)" }}
+            >
+              Which Meteora launch tools have you used?
+            </label>
+            <textarea
+              id="creatorTools"
+              value={creatorTools}
+              onChange={(e) => setCreatorTools(e.target.value)}
+              placeholder="DBC, DAMM v2, Dynamic Pools for initial liquidity..."
+              rows={2}
+              className="form-field w-full px-4 py-3 text-[14px] resize-none"
+              required
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="creatorHardest"
+              className="block mb-2.5 text-[12px] font-medium tracking-[0.5px] uppercase"
+              style={{ color: "var(--color-text-secondary)" }}
+            >
+              What&apos;s the hardest part of launching liquidity for a new token?
+              <span
+                className="ml-2 text-[11px] font-normal normal-case tracking-normal"
+                style={{ color: "var(--color-text-dim)" }}
+              >
+                optional but this is the real filter
+              </span>
+            </label>
+            <textarea
+              id="creatorHardest"
+              value={creatorHardest}
+              onChange={(e) => setCreatorHardest(e.target.value)}
+              placeholder="Price discovery, initial liquidity depth, migration timing, community coordination..."
+              rows={3}
+              className="form-field w-full px-4 py-3 text-[14px] resize-none"
+            />
+          </div>
+        </>
+      )}
 
       {/* Wallet */}
       <div>
