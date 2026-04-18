@@ -976,6 +976,12 @@
           <input type="email" name="email" placeholder="you@project.xyz" required>
         </div>
 
+        <!-- Honeypot — hidden from humans, bots auto-fill it -->
+        <div style="position:absolute;left:-9999px;top:-9999px;height:0;width:0;overflow:hidden;" aria-hidden="true" tabindex="-1">
+          <label for="website_url">Website URL</label>
+          <input type="text" name="website_url" id="website_url" autocomplete="off" tabindex="-1">
+        </div>
+
         <div class="submit-area">
           <button type="submit" class="submit-btn" id="submitBtn">
             Register for Workshop
@@ -1039,12 +1045,32 @@ document.querySelectorAll('[data-r]').forEach(el => obs.observe(el));
 // Google Sheets backend
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7TcIEkmW6wLGRy13iQH-_NhIrSxj8mIf90e4eaRvQhz3vB_YBfTE95cr2BN6_wkFF/exec';
 
+// Bot protection
+const PAGE_LOAD_TIME = Date.now();
+const MIN_FILL_TIME = 3000; // 3 seconds minimum — bots submit instantly
+const CHALLENGE_TOKEN = btoa(String(PAGE_LOAD_TIME).split('').reverse().join(''));
+
 // Rate limiting — prevent double/spam submissions
 let lastSubmitTime = 0;
 const SUBMIT_COOLDOWN = 10000; // 10 seconds between submissions
 
 function handleSubmit(e) {
   e.preventDefault();
+
+  // Bot check 1: Honeypot — if the hidden field has a value, it's a bot
+  const honeypot = document.getElementById('website_url');
+  if (honeypot && honeypot.value) {
+    // Silently fake success so bot thinks it worked
+    document.getElementById('formSection').parentElement.style.display = 'none';
+    document.getElementById('successState').classList.add('active');
+    return;
+  }
+
+  // Bot check 2: Time gate — real humans take >3s to fill a form
+  if (Date.now() - PAGE_LOAD_TIME < MIN_FILL_TIME) {
+    alert('Please take a moment to fill out the form.');
+    return;
+  }
 
   // Rate limit check
   const now = Date.now();
@@ -1078,7 +1104,8 @@ function handleSubmit(e) {
     challenge: data.get('challenge'),
     questions: data.get('questions'),
     l2interest: data.get('l2interest'),
-    email: email
+    email: email,
+    _token: CHALLENGE_TOKEN // JS challenge proof — server can verify this exists
   };
 
   btn.disabled = true;

@@ -76,6 +76,20 @@ function doPost(e) {
   try {
     var data = JSON.parse(e.postData.contents);
 
+    // Bot check: honeypot field — if filled, silently discard
+    if (data.website_url) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ status: 'ok' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Bot check: JS challenge token must be present
+    if (!data._token) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ status: 'ok' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
     // Basic validation — reject if missing required fields
     if (!data.name || !data.email || !data.project || !data.challenge) {
       return ContentService
