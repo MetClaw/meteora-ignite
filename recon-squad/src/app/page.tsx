@@ -585,13 +585,13 @@ export default function Home() {
 
                   <div className="field-row">
                     <div className={`field ${focusedField === "months" ? "field--focused" : ""} ${months ? "field--filled" : ""}`}>
-                      <label htmlFor="months" className="field-label">MONTHS ON METEORA</label>
+                      <label htmlFor="months" className="field-label">HOW LONG HAVE YOU BEEN TRADING ON SOLANA?</label>
                       <input
                         id="months" type="text" value={months}
                         onChange={(e) => setMonths(e.target.value)}
                         onFocus={() => setFocusedField("months")}
                         onBlur={() => setFocusedField(null)}
-                        placeholder="e.g. 6"
+                        placeholder="e.g. 2 years"
                         className="field-input"
                         autoComplete="off"
                       />
