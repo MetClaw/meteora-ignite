@@ -4,8 +4,6 @@ import { useEffect, useState, useRef, useCallback } from "react";
 
 /* ═══════════════════════════════════════════════════════════════
    PARTICLE CONSTELLATION CANVAS
-   80 dots drifting slowly, connected by lines when close,
-   gently pushing away from cursor. Living, breathing background.
    ═══════════════════════════════════════════════════════════════ */
 
 interface Particle {
@@ -31,10 +29,10 @@ function ParticleCanvas() {
 
     const dpr = window.devicePixelRatio || 1;
     dprRef.current = dpr;
-    const PARTICLE_COUNT = 70;
-    const LINE_DIST = 140;
-    const MOUSE_DIST = 180;
-    const MOUSE_FORCE = 0.8;
+    const PARTICLE_COUNT = 50;
+    const LINE_DIST = 120;
+    const MOUSE_DIST = 160;
+    const MOUSE_FORCE = 0.6;
 
     function resize() {
       if (!canvas) return;
@@ -50,8 +48,8 @@ function ParticleCanvas() {
       particlesRef.current = Array.from({ length: PARTICLE_COUNT }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: (Math.random() - 0.5) * 0.25,
         r: Math.random() * 1.2 + 0.4,
       }));
     }
@@ -69,9 +67,7 @@ function ParticleCanvas() {
 
       const particles = particlesRef.current;
 
-      // Update positions
       for (const p of particles) {
-        // Mouse repulsion
         const dmx = p.x - mx;
         const dmy = p.y - my;
         const distM = Math.sqrt(dmx * dmx + dmy * dmy);
@@ -80,30 +76,23 @@ function ParticleCanvas() {
           p.vx += (dmx / distM) * force;
           p.vy += (dmy / distM) * force;
         }
-
-        // Damping
         p.vx *= 0.98;
         p.vy *= 0.98;
-
-        // Drift
         p.x += p.vx;
         p.y += p.vy;
-
-        // Wrap edges
         if (p.x < -20) p.x = w + 20;
         if (p.x > w + 20) p.x = -20;
         if (p.y < -20) p.y = h + 20;
         if (p.y > h + 20) p.y = -20;
       }
 
-      // Draw lines between close particles
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
           const dy = particles[i].y - particles[j].y;
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < LINE_DIST) {
-            const alpha = (1 - dist / LINE_DIST) * 0.08;
+            const alpha = (1 - dist / LINE_DIST) * 0.06;
             ctx.strokeStyle = `rgba(245, 75, 0, ${alpha})`;
             ctx.lineWidth = 0.5;
             ctx.beginPath();
@@ -114,15 +103,12 @@ function ParticleCanvas() {
         }
       }
 
-      // Draw dots
       for (const p of particles) {
-        // Glow near mouse
         const dmx = p.x - mx;
         const dmy = p.y - my;
         const distM = Math.sqrt(dmx * dmx + dmy * dmy);
         const brightness = distM < MOUSE_DIST ? 0.5 + (1 - distM / MOUSE_DIST) * 0.5 : 0.5;
-
-        ctx.fillStyle = `rgba(255, 255, 255, ${brightness * 0.4})`;
+        ctx.fillStyle = `rgba(255, 255, 255, ${brightness * 0.35})`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
@@ -139,10 +125,8 @@ function ParticleCanvas() {
     resize();
     initParticles();
     draw();
-
     window.addEventListener("resize", resize);
     window.addEventListener("mousemove", onMouse);
-
     return () => {
       cancelAnimationFrame(rafRef.current);
       window.removeEventListener("resize", resize);
@@ -155,8 +139,6 @@ function ParticleCanvas() {
 
 /* ═══════════════════════════════════════════════════════════════
    TEXT SCRAMBLE
-   Characters morph through random glyphs before resolving.
-   Pentagon demo signature effect.
    ═══════════════════════════════════════════════════════════════ */
 
 const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZΔΣΩΦΨλμπ0123456789@#$%&";
@@ -196,23 +178,24 @@ function TextScramble({ text, delay = 600 }: { text: string; delay?: number }) {
 
 /* ═══════════════════════════════════════════════════════════════
    MAGNETIC BUTTON
-   Subtly pulls toward cursor when nearby. Feels physical.
    ═══════════════════════════════════════════════════════════════ */
 
 function MagneticButton({
   children,
   onClick,
   className,
+  disabled,
 }: {
   children: React.ReactNode;
   onClick: () => void;
   className?: string;
+  disabled?: boolean;
 }) {
   const ref = useRef<HTMLButtonElement>(null);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
 
   const handleMouse = useCallback((e: React.MouseEvent) => {
-    if (!ref.current) return;
+    if (!ref.current || disabled) return;
     const rect = ref.current.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
@@ -221,12 +204,12 @@ function MagneticButton({
     const dist = Math.sqrt(dx * dx + dy * dy);
     const maxDist = 120;
     if (dist < maxDist) {
-      const pull = (1 - dist / maxDist) * 8;
+      const pull = (1 - dist / maxDist) * 6;
       setOffset({ x: (dx / dist) * pull, y: (dy / dist) * pull });
     } else {
       setOffset({ x: 0, y: 0 });
     }
-  }, []);
+  }, [disabled]);
 
   const handleLeave = useCallback(() => {
     setOffset({ x: 0, y: 0 });
@@ -237,6 +220,7 @@ function MagneticButton({
       ref={ref}
       className={className}
       onClick={onClick}
+      disabled={disabled}
       onMouseMove={handleMouse}
       onMouseLeave={handleLeave}
       style={{
@@ -251,7 +235,6 @@ function MagneticButton({
 
 /* ═══════════════════════════════════════════════════════════════
    ANIMATED COUNTER
-   Numbers count up smoothly on mount.
    ═══════════════════════════════════════════════════════════════ */
 
 function AnimatedNumber({ value, duration = 1200, delay = 0 }: { value: number; duration?: number; delay?: number }) {
@@ -285,6 +268,12 @@ function AnimatedNumber({ value, duration = 1200, delay = 0 }: { value: number; 
 
 const GOOGLE_SCRIPT_URL = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL || "";
 
+const STEPS = [
+  { id: 1, label: "About you" },
+  { id: 2, label: "Experience" },
+  { id: 3, label: "Submit" },
+];
+
 export default function Home() {
   const [heroVisible, setHeroVisible] = useState(false);
   const [step, setStep] = useState(0); // 0 = hero, 1-3 = form steps
@@ -292,11 +281,10 @@ export default function Home() {
 
   // Form state
   const [twitter, setTwitter] = useState("");
-  const [months, setMonths] = useState("");
+  const [solanaTime, setSolanaTime] = useState("");
   const [volume, setVolume] = useState("");
   const [products, setProducts] = useState("");
-  const [strategy, setStrategy] = useState("");
-  const [improve, setImprove] = useState("");
+  const [whyYou, setWhyYou] = useState("");
   const [wallet, setWallet] = useState("");
 
   // Focus tracking
@@ -307,13 +295,13 @@ export default function Home() {
   }, []);
 
   // Progress calculation
-  const fields = [twitter, months, volume, products, strategy, wallet];
+  const fields = [twitter, solanaTime, volume, products, whyYou, wallet];
   const filled = fields.filter((f) => f.trim().length > 0).length;
   const progress = Math.round((filled / fields.length) * 100);
 
   // Step validation
-  const step1Ready = twitter.trim() && months.trim() && volume.trim();
-  const step2Ready = products.trim() && strategy.trim();
+  const step1Ready = twitter.trim() && solanaTime.trim();
+  const step2Ready = products.trim() && whyYou.trim();
   const step3Ready = wallet.trim();
 
   function startApplication() {
@@ -331,11 +319,10 @@ export default function Home() {
       timestamp: new Date().toISOString(),
       role: "trader",
       twitter: twitter.trim(),
-      months_on_meteora: months.trim(),
+      solana_trading_time: solanaTime.trim(),
       monthly_volume: volume.trim(),
       products: products.trim(),
-      strategy: strategy.trim(),
-      improve: improve.trim(),
+      why_you: whyYou.trim(),
       wallet: wallet.trim(),
     };
 
@@ -362,31 +349,21 @@ export default function Home() {
         <div className="grain" />
         <div className="progress-strip" style={{ "--strip-progress": "100%" } as React.CSSProperties} />
 
-        <nav className="nav">
-          <div className="nav-inner">
-            <div className="nav-brand">
-              <span className="nav-logo">RS</span>
-              <span className="nav-name">RECON SQUAD</span>
-            </div>
-            <span className="nav-tag">by Meteora</span>
-          </div>
-        </nav>
-
         <main className="success-page">
           <div className="success-ring">
-            <svg width="80" height="80" viewBox="0 0 80 80">
-              <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(36,201,141,0.15)" strokeWidth="1.5" />
-              <circle cx="40" cy="40" r="32" fill="none" stroke="#24c98d" strokeWidth="1.5"
-                strokeDasharray={2 * Math.PI * 32} strokeDashoffset={0}
+            <svg width="88" height="88" viewBox="0 0 88 88">
+              <circle cx="44" cy="44" r="36" fill="none" stroke="rgba(36,201,141,0.15)" strokeWidth="1.5" />
+              <circle cx="44" cy="44" r="36" fill="none" stroke="#24c98d" strokeWidth="1.5"
+                strokeDasharray={2 * Math.PI * 36} strokeDashoffset={0}
                 style={{ transform: "rotate(-90deg)", transformOrigin: "center", transition: "stroke-dashoffset 1s cubic-bezier(0.22,1,0.36,1)" }}
               />
             </svg>
-            <svg className="success-check" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#24c98d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg className="success-check" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#24c98d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12" className="check-draw" />
             </svg>
           </div>
           <h1 className="success-title">You&apos;re in the queue</h1>
-          <p className="success-sub">We review applications weekly.<br />If selected, you&apos;ll hear from us on X.</p>
+          <p className="success-sub">We review applications weekly.<br />If selected, we&apos;ll reach out on X.</p>
           <div className="success-handle">@{twitter.replace("@", "")}</div>
         </main>
       </div>
@@ -396,41 +373,21 @@ export default function Home() {
   /* ── Main Render ── */
   return (
     <div className="app-shell">
-      {/* Living background */}
       <ParticleCanvas />
       <div className="grain" />
 
-      {/* Progress strip -- fills left to right as form completes */}
+      {/* Progress strip */}
       <div
         className="progress-strip"
         style={{ "--strip-progress": step === 0 ? "0%" : `${progress}%` } as React.CSSProperties}
       />
 
-      {/* Nav -- expandable shell for future routes */}
-      <nav className="nav">
-        <div className="nav-inner">
-          <div className="nav-brand">
-            <span className="nav-logo">RS</span>
-            <span className="nav-name">RECON SQUAD</span>
-          </div>
-          <div className="nav-links">
-            <span className="nav-link active">Apply</span>
-            {/* Future routes */}
-            {/* <span className="nav-link">Dashboard</span> */}
-            {/* <span className="nav-link">Feedback</span> */}
-          </div>
-          <span className="nav-tag">by Meteora</span>
-        </div>
-      </nav>
-
-      {/* Hero -- full viewport, cinematic */}
+      {/* Hero */}
       <section className={`hero ${heroVisible ? "hero--visible" : ""}`}>
         <div className="hero-inner">
           <div className="hero-eyebrow s1">
-            <span className="hero-eyebrow-dot" />
-            <span>SEASON 01</span>
-            <span className="hero-eyebrow-sep" />
-            <span>7 SLOTS OPEN</span>
+            <span className="hero-dot" />
+            SEASON 01
           </div>
 
           <h1 className="hero-title s2">
@@ -441,8 +398,8 @@ export default function Home() {
           </h1>
 
           <p className="hero-sub s3">
-            Early access to unreleased Meteora products.
-            <br />Feedback direct to founders. USDC compensation.
+            Get early access to unreleased products built on Meteora.
+            <br />Give feedback directly to founders. Get paid in USDC.
           </p>
 
           <div className="hero-stats s4">
@@ -450,17 +407,17 @@ export default function Home() {
               <span className="hero-stat-value">
                 <AnimatedNumber value={7} duration={800} delay={1400} />
               </span>
-              <span className="hero-stat-label">TRADERS</span>
-            </div>
-            <div className="hero-stat-sep" />
-            <div className="hero-stat">
-              <span className="hero-stat-value">S01</span>
-              <span className="hero-stat-label">SEASON</span>
+              <span className="hero-stat-label">OPEN SLOTS</span>
             </div>
             <div className="hero-stat-sep" />
             <div className="hero-stat">
               <span className="hero-stat-value">USDC</span>
               <span className="hero-stat-label">COMPENSATION</span>
+            </div>
+            <div className="hero-stat-sep" />
+            <div className="hero-stat">
+              <span className="hero-stat-value">S01</span>
+              <span className="hero-stat-label">SEASON</span>
             </div>
           </div>
 
@@ -469,289 +426,199 @@ export default function Home() {
               Apply now
             </MagneticButton>
           </div>
-
-          <div className="s6 scroll-cue">
-            <div className="scroll-cue-line" />
-          </div>
         </div>
       </section>
 
-      {/* Application -- 3-step flow */}
-      <section id="application" className="app-section">
-        <div className="app-container">
-
-          {/* Sidebar */}
-          <aside className="app-sidebar">
-            <div className="app-sidebar-sticky">
-              {/* Progress ring */}
-              <div className="progress-ring">
-                <svg width="80" height="80" viewBox="0 0 80 80">
-                  <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.03)" strokeWidth="1.5" />
-                  <circle
-                    cx="40" cy="40" r="32" fill="none"
-                    stroke={progress === 100 ? "#24c98d" : "#f54b00"}
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeDasharray={2 * Math.PI * 32}
-                    strokeDashoffset={2 * Math.PI * 32 - (progress / 100) * 2 * Math.PI * 32}
-                    style={{
-                      transform: "rotate(-90deg)",
-                      transformOrigin: "center",
-                      transition: "stroke-dashoffset 0.6s cubic-bezier(0.22,1,0.36,1), stroke 0.3s ease",
-                    }}
-                  />
-                </svg>
-                <span className="progress-ring-val">
-                  {progress}<span className="progress-ring-pct">%</span>
-                </span>
-              </div>
-
-              <div className="sidebar-context">
-                <h3 className="sidebar-label">
-                  {step === 0 && "Ready when you are"}
-                  {step === 1 && "Identity"}
-                  {step === 2 && "Experience"}
-                  {step === 3 && "Final details"}
-                </h3>
-                <p className="sidebar-desc">
-                  {step === 0 && "Hit Apply now to start your application."}
-                  {step === 1 && "Your X handle and trading activity."}
-                  {step === 2 && "Which products and your strategy."}
-                  {step === 3 && "One optional question and your wallet."}
-                </p>
-              </div>
-
-              {/* Step indicators */}
-              <div className="step-nav">
-                {[1, 2, 3].map((s) => (
-                  <button
-                    key={s}
-                    className={`step-btn ${step === s ? "active" : ""} ${step > s ? "done" : ""}`}
-                    onClick={() => {
-                      if (s <= step || (s === 2 && step1Ready) || (s === 3 && step1Ready && step2Ready)) setStep(s);
-                    }}
-                    disabled={s > step && !(s === 2 && !!step1Ready) && !(s === 3 && !!step1Ready && !!step2Ready)}
-                  >
-                    <span className="step-btn-num">{String(s).padStart(2, "0")}</span>
-                  </button>
-                ))}
-                <div className="step-track">
-                  <div
-                    className="step-track-fill"
-                    style={{ width: step === 0 ? "0%" : step === 1 ? "0%" : step === 2 ? "50%" : "100%" }}
-                  />
-                </div>
+      {/* Application */}
+      <section id="application" className={`app-section ${step > 0 ? "app-section--active" : ""}`}>
+        {step > 0 && (
+          <div className="app-container">
+            {/* Step progress bar */}
+            <div className="step-bar">
+              {STEPS.map((s, i) => (
+                <button
+                  key={s.id}
+                  className={`step-item ${step === s.id ? "step-item--active" : ""} ${step > s.id ? "step-item--done" : ""}`}
+                  onClick={() => {
+                    if (s.id <= step) setStep(s.id);
+                    else if (s.id === 2 && step1Ready) setStep(2);
+                    else if (s.id === 3 && step1Ready && step2Ready) setStep(3);
+                  }}
+                  disabled={s.id > step && !(s.id === 2 && !!step1Ready) && !(s.id === 3 && !!step1Ready && !!step2Ready)}
+                >
+                  <span className="step-num">{String(s.id).padStart(2, "0")}</span>
+                  <span className="step-label">{s.label}</span>
+                </button>
+              ))}
+              {/* Connecting line */}
+              <div className="step-bar-track">
+                <div className="step-bar-fill" style={{ width: step === 1 ? "0%" : step === 2 ? "50%" : "100%" }} />
               </div>
             </div>
-          </aside>
 
-          {/* Form area */}
-          <div className="form-area">
-            {step === 0 && (
-              <div className="form-empty">
-                <div className="form-empty-lines">
-                  {[...Array(6)].map((_, i) => (
-                    <div key={i} className="form-empty-line" style={{ width: `${60 + Math.random() * 30}%`, animationDelay: `${i * 0.1}s` }} />
-                  ))}
-                </div>
-                <p className="form-empty-text">Your application will appear here</p>
-              </div>
-            )}
+            {/* Form */}
+            <div className="form-area">
 
-            {/* Step 1 */}
-            {step === 1 && (
-              <div className="form-step" key="step1">
-                <div className="form-step-head">
-                  <span className="form-step-num">01</span>
-                  <div>
-                    <h2 className="form-step-title">Identity</h2>
-                    <p className="form-step-sub">How we find you and verify your history</p>
-                  </div>
-                </div>
+              {/* Step 1: About you */}
+              {step === 1 && (
+                <div className="form-step" key="step1">
+                  <h2 className="form-heading">About you</h2>
+                  <p className="form-desc">The basics so we know who you are.</p>
 
-                <div className="form-fields">
-                  <div className={`field ${focusedField === "twitter" ? "field--focused" : ""} ${twitter ? "field--filled" : ""}`}>
-                    <label htmlFor="twitter" className="field-label">X HANDLE</label>
-                    <input
-                      id="twitter" type="text" value={twitter}
-                      onChange={(e) => setTwitter(e.target.value)}
-                      onFocus={() => setFocusedField("twitter")}
-                      onBlur={() => setFocusedField(null)}
-                      placeholder="@yourhandle"
-                      className="field-input"
-                      autoComplete="off"
-                    />
-                  </div>
-
-                  <div className="field-row">
-                    <div className={`field ${focusedField === "months" ? "field--focused" : ""} ${months ? "field--filled" : ""}`}>
-                      <label htmlFor="months" className="field-label">HOW LONG HAVE YOU BEEN TRADING ON SOLANA?</label>
+                  <div className="form-fields">
+                    <div className={`field ${focusedField === "twitter" ? "field--focused" : ""} ${twitter ? "field--filled" : ""}`}>
+                      <label htmlFor="twitter" className="field-label">X handle</label>
                       <input
-                        id="months" type="text" value={months}
-                        onChange={(e) => setMonths(e.target.value)}
-                        onFocus={() => setFocusedField("months")}
+                        id="twitter" type="text" value={twitter}
+                        onChange={(e) => setTwitter(e.target.value)}
+                        onFocus={() => setFocusedField("twitter")}
                         onBlur={() => setFocusedField(null)}
-                        placeholder="e.g. 2 years"
+                        placeholder="@yourhandle"
                         className="field-input"
                         autoComplete="off"
                       />
                     </div>
-                    <div className={`field ${focusedField === "volume" ? "field--focused" : ""} ${volume ? "field--filled" : ""}`}>
-                      <label htmlFor="volume" className="field-label">MONTHLY VOLUME (USD)</label>
-                      <input
-                        id="volume" type="text" value={volume}
-                        onChange={(e) => setVolume(e.target.value)}
-                        onFocus={() => setFocusedField("volume")}
+
+                    <div className="field-row">
+                      <div className={`field ${focusedField === "solanaTime" ? "field--focused" : ""} ${solanaTime ? "field--filled" : ""}`}>
+                        <label htmlFor="solanaTime" className="field-label">How long have you been trading on Solana?</label>
+                        <input
+                          id="solanaTime" type="text" value={solanaTime}
+                          onChange={(e) => setSolanaTime(e.target.value)}
+                          onFocus={() => setFocusedField("solanaTime")}
+                          onBlur={() => setFocusedField(null)}
+                          placeholder="e.g. 2 years"
+                          className="field-input"
+                          autoComplete="off"
+                        />
+                      </div>
+                      <div className={`field ${focusedField === "volume" ? "field--focused" : ""} ${volume ? "field--filled" : ""}`}>
+                        <label htmlFor="volume" className="field-label">Monthly volume (USD) <span className="field-opt">optional</span></label>
+                        <input
+                          id="volume" type="text" value={volume}
+                          onChange={(e) => setVolume(e.target.value)}
+                          onFocus={() => setFocusedField("volume")}
+                          onBlur={() => setFocusedField(null)}
+                          placeholder="e.g. 50k"
+                          className="field-input"
+                          autoComplete="off"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="form-actions">
+                    <div />
+                    <MagneticButton className="btn-next" disabled={!step1Ready} onClick={() => setStep(2)}>
+                      Next
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </MagneticButton>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 2: Experience */}
+              {step === 2 && (
+                <div className="form-step" key="step2">
+                  <h2 className="form-heading">Experience</h2>
+                  <p className="form-desc">What you use and why you&apos;d be great at this.</p>
+
+                  <div className="form-fields">
+                    <div className={`field ${focusedField === "products" ? "field--focused" : ""} ${products ? "field--filled" : ""}`}>
+                      <label htmlFor="products" className="field-label">Which Solana products do you use regularly?</label>
+                      <textarea
+                        id="products" value={products}
+                        onChange={(e) => setProducts(e.target.value)}
+                        onFocus={() => setFocusedField("products")}
                         onBlur={() => setFocusedField(null)}
-                        placeholder="e.g. 50k"
-                        className="field-input"
+                        placeholder="DEXs, lending, LP platforms, wallets, analytics tools..."
+                        rows={3} className="field-textarea"
+                      />
+                    </div>
+
+                    <div className={`field ${focusedField === "whyYou" ? "field--focused" : ""} ${whyYou ? "field--filled" : ""}`}>
+                      <label htmlFor="whyYou" className="field-label">Why would you be a good product tester?</label>
+                      <textarea
+                        id="whyYou" value={whyYou}
+                        onChange={(e) => setWhyYou(e.target.value)}
+                        onFocus={() => setFocusedField("whyYou")}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder="What makes your feedback valuable? How do you approach new products?"
+                        rows={3} className="field-textarea"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-actions">
+                    <button className="btn-back" onClick={() => setStep(1)}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                      Back
+                    </button>
+                    <MagneticButton className="btn-next" disabled={!step2Ready} onClick={() => setStep(3)}>
+                      Next
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </MagneticButton>
+                  </div>
+                </div>
+              )}
+
+              {/* Step 3: Submit */}
+              {step === 3 && (
+                <div className="form-step" key="step3">
+                  <h2 className="form-heading">Almost done</h2>
+                  <p className="form-desc">Your wallet for compensation. That&apos;s it.</p>
+
+                  <div className="form-fields">
+                    <div className={`field ${focusedField === "wallet" ? "field--focused" : ""} ${wallet ? "field--filled" : ""}`}>
+                      <label htmlFor="wallet" className="field-label">Solana wallet address</label>
+                      <input
+                        id="wallet" type="text" value={wallet}
+                        onChange={(e) => setWallet(e.target.value)}
+                        onFocus={() => setFocusedField("wallet")}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder="Your Solana public key"
+                        className="field-input field-mono"
                         autoComplete="off"
                       />
                     </div>
                   </div>
-                </div>
 
-                <div className="form-actions">
-                  <div />
-                  <button className="btn-continue" disabled={!step1Ready} onClick={() => setStep(2)}>
-                    Continue
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 2 */}
-            {step === 2 && (
-              <div className="form-step" key="step2">
-                <div className="form-step-head">
-                  <span className="form-step-num">02</span>
-                  <div>
-                    <h2 className="form-step-title">Experience</h2>
-                    <p className="form-step-sub">Your products and approach</p>
-                  </div>
-                </div>
-
-                <div className="form-fields">
-                  <div className={`field ${focusedField === "products" ? "field--focused" : ""} ${products ? "field--filled" : ""}`}>
-                    <label htmlFor="products" className="field-label">WHICH METEORA PRODUCTS DO YOU ACTIVELY LP ON?</label>
-                    <textarea
-                      id="products" value={products}
-                      onChange={(e) => setProducts(e.target.value)}
-                      onFocus={() => setFocusedField("products")}
-                      onBlur={() => setFocusedField(null)}
-                      placeholder="DLMM, Dynamic Pools, Dynamic Vaults..."
-                      rows={2} className="field-textarea"
-                    />
+                  <div className="form-actions">
+                    <button className="btn-back" onClick={() => setStep(2)}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                      Back
+                    </button>
+                    <MagneticButton
+                      className="btn-submit"
+                      disabled={!step3Ready || status === "submitting"}
+                      onClick={handleSubmit}
+                    >
+                      {status === "submitting" ? (
+                        <>
+                          <span className="btn-spinner" />
+                          Submitting...
+                        </>
+                      ) : (
+                        "Submit application"
+                      )}
+                    </MagneticButton>
                   </div>
 
-                  <div className={`field ${focusedField === "strategy" ? "field--focused" : ""} ${strategy ? "field--filled" : ""}`}>
-                    <label htmlFor="strategy" className="field-label">WHAT&apos;S YOUR TYPICAL LP STRATEGY?</label>
-                    <textarea
-                      id="strategy" value={strategy}
-                      onChange={(e) => setStrategy(e.target.value)}
-                      onFocus={() => setFocusedField("strategy")}
-                      onBlur={() => setFocusedField(null)}
-                      placeholder="Concentrated ranges, wide bins, vault-and-forget, active rebalancing..."
-                      rows={3} className="field-textarea"
-                    />
-                  </div>
+                  {status === "error" && (
+                    <p className="form-error">Something went wrong. Try again.</p>
+                  )}
                 </div>
-
-                <div className="form-actions">
-                  <button className="btn-back" onClick={() => setStep(1)}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                    Back
-                  </button>
-                  <button className="btn-continue" disabled={!step2Ready} onClick={() => setStep(3)}>
-                    Continue
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {/* Step 3 */}
-            {step === 3 && (
-              <div className="form-step" key="step3">
-                <div className="form-step-head">
-                  <span className="form-step-num">03</span>
-                  <div>
-                    <h2 className="form-step-title">Final</h2>
-                    <p className="form-step-sub">The question that matters and where to pay you</p>
-                  </div>
-                </div>
-
-                <div className="form-fields">
-                  <div className={`field ${focusedField === "improve" ? "field--focused" : ""} ${improve ? "field--filled" : ""}`}>
-                    <label htmlFor="improve" className="field-label">
-                      WHAT&apos;S ONE THING ABOUT METEORA&apos;S LP EXPERIENCE YOU&apos;D CHANGE?
-                      <span className="field-optional">optional</span>
-                    </label>
-                    <textarea
-                      id="improve" value={improve}
-                      onChange={(e) => setImprove(e.target.value)}
-                      onFocus={() => setFocusedField("improve")}
-                      onBlur={() => setFocusedField(null)}
-                      placeholder="Fee structure, position management, analytics, bin UX..."
-                      rows={4} className="field-textarea"
-                    />
-                  </div>
-
-                  <div className={`field ${focusedField === "wallet" ? "field--focused" : ""} ${wallet ? "field--filled" : ""}`}>
-                    <label htmlFor="wallet" className="field-label">
-                      WALLET ADDRESS
-                      <span className="field-hint">for compensation</span>
-                    </label>
-                    <input
-                      id="wallet" type="text" value={wallet}
-                      onChange={(e) => setWallet(e.target.value)}
-                      onFocus={() => setFocusedField("wallet")}
-                      onBlur={() => setFocusedField(null)}
-                      placeholder="Solana public key"
-                      className="field-input field-mono"
-                      autoComplete="off"
-                    />
-                  </div>
-                </div>
-
-                <div className="form-actions">
-                  <button className="btn-back" onClick={() => setStep(2)}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                    Back
-                  </button>
-                  <button
-                    className="btn-submit"
-                    disabled={!step3Ready || status === "submitting"}
-                    onClick={handleSubmit}
-                  >
-                    {status === "submitting" ? (
-                      <>
-                        <span className="btn-spinner" />
-                        Submitting...
-                      </>
-                    ) : (
-                      "Submit application"
-                    )}
-                  </button>
-                </div>
-
-                {status === "error" && (
-                  <p className="form-error">Something went wrong. Try again.</p>
-                )}
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </section>
 
       {/* Footer */}
       <footer className="footer">
-        <div className="footer-inner">
-          <span className="footer-brand">RECON SQUAD</span>
-          <span className="footer-sep" />
-          <span className="footer-tag">by Meteora</span>
-        </div>
+        <span className="footer-brand">RECON SQUAD</span>
+        <span className="footer-sep" />
+        <span className="footer-tag">by Meteora</span>
       </footer>
     </div>
   );
