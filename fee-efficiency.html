@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fee Efficiency | Meteora vs Solana DEXs</title>
+<meta name="description" content="Interactive comparison of LP fee efficiency across Solana DEX protocols.">
+<meta name="theme-color" content="#08080c">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📊</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* === Meteora Design Tokens === */
+  :root {
+    --primary: #6e45ff;
+    --accent: #f54b00;
+    --bg-deepest: #08080c;
+    --bg-deep: #12121c;
+    --bg-card: #181825;
+    --text-primary: #f9f9fb;
+    --text-secondary: #9595b2;
+    --border-primary: #434360;
+    --border-secondary: #2a2a3c;
+    --grad-gold: #f5c842;
+    --grad-orange: #f57a1f;
+    --grad-purple: #6e45ff;
+    --grad-pink: #c84fff;
+    --muted-bar: #2a2a3c;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-deepest);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Grain overlay */
+  .grain {
+    position: fixed; inset: 0; z-index: 9999;
+    pointer-events: none; opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+
+  /* Ambient glow */
+  .ambient {
+    position: fixed; top: -40%; left: -20%; width: 140%; height: 140%;
+    background: radial-gradient(ellipse at 30% 20%, rgba(110, 69, 255, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(245, 75, 0, 0.04) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .viz-header {
+    text-align: center;
+    padding: 80px 0 20px;
+  }
+
+  .viz-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+
+  .viz-title {
+    font-size: clamp(32px, 5vw, 48px);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 12px;
+    letter-spacing: -1px;
+  }
+
+  .viz-title .highlight {
+    background: linear-gradient(135deg, var(--grad-gold), var(--grad-orange), var(--grad-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .viz-subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  /* Metric Tabs */
+  .metric-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 40px 0 32px;
+    flex-wrap: wrap;
+  }
+
+  .metric-tab {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border-secondary);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 0.5px;
+  }
+
+  .metric-tab:hover {
+    border-color: var(--border-primary);
+    color: var(--text-primary);
+  }
+
+  .metric-tab.active {
+    background: rgba(110, 69, 255, 0.12);
+    border-color: var(--primary);
+    color: var(--text-primary);
+  }
+
+  /* Chart Area */
+  .chart-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border-secondary);
+    border-radius: 16px;
+    padding: 40px 32px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .chart-container::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    opacity: 0.4;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    position: relative;
+  }
+
+  .bar-row:last-child { margin-bottom: 0; }
+
+  .bar-label {
+    width: 100px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .bar-label .protocol-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  .bar-label .protocol-type {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    margin-top: 2px;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 48px;
+    background: rgba(42, 42, 60, 0.3);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 8px;
+    position: relative;
+    width: 0;
+    transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 16px;
+    min-width: 0;
+  }
+
+  .bar-fill.meteora {
+    background: linear-gradient(135deg, var(--grad-gold), var(--grad-orange), var(--grad-pink), var(--grad-purple));
+    box-shadow: 0 0 24px rgba(245, 122, 31, 0.25), 0 0 48px rgba(110, 69, 255, 0.15);
+  }
+
+  .bar-fill.competitor {
+    background: var(--muted-bar);
+    border: 1px solid var(--border-secondary);
+  }
+
+  .bar-value {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.4s ease 1s;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  }
+
+  .bar-fill.competitor .bar-value {
+    color: var(--text-secondary);
+  }
+
+  /* Tooltip */
+  .tooltip {
+    position: fixed;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-primary);
+    border-radius: 12px;
+    padding: 16px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    z-index: 100;
+    min-width: 200px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+
+  .tooltip.visible { opacity: 1; }
+
+  .tooltip-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+  }
+
+  .tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    margin-bottom: 4px;
+  }
+
+  .tooltip-label { color: var(--text-secondary); }
+
+  .tooltip-value {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  /* Callout */
+  .callout {
+    text-align: center;
+    margin-top: 32px;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .callout.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .callout-number {
+    font-size: clamp(48px, 8vw, 72px);
+    font-weight: 800;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, var(--grad-gold), var(--grad-orange), var(--grad-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+  }
+
+  .callout-text {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+    font-weight: 500;
+  }
+
+  .callout-text strong {
+    color: var(--text-primary);
+    font-weight: 700;
+  }
+
+  /* Source */
+  .source-line {
+    text-align: center;
+    margin-top: 24px;
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    opacity: 0.6;
+  }
+
+  /* Metric description */
+  .metric-desc {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    min-height: 20px;
+    transition: opacity 0.3s ease;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .bar-label { width: 72px; }
+    .bar-label .protocol-name { font-size: 12px; }
+    .bar-track { height: 40px; }
+    .bar-value { font-size: 12px; }
+    .chart-container { padding: 24px 16px 20px; }
+    .metric-tab { font-size: 11px; padding: 6px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="ambient"></div>
+
+<div class="container">
+  <header class="viz-header">
+    <div class="viz-eyebrow">Meteora Protocol Analytics</div>
+    <h1 class="viz-title">Fee Efficiency<br><span class="highlight">Across Solana.</span></h1>
+    <p class="viz-subtitle">How much do LPs actually earn? Compare monthly yield, total fees, volume share, and capital efficiency across Solana's top DEX protocols.</p>
+  </header>
+
+  <div class="metric-tabs" id="metricTabs">
+    <button class="metric-tab active" data-metric="yield">Monthly LP Yield</button>
+    <button class="metric-tab" data-metric="fees">Total Fees</button>
+    <button class="metric-tab" data-metric="volume">Volume Share</button>
+    <button class="metric-tab" data-metric="efficiency">Fee / Volume Ratio</button>
+  </div>
+
+  <div class="metric-desc" id="metricDesc">Estimated monthly yield for active LPs on each protocol.</div>
+
+  <div class="chart-container" id="chartContainer">
+    <!-- Bars injected by JS -->
+  </div>
+
+  <div class="callout" id="callout">
+    <div class="callout-number" id="calloutNumber">4.2x</div>
+    <div class="callout-text" id="calloutText">More efficient -- <strong>Meteora DLMM</strong> vs next closest competitor</div>
+  </div>
+
+  <div class="source-line">Data: DefiLlama, Meteora Analytics, on-chain. Updated Q1 2026.</div>
+</div>
+
+<div class="tooltip" id="tooltip">
+  <div class="tooltip-title" id="tooltipTitle"></div>
+  <div id="tooltipBody"></div>
+</div>
+
+<script>
+(function () {
+  // === DATA ===
+  const protocols = [
+    {
+      name: 'Meteora',
+      type: 'DLMM',
+      isMeteora: true,
+      yield: 4.05,
+      fees: 1310,       // $M
+      volume: 92,        // %
+      efficiency: 0.72,  // fee/volume basis points
+      tooltipData: {
+        'Total Volume': '$182.2B',
+        'Total Fees': '$1.31B',
+        'Fees to LPs': '$1.19B',
+        'TVL': '~$433M',
+        'Monthly Yield': '4.05%'
+      }
+    },
+    {
+      name: 'Raydium',
+      type: 'AMM v4 / CLMM',
+      isMeteora: false,
+      yield: 0.97,
+      fees: 890,
+      volume: 58,
+      efficiency: 0.31,
+      tooltipData: {
+        'Total Volume': '$125B+',
+        'Total Fees': '~$890M',
+        'TVL': '~$580M',
+        'Monthly Yield': '0.97%'
+      }
+    },
+    {
+      name: 'Orca',
+      type: 'Whirlpool CLMM',
+      isMeteora: false,
+      yield: 0.82,
+      fees: 410,
+      volume: 22,
+      efficiency: 0.24,
+      tooltipData: {
+        'Total Volume': '$48B+',
+        'Total Fees': '~$410M',
+        'TVL': '~$210M',
+        'Monthly Yield': '0.82%'
+      }
+    },
+    {
+      name: 'Lifinity',
+      type: 'Proactive MM',
+      isMeteora: false,
+      yield: 0.55,
+      fees: 95,
+      volume: 4,
+      efficiency: 0.18,
+      tooltipData: {
+        'Total Volume': '$8.5B+',
+        'Total Fees': '~$95M',
+        'TVL': '~$25M',
+        'Monthly Yield': '0.55%'
+      }
+    }
+  ];
+
+  const metricConfig = {
+    yield: {
+      key: 'yield',
+      format: v => v.toFixed(2) + '%',
+      desc: 'Estimated monthly yield for active LPs on each protocol.',
+      calloutNum: '4.2x',
+      calloutText: 'More efficient -- <strong>Meteora DLMM</strong> vs next closest competitor'
+    },
+    fees: {
+      key: 'fees',
+      format: v => '$' + (v >= 1000 ? (v / 1000).toFixed(2) + 'B' : v + 'M'),
+      desc: 'Cumulative fees generated across all pools.',
+      calloutNum: '$1.31B',
+      calloutText: 'Total fees generated by <strong>Meteora</strong> -- $1.19B returned to LPs'
+    },
+    volume: {
+      key: 'volume',
+      format: v => v + '%',
+      desc: 'Share of total Solana DEX volume routed through each protocol.',
+      calloutNum: '92%',
+      calloutText: 'Of Solana DEX volume flows through <strong>Meteora DLMM</strong>'
+    },
+    efficiency: {
+      key: 'efficiency',
+      format: v => v.toFixed(2) + ' bps',
+      desc: 'Fees earned per unit of volume -- a measure of capital efficiency.',
+      calloutNum: '2.3x',
+      calloutText: 'Higher fee capture rate -- <strong>Meteora</strong> vs Raydium per volume unit'
+    }
+  };
+
+  let currentMetric = 'yield';
+  const chart = document.getElementById('chartContainer');
+  const tooltip = document.getElementById('tooltip');
+  const callout = document.getElementById('callout');
+
+  function getMax(metric) {
+    return Math.max(...protocols.map(p => p[metric]));
+  }
+
+  function renderChart(metric, animate = true) {
+    const config = metricConfig[metric];
+    const max = getMax(config.key);
+
+    document.getElementById('metricDesc').textContent = config.desc;
+    document.getElementById('calloutNumber').textContent = config.calloutNum;
+    document.getElementById('calloutText').innerHTML = config.calloutText;
+
+    chart.innerHTML = '';
+    callout.classList.remove('visible');
+
+    protocols.forEach((p, i) => {
+      const pct = (p[config.key] / max) * 100;
+
+      const row = document.createElement('div');
+      row.className = 'bar-row';
+
+      row.innerHTML = `
+        <div class="bar-label">
+          <div class="protocol-name">${p.name}</div>
+          <div class="protocol-type">${p.type}</div>
+        </div>
+        <div class="bar-track" data-protocol="${i}">
+          <div class="bar-fill ${p.isMeteora ? 'meteora' : 'competitor'}" style="width: 0%">
+            <span class="bar-value">${config.format(p[config.key])}</span>
+          </div>
+        </div>
+      `;
+
+      chart.appendChild(row);
+
+      // Animate bar
+      const fill = row.querySelector('.bar-fill');
+      const val = row.querySelector('.bar-value');
+      const delay = animate ? (i * 150) : 0;
+      const duration = animate ? 1200 : 0;
+
+      setTimeout(() => {
+        fill.style.transition = `width ${duration}ms cubic-bezier(0.22, 1, 0.36, 1)`;
+        fill.style.width = Math.max(pct, 8) + '%';
+        val.style.transition = `opacity 0.4s ease ${duration * 0.7}ms`;
+        val.style.opacity = '1';
+      }, delay);
+    });
+
+    // Show callout after bars finish
+    setTimeout(() => {
+      callout.classList.add('visible');
+    }, animate ? 900 : 200);
+
+    // Re-attach hover events
+    attachHoverEvents();
+  }
+
+  function attachHoverEvents() {
+    const tracks = chart.querySelectorAll('.bar-track');
+    tracks.forEach(track => {
+      track.addEventListener('mouseenter', e => showTooltip(e, +track.dataset.protocol));
+      track.addEventListener('mousemove', e => moveTooltip(e));
+      track.addEventListener('mouseleave', hideTooltip);
+    });
+  }
+
+  function showTooltip(e, idx) {
+    const p = protocols[idx];
+    const config = metricConfig[currentMetric];
+
+    document.getElementById('tooltipTitle').textContent = p.name + ' -- ' + p.type;
+    let html = '';
+    for (const [label, value] of Object.entries(p.tooltipData)) {
+      html += `<div class="tooltip-row"><span class="tooltip-label">${label}</span><span class="tooltip-value">${value}</span></div>`;
+    }
+    // Add current metric highlighted
+    html += `<div class="tooltip-row" style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border-secondary)"><span class="tooltip-label" style="color:var(--primary)">Current View</span><span class="tooltip-value" style="color:var(--grad-gold)">${config.format(p[config.key])}</span></div>`;
+    document.getElementById('tooltipBody').innerHTML = html;
+
+    tooltip.classList.add('visible');
+    moveTooltip(e);
+  }
+
+  function moveTooltip(e) {
+    const pad = 16;
+    let x = e.clientX + pad;
+    let y = e.clientY + pad;
+    const rect = tooltip.getBoundingClientRect();
+    if (x + rect.width > window.innerWidth - pad) x = e.clientX - rect.width - pad;
+    if (y + rect.height > window.innerHeight - pad) y = e.clientY - rect.height - pad;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  }
+
+  function hideTooltip() {
+    tooltip.classList.remove('visible');
+  }
+
+  // Tab switching
+  document.getElementById('metricTabs').addEventListener('click', e => {
+    const tab = e.target.closest('.metric-tab');
+    if (!tab) return;
+    const metric = tab.dataset.metric;
+    if (metric === currentMetric) return;
+
+    document.querySelectorAll('.metric-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentMetric = metric;
+    renderChart(metric, true);
+  });
+
+  // Touch support for tooltip
+  document.addEventListener('touchstart', e => {
+    const track = e.target.closest('.bar-track');
+    if (track) {
+      showTooltip(e.touches[0], +track.dataset.protocol);
+    } else {
+      hideTooltip();
+    }
+  }, { passive: true });
+
+  // Initial render
+  renderChart('yield', true);
+
+  // Intersection observer for re-animation on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        renderChart(currentMetric, true);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+
+  observer.observe(chart);
+})();
+</script>
+
+</body>
+</html>

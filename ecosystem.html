@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ecosystem Overview | Meteora</title>
+<meta name="description" content="The full Meteora ecosystem -- every asset class, every project, every opportunity. Live and interactive.">
+<meta name="theme-color" content="#08080c">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #6e45ff;
+  --primary-dim: rgba(110, 69, 255, 0.15);
+  --primary-glow: rgba(110, 69, 255, 0.35);
+  --accent: #f54b00;
+  --accent-dim: rgba(245, 75, 0, 0.15);
+  --accent-glow: rgba(245, 75, 0, 0.25);
+  --bg-deepest: #08080c;
+  --bg-deep: #12121c;
+  --bg-card: #181825;
+  --bg-card-hover: #1e1e2e;
+  --text-primary: #f9f9fb;
+  --text-secondary: #9595b2;
+  --text-muted: #6c6c89;
+  --text-disabled: #565676;
+  --border-primary: #434360;
+  --border-secondary: #2a2a3c;
+  --border-tertiary: #202031;
+  --success: #24c98d;
+  --danger: #f04438;
+  --warning: #f79009;
+  --blue: #36bffa;
+  --container-main: #18192c;
+  --container-secondary: #1e1f35;
+  --stroke: #2c2e49;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg-deepest);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Grain */
+.grain {
+  position: fixed; inset: 0; z-index: 9999;
+  pointer-events: none; opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+
+/* Ambient */
+.ambient {
+  position: fixed; top: -40%; left: -20%; width: 140%; height: 140%;
+  background: radial-gradient(ellipse at 30% 20%, rgba(110, 69, 255, 0.06) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(245, 75, 0, 0.04) 0%, transparent 50%);
+  pointer-events: none; z-index: 0;
+  animation: ambientDrift 25s ease-in-out infinite alternate;
+}
+
+@keyframes ambientDrift {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-2%, 1%) scale(1.03); }
+}
+
+.container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ═══ NAV ═══ */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(8, 8, 12, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-tertiary);
+}
+
+.nav-inner {
+  max-width: 1120px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px; height: 56px;
+}
+
+.nav-brand {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+  color: var(--text-primary); text-decoration: none;
+  letter-spacing: 0.12em;
+}
+
+.nav-links { display: flex; gap: 4px; }
+
+.nav-link {
+  font-size: 12px; font-weight: 500; color: var(--text-muted);
+  text-decoration: none; padding: 6px 12px; border-radius: 6px;
+  transition: all 0.2s;
+}
+.nav-link:hover { color: var(--text-secondary); background: rgba(255,255,255,0.03); }
+.nav-link.active { color: var(--text-primary); background: rgba(110, 69, 255, 0.08); }
+
+.nav-badge {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  color: var(--success); background: rgba(36, 201, 141, 0.08);
+  border: 1px solid rgba(36, 201, 141, 0.2);
+  padding: 4px 10px; border-radius: 100px;
+  letter-spacing: 0.1em;
+  display: flex; align-items: center; gap: 6px;
+}
+
+.nav-badge .pulse {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--success);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.8); }
+}
+
+/* ═══ HERO ═══ */
+.hero {
+  padding: 120px 0 60px;
+  text-align: center;
+  position: relative;
+}
+
+.hero-eyebrow {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  color: var(--text-muted); letter-spacing: 0.2em;
+  margin-bottom: 20px;
+}
+
+.hero h1 {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 800; line-height: 1.1;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+
+.hero h1 .grad {
+  background: linear-gradient(259deg, #f7c10b, #f84c00, #5f33ff);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: 1.125rem; color: var(--text-secondary);
+  max-width: 520px; margin: 0 auto 32px;
+  line-height: 1.7; font-weight: 300;
+}
+
+/* ═══ LIVE STATS BAR ═══ */
+.stats-bar {
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  border: 1px solid var(--stroke); border-radius: 16px;
+  overflow: hidden; background: var(--container-main);
+  margin-bottom: 0;
+}
+
+.stat-cell {
+  padding: 24px 16px; text-align: center;
+  border-right: 1px solid var(--stroke);
+  position: relative;
+}
+.stat-cell:last-child { border-right: none; }
+
+.stat-value {
+  font-size: 1.75rem; font-weight: 700; line-height: 1;
+  margin-bottom: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.stat-value.purple { color: var(--primary); }
+.stat-value.orange { color: var(--accent); }
+.stat-value.green { color: var(--success); }
+.stat-value.blue { color: var(--blue); }
+.stat-value.gold { color: #f7c10b; }
+
+.stat-label {
+  font-size: 0.6875rem; color: var(--text-disabled);
+  font-weight: 500; letter-spacing: 0.03em;
+}
+
+.stat-delta {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  margin-top: 4px;
+}
+.stat-delta.up { color: var(--success); }
+.stat-delta.down { color: var(--danger); }
+
+.stats-source {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 16px; margin-top: 4px; margin-bottom: 64px;
+  font-size: 0.6875rem; color: var(--text-disabled);
+}
+.stats-source a { color: var(--text-muted); text-decoration: underline; text-underline-offset: 2px; }
+.stats-source a:hover { color: var(--text-secondary); }
+.source-time { font-family: var(--font-mono); font-size: 10px; }
+.stat-error { color: var(--warning); font-size: 10px; font-family: var(--font-mono); }
+.unverified-tag {
+  display: inline-block; font-family: var(--font-mono); font-size: 9px;
+  color: var(--warning); background: rgba(247, 144, 9, 0.08);
+  border: 1px solid rgba(247, 144, 9, 0.15);
+  padding: 1px 6px; border-radius: 4px; margin-left: 6px;
+  vertical-align: middle;
+}
+
+/* ═══ SECTION HEADERS ═══ */
+.section-header {
+  margin-bottom: 24px;
+  padding-top: 48px;
+}
+
+.section-num {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  color: var(--accent); letter-spacing: 0.15em;
+  margin-bottom: 8px;
+}
+
+.section-title {
+  font-size: 1.5rem; font-weight: 700;
+  letter-spacing: -0.01em; margin-bottom: 6px;
+}
+
+.section-sub {
+  font-size: 0.875rem; color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ═══ ASSET CLASS FILTERS ═══ */
+.filters {
+  display: flex; gap: 6px; flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.filter-btn {
+  font-family: var(--font-sans); font-size: 12px; font-weight: 500;
+  color: var(--text-muted); background: transparent;
+  border: 1px solid var(--border-tertiary); border-radius: 8px;
+  padding: 7px 14px; cursor: pointer;
+  transition: all 0.25s;
+  display: flex; align-items: center; gap: 6px;
+}
+
+.filter-btn:hover {
+  color: var(--text-secondary);
+  border-color: var(--border-secondary);
+  background: rgba(255,255,255,0.02);
+}
+
+.filter-btn.active {
+  color: var(--text-primary);
+  border-color: var(--primary);
+  background: var(--primary-dim);
+}
+
+.filter-count {
+  font-family: var(--font-mono); font-size: 10px;
+  background: rgba(255,255,255,0.06);
+  padding: 1px 6px; border-radius: 4px;
+}
+
+.filter-btn.active .filter-count {
+  background: rgba(110, 69, 255, 0.2);
+  color: #b6a2ff;
+}
+
+/* ═══ ASSET CLASS CARDS ═══ */
+.asset-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 12px; margin-bottom: 48px;
+}
+
+.asset-card {
+  background: var(--container-main);
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  padding: 24px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.asset-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--card-accent, var(--primary));
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.asset-card:hover {
+  border-color: var(--stroke);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.asset-card:hover::before { opacity: 1; }
+
+.asset-card-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.asset-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  background: var(--icon-bg, var(--primary-dim));
+  border: 1px solid var(--icon-border, rgba(110, 69, 255, 0.15));
+  flex-shrink: 0;
+}
+
+.asset-status {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  padding: 3px 8px; border-radius: 4px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+.status-live { color: var(--success); background: rgba(36, 201, 141, 0.08); }
+.status-growing { color: #f7c10b; background: rgba(247, 193, 11, 0.08); }
+.status-emerging { color: var(--blue); background: rgba(54, 191, 250, 0.08); }
+.status-building { color: var(--accent); background: rgba(245, 75, 0, 0.08); }
+
+.asset-name {
+  font-size: 1rem; font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.asset-desc {
+  font-size: 0.8125rem; color: var(--text-muted);
+  line-height: 1.6; margin-bottom: 16px;
+}
+
+.asset-metrics {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.metric {
+  padding: 10px 12px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 8px;
+}
+
+.metric-value {
+  font-size: 0.9375rem; font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 2px;
+}
+
+.metric-label {
+  font-size: 0.6875rem; color: var(--text-disabled);
+}
+
+/* ═══ PROJECTS LIST ═══ */
+.projects-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 48px;
+}
+
+.projects-table thead th {
+  font-family: var(--font-mono); font-size: 0.6875rem;
+  color: var(--text-disabled); background: var(--bg-deep);
+  padding: 12px 16px; text-align: left;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  font-weight: 600;
+  border-bottom: 1px solid var(--stroke);
+}
+
+.projects-table tbody tr {
+  transition: background 0.2s;
+}
+
+.projects-table tbody tr:hover {
+  background: rgba(110, 69, 255, 0.03);
+}
+
+.projects-table td {
+  padding: 14px 16px;
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--stroke);
+  vertical-align: middle;
+}
+
+.projects-table tbody tr:last-child td { border-bottom: none; }
+
+.project-name {
+  font-weight: 600; color: var(--text-primary);
+  display: flex; align-items: center; gap: 8px;
+}
+
+.project-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.project-tag {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+  padding: 2px 8px; border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+.tag-defi { color: var(--primary); background: var(--primary-dim); }
+.tag-rwa { color: #f7c10b; background: rgba(247, 193, 11, 0.08); }
+.tag-stable { color: var(--success); background: rgba(36, 201, 141, 0.08); }
+.tag-meme { color: var(--accent); background: var(--accent-dim); }
+.tag-infra { color: var(--blue); background: rgba(54, 191, 250, 0.08); }
+
+/* ═══ POSITIONING SECTION ═══ */
+.position-card {
+  background: var(--container-main);
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  padding: 40px;
+  margin-bottom: 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+.position-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+}
+
+.position-quote {
+  font-size: 1.375rem; font-weight: 600;
+  line-height: 1.5; margin-bottom: 20px;
+  letter-spacing: -0.01em;
+}
+
+.position-quote .highlight {
+  background: linear-gradient(259deg, #f7c10b, #f84c00, #5f33ff);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.position-body {
+  font-size: 0.875rem; color: var(--text-secondary);
+  line-height: 1.8; max-width: 680px;
+}
+
+.position-body p + p { margin-top: 12px; }
+
+/* ═══ OPPORTUNITY CARDS ═══ */
+.opp-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; margin-bottom: 48px;
+}
+
+.opp-card {
+  background: var(--container-main);
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  padding: 28px 24px;
+  transition: all 0.3s;
+}
+
+.opp-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.opp-label {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.opp-label.stables { color: var(--success); }
+.opp-label.rwa { color: #f7c10b; }
+.opp-label.mobile { color: var(--blue); }
+
+.opp-title {
+  font-size: 1.0625rem; font-weight: 600;
+  margin-bottom: 8px; line-height: 1.3;
+}
+
+.opp-body {
+  font-size: 0.8125rem; color: var(--text-muted);
+  line-height: 1.7; margin-bottom: 16px;
+}
+
+.opp-stat {
+  font-family: var(--font-mono); font-size: 0.8125rem;
+  color: var(--text-secondary);
+  padding: 10px 14px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 8px;
+}
+
+.opp-stat strong {
+  color: var(--text-primary);
+}
+
+/* ═══ CTA ═══ */
+.cta {
+  text-align: center;
+  padding: 80px 0;
+  border-top: 1px solid var(--stroke);
+  position: relative;
+}
+
+.cta::before {
+  content: '';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 800px; height: 400px;
+  background: radial-gradient(ellipse, rgba(110, 69, 255, 0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.cta h2 {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700; margin-bottom: 16px;
+}
+
+.cta p {
+  font-size: 0.9375rem; color: var(--text-secondary);
+  margin-bottom: 28px; line-height: 1.7;
+}
+
+.btn-row { display: flex; gap: 12px; justify-content: center; }
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px; border-radius: 10px;
+  font-size: 0.875rem; font-weight: 600;
+  color: #fff; text-decoration: none;
+  background: linear-gradient(135deg, var(--primary), #5a35d4);
+  border: none; cursor: pointer;
+  transition: all 0.25s;
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(110, 69, 255, 0.3); }
+
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 28px; border-radius: 10px;
+  font-size: 0.875rem; font-weight: 600;
+  color: var(--text-secondary); text-decoration: none;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-secondary);
+  cursor: pointer; transition: all 0.25s;
+}
+.btn-secondary:hover { color: var(--text-primary); border-color: var(--border-primary); }
+
+/* ═══ FOOTER ═══ */
+.footer {
+  padding: 24px 0;
+  border-top: 1px solid var(--stroke);
+}
+
+.footer-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 0.75rem; color: var(--text-disabled);
+}
+
+.footer a { color: var(--text-muted); text-decoration: none; }
+.footer a:hover { color: var(--text-secondary); }
+
+/* ═══ REVEAL ANIMATION ═══ */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 768px) {
+  .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  .stat-cell:nth-child(odd):last-child { grid-column: span 2; }
+  .opp-grid { grid-template-columns: 1fr; }
+  .asset-grid { grid-template-columns: 1fr; }
+  .hero { padding: 100px 0 40px; }
+  .position-card { padding: 28px 20px; }
+  .position-quote { font-size: 1.125rem; }
+}
+
+@media (max-width: 480px) {
+  .stats-bar { grid-template-columns: 1fr 1fr; }
+  .nav-links { display: none; }
+  .filters { gap: 4px; }
+  .filter-btn { font-size: 11px; padding: 6px 10px; }
+}
+
+/* Counter animation */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.count-animate {
+  animation: countUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="ambient"></div>
+
+<!-- Nav -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">METEORA</a>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Playbook</a>
+      <a href="ecosystem.html" class="nav-link active">Ecosystem</a>
+      <a href="ignite.html" class="nav-link">Ignite</a>
+      <a href="fee-efficiency.html" class="nav-link">Fee Data</a>
+    </div>
+    <div class="nav-badge"><span class="pulse"></span> LIVE DATA</div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">METEORA ECOSYSTEM</div>
+    <h1>The Liquidity Layer<br>for <span class="grad">Every Digital Asset.</span></h1>
+    <p class="hero-sub">Memecoins. Stablecoins. Tokenized gold. Pre-IPO stocks. One protocol powers them all.</p>
+  </div>
+</section>
+
+<!-- Stats Bar -->
+<div class="container">
+  <div class="stats-bar reveal" id="stats-bar">
+    <div class="stat-cell">
+      <div class="stat-value purple" id="stat-volume">--</div>
+      <div class="stat-label">Total Volume</div>
+      <div class="stat-delta" id="stat-volume-delta"></div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value orange" id="stat-fees">--</div>
+      <div class="stat-label">Total Fees</div>
+      <div class="stat-delta" id="stat-fees-delta"></div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value green" id="stat-fees-24h">--</div>
+      <div class="stat-label">24h Fees</div>
+      <div class="stat-delta" id="stat-fees-24h-delta"></div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value blue" id="stat-volume-30d">--</div>
+      <div class="stat-label">30d Volume</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-value gold" id="stat-tvl">--</div>
+      <div class="stat-label">TVL</div>
+    </div>
+  </div>
+  <div class="stats-source" id="stats-source">
+    <span class="source-label">Source: <a href="https://defillama.com/protocol/meteora" target="_blank" rel="noopener">DefiLlama</a></span>
+    <span class="source-time" id="stats-updated">Loading live data...</span>
+  </div>
+</div>
+
+<!-- Positioning -->
+<div class="container">
+  <div class="position-card reveal">
+    <div class="position-quote">
+      Meteora isn't a memecoin DEX. It isn't an RWA platform. It's the <span class="highlight">liquidity infrastructure that makes every digital asset tradeable on Solana.</span>
+    </div>
+    <div class="position-body">
+      <p>The DLMM doesn't care what the asset is. Concentrated liquidity with dynamic fees works for memecoins, stablecoins, tokenized gold, and pre-IPO stocks alike. That's not a limitation -- it's the moat.</p>
+      <p>While other protocols chase one vertical, Meteora powers them all. The ecosystem below is proof: every category of digital asset on Solana flows through Meteora's pools.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Asset Classes -->
+<div class="container">
+  <div class="section-header reveal">
+    <div class="section-num">01</div>
+    <div class="section-title">Ecosystem by Asset Class</div>
+    <div class="section-sub">Everything live on Meteora, organized by what it is.</div>
+  </div>
+
+  <div class="filters reveal" id="filters">
+    <button class="filter-btn active" data-filter="all">All <span class="filter-count" id="count-all">6</span></button>
+    <button class="filter-btn" data-filter="defi">DeFi <span class="filter-count">1</span></button>
+    <button class="filter-btn" data-filter="stablecoin">Stablecoins <span class="filter-count">1</span></button>
+    <button class="filter-btn" data-filter="rwa">RWAs <span class="filter-count">1</span></button>
+    <button class="filter-btn" data-filter="meme">Memecoins <span class="filter-count">1</span></button>
+    <button class="filter-btn" data-filter="prestock">Pre-IPO / Stocks <span class="filter-count">1</span></button>
+    <button class="filter-btn" data-filter="commodity">Commodities <span class="filter-count">1</span></button>
+  </div>
+
+  <div class="asset-grid" id="asset-grid">
+
+    <!-- DeFi Native -->
+    <div class="asset-card reveal" data-category="defi" style="--card-accent: var(--primary); --icon-bg: var(--primary-dim); --icon-border: rgba(110,69,255,0.15)">
+      <div class="asset-card-header">
+        <div>
+          <div class="asset-icon">&#x26A1;</div>
+        </div>
+        <span class="asset-status status-live">LIVE</span>
+      </div>
+      <div class="asset-name">DeFi Native Tokens</div>
+      <div class="asset-desc">Protocol tokens, governance tokens, and DeFi primitives. The backbone of on-chain finance -- JUP, JTO, PYTH, RAY, ORCA, and hundreds more.</div>
+      <div class="asset-metrics">
+        <div class="metric">
+          <div class="metric-value" id="dlmm-vol-share">--</div>
+          <div class="metric-label">Volume via DLMM</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value" id="dlmm-fee-share">--</div>
+          <div class="metric-label">Fee Share</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stablecoins -->
+    <div class="asset-card reveal" data-category="stablecoin" style="--card-accent: var(--success); --icon-bg: rgba(36,201,141,0.08); --icon-border: rgba(36,201,141,0.15)">
+      <div class="asset-card-header">
+        <div>
+          <div class="asset-icon" style="background: rgba(36,201,141,0.08); border-color: rgba(36,201,141,0.15)">&#x1F4B5;</div>
+        </div>
+        <span class="asset-status status-growing">GROWING</span>
+      </div>
+      <div class="asset-name">Stablecoins</div>
+      <div class="asset-desc">USDC, USDT, PYUSD, and next-gen stablecoins. The fastest-growing asset class in crypto. Meteora's DAMM pools provide deep, stable liquidity.</div>
+      <div class="asset-metrics">
+        <div class="metric">
+          <div class="metric-value">Deep</div>
+          <div class="metric-label">Pool Liquidity</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">Low IL</div>
+          <div class="metric-label">Risk Profile</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RWAs -->
+    <div class="asset-card reveal" data-category="rwa" style="--card-accent: #f7c10b; --icon-bg: rgba(247,193,11,0.08); --icon-border: rgba(247,193,11,0.15)">
+      <div class="asset-card-header">
+        <div>
+          <div class="asset-icon" style="background: rgba(247,193,11,0.08); border-color: rgba(247,193,11,0.15)">&#x1F3E6;</div>
+        </div>
+        <span class="asset-status status-emerging">EMERGING</span>
+      </div>
+      <div class="asset-name">Real World Assets</div>
+      <div class="asset-desc">Tokenized treasuries, real estate, and other off-chain assets brought on-chain. DTCC, Nasdaq, NYSE are all moving here. Meteora provides the trading infrastructure.</div>
+      <div class="asset-metrics">
+        <div class="metric">
+          <div class="metric-value">DTCC + NYSE</div>
+          <div class="metric-label">Moving On-Chain</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">Early</div>
+          <div class="metric-label">Stage on Solana</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Memecoins -->
+    <div class="asset-card reveal" data-category="meme" style="--card-accent: var(--accent); --icon-bg: var(--accent-dim); --icon-border: rgba(245,75,0,0.15)">
+      <div class="asset-card-header">
+        <div>
+          <div class="asset-icon" style="background: var(--accent-dim); border-color: rgba(245,75,0,0.15)">&#x1F525;</div>
+        </div>
+        <span class="asset-status status-live">LIVE</span>
+      </div>
+      <div class="asset-name">Memecoins</div>
+      <div class="asset-desc">The asset class that put Solana on the map. BONK, WIF, POPCAT, and thousands of community tokens. Still significant volume, but diversifying.</div>
+      <div class="asset-metrics">
+        <div class="metric">
+          <div class="metric-value">High APR</div>
+          <div class="metric-label">Fee Opportunity</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">High</div>
+          <div class="metric-label">Volatility</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pre-IPO / Stocks -->
+    <div class="asset-card reveal" data-category="prestock" style="--card-accent: var(--blue); --icon-bg: rgba(54,191,250,0.08); --icon-border: rgba(54,191,250,0.15)">
+      <div class="asset-card-header">
+        <div>
+          <div class="asset-icon" style="background: rgba(54,191,250,0.08); border-color: rgba(54,191,250,0.15)">&#x1F4C8;</div>
+        </div>
+        <span class="asset-status status-building">BUILDING</span>
+      </div>
+      <div class="asset-name">Pre-IPO & Tokenized Stocks</div>
+      <div class="asset-desc">Sunrise and prestocks are pioneering pre-IPO stock access on Solana through Meteora pools. Trade exposure to companies before they list publicly.</div>
+      <div class="asset-metrics">
+        <div class="metric">
+          <div class="metric-value">Sunrise</div>
+          <div class="metric-label">Lead Project</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">Novel</div>
+          <div class="metric-label">Asset Class</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Commodities -->
+    <div class="asset-card reveal" data-category="commodity" style="--card-accent: #d4a017; --icon-bg: rgba(212,160,23,0.08); --icon-border: rgba(212,160,23,0.15)">
+      <div class="asset-card-header">
+        <div>
+          <div class="asset-icon" style="background: rgba(212,160,23,0.08); border-color: rgba(212,160,23,0.15)">&#x2728;</div>
+        </div>
+        <span class="asset-status status-emerging">EMERGING</span>
+      </div>
+      <div class="asset-name">Tokenized Commodities</div>
+      <div class="asset-desc">Gold, silver, and other commodities tokenized and tradeable on Solana. DLMM pools enable concentrated liquidity for asset-backed tokens.</div>
+      <div class="asset-metrics">
+        <div class="metric">
+          <div class="metric-value">Gold</div>
+          <div class="metric-label">Leading Asset</div>
+        </div>
+        <div class="metric">
+          <div class="metric-value">Growing</div>
+          <div class="metric-label">Institutional Interest</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Key Projects -->
+<div class="container">
+  <div class="section-header reveal">
+    <div class="section-num">02</div>
+    <div class="section-title">Key Ecosystem Projects</div>
+    <div class="section-sub">Projects building on or deeply integrated with Meteora.</div>
+  </div>
+
+  <table class="projects-table reveal">
+    <thead>
+      <tr>
+        <th>Project</th>
+        <th>Category</th>
+        <th>What They Do</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="project-name"><span class="project-dot" style="background: var(--blue)"></span> Sunrise</span></td>
+        <td><span class="project-tag tag-rwa">PRE-IPO</span></td>
+        <td>Tokenized pre-IPO stock exposure on Solana via Meteora DLMM pools</td>
+        <td><span class="asset-status status-building">BUILDING</span></td>
+      </tr>
+      <tr>
+        <td><span class="project-name"><span class="project-dot" style="background: var(--blue)"></span> Prestocks</span></td>
+        <td><span class="project-tag tag-rwa">STOCKS</span></td>
+        <td>High-quality pre-IPO stock tokens trading on Meteora infrastructure</td>
+        <td><span class="asset-status status-building">BUILDING</span></td>
+      </tr>
+      <tr>
+        <td><span class="project-name"><span class="project-dot" style="background: var(--success)"></span> LP Army</span></td>
+        <td><span class="project-tag tag-defi">COMMUNITY</span></td>
+        <td>Educated LP community providing liquidity across Meteora pools</td>
+        <td><span class="asset-status status-live">LIVE</span></td>
+      </tr>
+      <tr>
+        <td><span class="project-name"><span class="project-dot" style="background: #f7c10b"></span> Bedrock Foundation</span></td>
+        <td><span class="project-tag tag-infra">LEGAL</span></td>
+        <td>Permissionless incorporation framework for token projects. $7,500 deposit.</td>
+        <td><span class="asset-status status-building">INTAKE #01</span></td>
+      </tr>
+      <tr>
+        <td><span class="project-name"><span class="project-dot" style="background: var(--accent)"></span> LetsBonk</span></td>
+        <td><span class="project-tag tag-infra">LAUNCHPAD</span></td>
+        <td>BONK-native launchpad (bonk.fun), graduates to Meteora DLMM at $100K market cap</td>
+        <td><span class="asset-status status-live">LIVE</span></td>
+      </tr>
+      <tr>
+        <td><span class="project-name"><span class="project-dot" style="background: var(--primary)"></span> MetIgnite</span></td>
+        <td><span class="project-tag tag-infra">AI AGENT</span></td>
+        <td>Agentic AI cofounder for token launches. 8 skills live as Claude Code commands.</td>
+        <td><span class="asset-status status-building">PROTOTYPE</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Market Opportunities -->
+<div class="container">
+  <div class="section-header reveal">
+    <div class="section-num">03</div>
+    <div class="section-title">Where the Market Is Going</div>
+    <div class="section-sub">Three macro trends Meteora is positioned to capture.</div>
+  </div>
+
+  <div class="opp-grid reveal">
+    <div class="opp-card">
+      <div class="opp-label stables">STABLECOINS</div>
+      <div class="opp-title">The stablecoin explosion</div>
+      <div class="opp-body">Stablecoin supply is growing rapidly. Major banks, fintechs, and payment networks are launching or integrating stablecoins. They all need trading infrastructure and liquidity.</div>
+      <div class="opp-stat">Stablecoin supply growing rapidly across Solana</div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-label rwa">TOKENIZATION</div>
+      <div class="opp-title">TradFi comes on-chain</div>
+      <div class="opp-body">DTCC, Nasdaq, NYSE are tokenizing securities. BlackRock launched BUIDL. Major institutions are bringing assets on-chain. Solana is the fastest chain for settlement.</div>
+      <div class="opp-stat">Tokenized securities: <strong>institutional adoption accelerating</strong></div>
+    </div>
+    <div class="opp-card">
+      <div class="opp-label mobile">MOBILE</div>
+      <div class="opp-title">Solana goes mobile-first</div>
+      <div class="opp-body">Saga phones, Solana Mobile Stack, Blinks -- Meteora is pushing to onboard mobile traders. New UX patterns for LP and trading.</div>
+      <div class="opp-stat">Solana Mobile users: <strong>Growing fast</strong></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="cta reveal">
+  <div class="container">
+    <h2>Build on <span class="grad">Meteora.</span></h2>
+    <p>The liquidity infrastructure for every digital asset on Solana. Start providing liquidity, launch a token, or build with our pools.</p>
+    <div class="btn-row">
+      <a href="https://app.meteora.ag" class="btn-primary" target="_blank">Open App</a>
+      <a href="ignite.html" class="btn-secondary">Launch a Token</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-inner">
+      <span>Meteora Ecosystem Overview</span>
+      <a href="https://x.com/meteoraeco" target="_blank">@meteoraeco</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  // ── FORMAT HELPERS ──
+  function formatUSD(n) {
+    if (n >= 1e12) return '$' + (n / 1e12).toFixed(2) + 'T';
+    if (n >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
+    if (n >= 1e6) return '$' + (n / 1e6).toFixed(1) + 'M';
+    if (n >= 1e3) return '$' + (n / 1e3).toFixed(0) + 'K';
+    return '$' + n.toFixed(0);
+  }
+
+  function formatDelta(pct) {
+    if (pct === null || pct === undefined) return '';
+    const sign = pct >= 0 ? '+' : '';
+    return sign + pct.toFixed(1) + '% (24h)';
+  }
+
+  function setDelta(id, pct) {
+    const el = document.getElementById(id);
+    if (!el || pct === null || pct === undefined) return;
+    el.textContent = formatDelta(pct);
+    el.className = 'stat-delta ' + (pct >= 0 ? 'up' : 'down');
+  }
+
+  // ── LIVE DATA FROM DEFILLAMA ──
+  async function fetchLiveData() {
+    const sourceEl = document.getElementById('stats-updated');
+    try {
+      const [tvlRes, feesRes, volRes] = await Promise.all([
+        fetch('https://api.llama.fi/protocol/meteora'),
+        fetch('https://api.llama.fi/summary/fees/meteora'),
+        fetch('https://api.llama.fi/summary/dexs/meteora')
+      ]);
+
+      if (!tvlRes.ok || !feesRes.ok || !volRes.ok) throw new Error('API request failed');
+
+      const [tvlData, feesData, volData] = await Promise.all([
+        tvlRes.json(), feesRes.json(), volRes.json()
+      ]);
+
+      // Total volume (all time)
+      document.getElementById('stat-volume').textContent = formatUSD(volData.totalAllTime || 0);
+      setDelta('stat-volume-delta', volData.change_1d);
+
+      // Total fees (all time)
+      document.getElementById('stat-fees').textContent = formatUSD(feesData.totalAllTime || 0);
+      setDelta('stat-fees-delta', feesData.change_1d);
+
+      // 24h fees
+      document.getElementById('stat-fees-24h').textContent = formatUSD(feesData.total24h || 0);
+
+      // 30d volume
+      document.getElementById('stat-volume-30d').textContent = formatUSD(volData.total30d || 0);
+
+      // TVL
+      const currentTVL = tvlData.currentChainTvls && tvlData.currentChainTvls.Solana
+        ? tvlData.currentChainTvls.Solana
+        : (tvlData.tvl && tvlData.tvl.length > 0
+          ? tvlData.tvl[tvlData.tvl.length - 1].totalLiquidityUSD
+          : 0);
+      document.getElementById('stat-tvl').textContent = formatUSD(currentTVL);
+
+      // DLMM share (from fees breakdown -- latest data point)
+      if (feesData.totalDataChartBreakdown && feesData.totalDataChartBreakdown.length > 0) {
+        const latest = feesData.totalDataChartBreakdown[feesData.totalDataChartBreakdown.length - 1];
+        const breakdown = latest[1];
+        if (breakdown && breakdown.Solana) {
+          const chains = breakdown.Solana;
+          let dlmmFees = 0, totalFees = 0;
+          for (const [protocol, val] of Object.entries(chains)) {
+            totalFees += val;
+            if (protocol.includes('DLMM')) dlmmFees += val;
+          }
+          if (totalFees > 0) {
+            const dlmmFeeEl = document.getElementById('dlmm-fee-share');
+            if (dlmmFeeEl) dlmmFeeEl.textContent = Math.round((dlmmFees / totalFees) * 100) + '%';
+          }
+        }
+      }
+
+      // DLMM volume share (from volume breakdown)
+      if (volData.totalDataChartBreakdown && volData.totalDataChartBreakdown.length > 0) {
+        const latest = volData.totalDataChartBreakdown[volData.totalDataChartBreakdown.length - 1];
+        const breakdown = latest[1];
+        if (breakdown && breakdown.Solana) {
+          const chains = breakdown.Solana;
+          let dlmmVol = 0, totalVol = 0;
+          for (const [protocol, val] of Object.entries(chains)) {
+            totalVol += val;
+            if (protocol.includes('DLMM')) dlmmVol += val;
+          }
+          if (totalVol > 0) {
+            const dlmmVolEl = document.getElementById('dlmm-vol-share');
+            if (dlmmVolEl) dlmmVolEl.textContent = Math.round((dlmmVol / totalVol) * 100) + '%';
+          }
+        }
+      }
+
+      // Update source timestamp
+      const now = new Date();
+      sourceEl.textContent = 'Updated ' + now.toLocaleTimeString() + ' (live)';
+      sourceEl.classList.remove('stat-error');
+
+    } catch (err) {
+      console.error('DefiLlama fetch error:', err);
+      sourceEl.textContent = 'Failed to load live data. Showing no data.';
+      sourceEl.classList.add('stat-error');
+    }
+  }
+
+  // Fetch immediately on page load
+  fetchLiveData();
+
+  // Refresh every 5 minutes
+  setInterval(fetchLiveData, 5 * 60 * 1000);
+
+  // ── REVEAL ON SCROLL ──
+  const revealElements = document.querySelectorAll('.reveal');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  revealElements.forEach(el => observer.observe(el));
+
+  // ── FILTER LOGIC ──
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('.asset-card');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const filter = btn.dataset.filter;
+
+      cards.forEach(card => {
+        if (filter === 'all' || card.dataset.category === filter) {
+          card.style.display = '';
+          card.style.animation = 'countUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  // ── SMOOTH SCROLL ──
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+})();
+</script>
+</body>
+</html>

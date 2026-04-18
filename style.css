@@ -421,7 +421,7 @@ body:hover .cursor-glow { opacity: 1; }
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 12px 28px; font-size: 14px; font-weight: 600;
   background: var(--accent-400); color: var(--text-primary); text-decoration: none;
-  border-radius: 10px; transition: all 0.3s var(--ease-out-expo); border: none; cursor: pointer;
+  border-radius: 8px; transition: all 0.3s var(--ease-out-expo); border: none; cursor: pointer;
   box-shadow: var(--shadow-button);
   position: relative; overflow: hidden;
   letter-spacing: 0.01em;
@@ -447,7 +447,7 @@ body:hover .cursor-glow { opacity: 1; }
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   padding: 12px 28px; font-size: 14px; font-weight: 500;
   background: var(--primary-tint-100); color: var(--primary-500);
-  text-decoration: none; border-radius: 10px; transition: all 0.3s var(--ease-out-expo);
+  text-decoration: none; border-radius: 8px; transition: all 0.3s var(--ease-out-expo);
   border: 1px solid var(--border-secondary); cursor: pointer;
 }
 
@@ -534,7 +534,7 @@ body:hover .cursor-glow { opacity: 1; }
 
 /* ═══ CALLOUTS — Meteora cards ═══ */
 .callout {
-  padding: 20px 24px; border-radius: 12px; margin: 24px 0;
+  padding: 20px 24px; border-radius: 8px; margin: 24px 0;
   border: 1px solid var(--border-secondary);
   border-left: 3px solid; font-size: 0.875rem; line-height: 1.7;
   background: var(--base-0);
@@ -556,7 +556,7 @@ body:hover .cursor-glow { opacity: 1; }
 /* ═══ TEMPLATES ═══ */
 .template {
   background: var(--base-0); border: 1px solid var(--border-secondary);
-  border-radius: 12px; margin: 16px 0; overflow: hidden;
+  border-radius: 8px; margin: 16px 0; overflow: hidden;
   transition: border-color 0.3s, transform 0.3s var(--ease-out-expo), box-shadow 0.3s;
 }
 
@@ -605,7 +605,7 @@ body:hover .cursor-glow { opacity: 1; }
 
 .check-item {
   display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px;
-  border: 1px solid var(--border-secondary); border-radius: 10px; margin: 5px 0;
+  border: 1px solid var(--border-secondary); border-radius: 8px; margin: 5px 0;
   cursor: pointer; transition: all 0.3s var(--ease-out-expo);
   font-size: 0.875rem; color: var(--text-secondary);
   background: var(--base-0);
@@ -655,7 +655,7 @@ body:hover .cursor-glow { opacity: 1; }
   padding: 14px 18px; border-left: 2px solid var(--success); margin: 6px 0;
   font-size: 0.875rem; color: var(--text-secondary);
   background: var(--success-opacity1);
-  border-radius: 0 10px 10px 0;
+  border-radius: 0 8px 8px 0;
   transition: transform 0.3s var(--ease-out-expo), background 0.3s;
 }
 
@@ -676,7 +676,7 @@ body:hover .cursor-glow { opacity: 1; }
 .seq-item:hover { transform: translateX(4px); }
 
 .seq-num {
-  width: 36px; height: 36px; border-radius: 10px;
+  width: 36px; height: 36px; border-radius: 8px;
   background: var(--primary-tint-100);
   color: var(--primary-500); font-size: 0.75rem; font-weight: 600;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
@@ -699,7 +699,7 @@ body:hover .cursor-glow { opacity: 1; }
 .col-card {
   padding: 20px; background: var(--base-0);
   border: 1px solid var(--border-secondary);
-  border-radius: 12px; transition: all 0.3s var(--ease-out-expo);
+  border-radius: 8px; transition: all 0.3s var(--ease-out-expo);
   position: relative; overflow: hidden;
 }
 
@@ -730,7 +730,7 @@ body:hover .cursor-glow { opacity: 1; }
   margin: 24px 0; padding: 28px;
   background: var(--base-1);
   border: 1px solid var(--border-secondary);
-  border-radius: 12px;
+  border-radius: 8px;
   box-shadow: var(--shadow-card);
 }
 
@@ -745,7 +745,7 @@ body:hover .cursor-glow { opacity: 1; }
 
 .clock-item {
   display: flex; align-items: center; gap: 14px; padding: 12px 16px;
-  border-radius: 10px; font-size: 0.875rem; color: var(--text-tertiary);
+  border-radius: 8px; font-size: 0.875rem; color: var(--text-tertiary);
   transition: all 0.5s var(--ease-out-expo);
 }
 
@@ -791,7 +791,7 @@ body:hover .cursor-glow { opacity: 1; }
 .listing {
   padding: 20px; background: var(--base-0);
   border: 1px solid var(--border-secondary);
-  border-radius: 12px; transition: all 0.3s var(--ease-out-expo);
+  border-radius: 8px; transition: all 0.3s var(--ease-out-expo);
 }
 
 .listing:hover {
@@ -830,7 +830,7 @@ body:hover .cursor-glow { opacity: 1; }
 .story {
   padding: 16px 20px; border-left: 2px solid var(--primary-400); margin: 8px 0;
   font-size: 0.875rem; color: var(--text-secondary);
-  background: var(--primary-tint-100); border-radius: 0 12px 12px 0;
+  background: var(--primary-tint-100); border-radius: 0 8px 8px 0;
   line-height: 1.7;
   transition: all 0.3s var(--ease-out-expo);
 }

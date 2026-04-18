@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<title>MetClaw Social Card Template</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  /* ═══════════════════════════════════════════════════════════
+     METCLAW SOCIAL CARD TEMPLATE
+     Two modes: .statement (hero stat) / .data (metric rows)
+     All content injectable via CSS custom properties.
+     Render at 1200×675. Screenshot with Puppeteer/Playwright.
+     ═══════════════════════════════════════════════════════════ */
+
+  /* ── Tokens ── */
+  :root {
+    --bg-deepest: #08080c;
+    --text-primary: #f9f9fb;
+    --text-secondary: #9595b2;
+    --text-tertiary: #6c6c89;
+    --border-tertiary: #202031;
+    --accent-orange: #F54B00;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    /* ── Content injection slots ── */
+    --card-stat: "$182.2B";
+    --card-label: "Total Volume";
+    --card-context: "Meteora DLMM";
+    --card-title: "Weekly Protocol Metrics";
+  }
+
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: #1a1a2e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: var(--font-body);
+    gap: 32px;
+  }
+
+  /* ── Card canvas ── */
+  .card {
+    width: 1200px;
+    height: 675px;
+    background: var(--bg-deepest);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  /* ── Orange strip — the brand signal ── */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--accent-orange);
+    z-index: 10;
+  }
+
+  /* ── Meteora wordmark ── */
+  .wordmark {
+    position: absolute;
+    bottom: 32px;
+    right: 48px;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    opacity: 0.40;
+    z-index: 5;
+  }
+
+  /* ═══════════════════════════════════════
+     MODE 1: STATEMENT CARD
+     One stat, massive type, nothing else.
+     ═══════════════════════════════════════ */
+
+  .card.statement .statement-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    padding: 0 80px;
+  }
+
+  .card.statement .data-content {
+    display: none;
+  }
+
+  .stat-context {
+    font-family: var(--font-body);
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.5px;
+    margin-bottom: 20px;
+  }
+
+  .stat-number {
+    font-family: var(--font-body);
+    font-size: 112px;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+    letter-spacing: -3px;
+    margin-bottom: 16px;
+  }
+
+  .stat-label {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.3px;
+  }
+
+  /* ═══════════════════════════════════════
+     MODE 2: DATA CARD
+     Title + metric rows, dense and precise.
+     ═══════════════════════════════════════ */
+
+  .card.data .data-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 52px 80px 48px;
+  }
+
+  .card.data .statement-content {
+    display: none;
+  }
+
+  .data-title {
+    font-family: var(--font-body);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.2px;
+    margin-bottom: 36px;
+  }
+
+  .data-subtitle {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-tertiary);
+    margin-top: 6px;
+  }
+
+  .metric-rows {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .metric-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border-tertiary);
+  }
+
+  .metric-row:last-child {
+    border-bottom: none;
+  }
+
+  .metric-label {
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--text-secondary);
+  }
+
+  .metric-value {
+    font-family: var(--font-mono);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.3px;
+  }
+
+  /* Highlighted row — the key data point */
+  .metric-row.highlight .metric-value {
+    color: var(--accent-orange);
+  }
+
+  .metric-row.highlight .metric-label {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  /* ═══════════════════════════════════════
+     PREVIEW CONTROLS (outside card area)
+     Not part of the template — for dev use.
+     ═══════════════════════════════════════ */
+
+  .controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-family: var(--font-body);
+  }
+
+  .controls button {
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 20px;
+    border: 1px solid #434360;
+    background: transparent;
+    color: #9595b2;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .controls button:hover {
+    border-color: #9595b2;
+    color: #f9f9fb;
+  }
+
+  .controls button.active {
+    background: var(--accent-orange);
+    border-color: var(--accent-orange);
+    color: #fff;
+  }
+
+  .controls .label {
+    font-size: 11px;
+    color: #6c6c89;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-right: 8px;
+  }
+
+  .size-note {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #6c6c89;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Preview controls — strip these when screenshotting -->
+  <div class="controls">
+    <span class="label">Mode</span>
+    <button id="btn-statement" class="active" onclick="setMode('statement')">Statement</button>
+    <button id="btn-data" onclick="setMode('data')">Data</button>
+    <span class="size-note">1200 × 675</span>
+  </div>
+
+  <!-- ═══ THE CARD ═══ -->
+  <div class="card statement" id="card">
+
+    <!-- Statement mode content -->
+    <div class="statement-content">
+      <div class="stat-context">Meteora DLMM</div>
+      <div class="stat-number">$182.2B</div>
+      <div class="stat-label">Total Volume</div>
+    </div>
+
+    <!-- Data mode content -->
+    <div class="data-content">
+      <div class="data-title">Weekly Protocol Metrics</div>
+      <div class="metric-rows">
+        <div class="metric-row highlight">
+          <span class="metric-label">Weekly Volume</span>
+          <span class="metric-value">$4.21B</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Fees Generated</span>
+          <span class="metric-value">$18.7M</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Active Pools</span>
+          <span class="metric-value">12,847</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">Unique LPs</span>
+          <span class="metric-value">31,204</span>
+        </div>
+        <div class="metric-row">
+          <span class="metric-label">DLMM Market Share</span>
+          <span class="metric-value">92.1%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="wordmark">METEORA</div>
+  </div>
+
+  <script>
+    function setMode(mode) {
+      const card = document.getElementById('card');
+      card.className = 'card ' + mode;
+      document.getElementById('btn-statement').className = mode === 'statement' ? 'active' : '';
+      document.getElementById('btn-data').className = mode === 'data' ? 'active' : '';
+    }
+  </script>
+</body>
+</html>

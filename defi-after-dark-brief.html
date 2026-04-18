@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeFi After Dark — Event Brief</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #fafaf8;
+    --card: #ffffff;
+    --text: #1a1a1a;
+    --muted: #6b6b6b;
+    --light: #a0a0a0;
+    --border: #e8e8e4;
+    --accent: #6c3baa;
+    --accent-light: #f3eefa;
+    --blue: #0077cc;
+    --amber: #c47a00;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    padding: 40px 20px;
+  }
+
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 2px solid var(--text);
+  }
+  .header .label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 8px;
+  }
+  .header .subtitle {
+    font-size: 16px;
+    color: var(--muted);
+    font-weight: 300;
+  }
+  .header .status {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--amber);
+    background: #fef6e8;
+    padding: 5px 12px;
+    border-radius: 3px;
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: 40px;
+  }
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--light);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Key details grid */
+  .details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 40px;
+  }
+  .detail-cell {
+    background: var(--card);
+    padding: 20px 24px;
+  }
+  .detail-cell .key {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--light);
+    margin-bottom: 6px;
+  }
+  .detail-cell .val {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .detail-cell .val small {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* Card */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px 28px;
+    margin-bottom: 16px;
+  }
+  .card h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .card p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* List */
+  ul.clean {
+    list-style: none;
+    padding: 0;
+  }
+  ul.clean li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+  ul.clean li:last-child { border-bottom: none; }
+  ul.clean li .bullet {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 28px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 8px;
+    bottom: 8px;
+    width: 1px;
+    background: var(--border);
+  }
+  .timeline-item {
+    position: relative;
+    padding-bottom: 20px;
+  }
+  .timeline-item:last-child { padding-bottom: 0; }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -25px;
+    top: 7px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--bg);
+  }
+  .timeline-item .time {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 2px;
+  }
+  .timeline-item .desc {
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* Budget table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  table th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--light);
+    padding: 8px 0;
+    border-bottom: 2px solid var(--border);
+  }
+  table td {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  table td:last-child {
+    text-align: right;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+  table tr:last-child td {
+    border-bottom: 2px solid var(--text);
+    font-weight: 700;
+  }
+
+  /* Tags */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tag {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 14px;
+    background: var(--accent-light);
+    color: var(--accent);
+    border-radius: 3px;
+  }
+
+  /* Notes callout */
+  .callout {
+    background: #f8f6ff;
+    border-left: 3px solid var(--accent);
+    padding: 20px 24px;
+    border-radius: 0 4px 4px 0;
+    margin-top: 12px;
+  }
+  .callout p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--light);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  @media print {
+    body { padding: 0; }
+    .page { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="label">Event Brief</div>
+    <h1>DeFi After Dark</h1>
+    <div class="subtitle">Where DeFi meets after hours.</div>
+    <div class="status">Draft &mdash; Pending Approval</div>
+  </div>
+
+  <!-- Key Details -->
+  <div class="section">
+    <div class="section-title">Key Details</div>
+    <div class="details-grid">
+      <div class="detail-cell">
+        <div class="key">Date</div>
+        <div class="val">March 12, 2025 <small>Night before Solana Summit</small></div>
+      </div>
+      <div class="detail-cell">
+        <div class="key">Time</div>
+        <div class="val">7:00 PM &mdash; Late <small>Doors open 6:30 PM</small></div>
+      </div>
+      <div class="detail-cell">
+        <div class="key">Venue</div>
+        <div class="val">Raposa <small>Delancey Street, Lower East Side, NYC</small></div>
+      </div>
+      <div class="detail-cell">
+        <div class="key">Capacity</div>
+        <div class="val">TBD <small>Confirm with Raposa</small></div>
+      </div>
+      <div class="detail-cell">
+        <div class="key">Expected Guests</div>
+        <div class="val">60&ndash;100 <small>DeFi builders, Brooklyn locals, DAS Week attendees</small></div>
+      </div>
+      <div class="detail-cell">
+        <div class="key">Ticket Cost</div>
+        <div class="val">Free / RSVP <small>Consider capped guest list for exclusivity</small></div>
+      </div>
+      <div class="detail-cell">
+        <div class="key">Primary Sponsor</div>
+        <div class="val">Meteora <small>Sponsoring live music + drinks</small></div>
+      </div>
+      <div class="detail-cell">
+        <div class="key">Organizer</div>
+        <div class="val">MetClaw <small>@Nftreats / Raposa</small></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vision -->
+  <div class="section">
+    <div class="section-title">Vision & Vibe</div>
+    <div class="card">
+      <h3>Why This Event Exists</h3>
+      <p>Most crypto events are boring, forgettable, and don't bring different kinds of people together. DeFi After Dark is built to change that. It's an organic, late-night gathering that mixes DeFi-native people with Brooklyn locals, alternative crowds, and policy/DAS Week attendees. Real conversations over handcrafted drinks, not a conference afterparty.</p>
+    </div>
+    <div class="card">
+      <h3>The Vibe</h3>
+      <p>Late-night lounge energy. Live music filling the room. Curated drinks (including non-alcoholic). TCG card pack openings as icebreakers. Short, sharp lightning talks that actually teach you something. Not over-programmed &mdash; enough structure to be valuable, enough space to be fun.</p>
+    </div>
+    <div class="callout">
+      <p><strong>Strategic angle:</strong> Sentiment is low, Solana discourse is combative. An event like this &mdash; warm, human, cross-community &mdash; stands out and compounds over time. High signal about DeFi ahead of Summit without the corporate energy.</p>
+    </div>
+  </div>
+
+  <!-- Programming -->
+  <div class="section">
+    <div class="section-title">Programming</div>
+    <ul class="clean">
+      <li><div class="bullet"></div><div><strong>Live Music</strong> &mdash; Local artist(s), acoustic or DJ set. Sets the tone, not the agenda.</div></li>
+      <li><div class="bullet"></div><div><strong>Lightning Talks (3&ndash;4)</strong> &mdash; 5-minute slots. DeFi-focused: security best practices, LP strategy, on-chain data, policy updates. No pitches.</div></li>
+      <li><div class="bullet"></div><div><strong>Handcrafted Drinks</strong> &mdash; Signature cocktails + non-alcoholic options. Raposa barista specials.</div></li>
+      <li><div class="bullet"></div><div><strong>TCG Activations</strong> &mdash; Card pack openings (Phygitals / collectibles from Raposa's existing inventory). Social icebreaker.</div></li>
+      <li><div class="bullet"></div><div><strong>Open Networking</strong> &mdash; Unstructured time is the point. Give people space to connect.</div></li>
+    </ul>
+  </div>
+
+  <!-- Run of Show -->
+  <div class="section">
+    <div class="section-title">Suggested Run of Show</div>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="time">6:30 PM</div>
+        <div class="desc">Doors open. Music playing. Drinks flowing.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="time">7:00 PM</div>
+        <div class="desc">Welcome &amp; scene-setting (2 min). Keep it brief.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="time">7:15 PM</div>
+        <div class="desc">Lightning Talk #1 &mdash; DeFi Security</div>
+      </div>
+      <div class="timeline-item">
+        <div class="time">7:30 PM</div>
+        <div class="desc">Lightning Talk #2 &mdash; LP Strategy / On-chain Data</div>
+      </div>
+      <div class="timeline-item">
+        <div class="time">7:45 PM</div>
+        <div class="desc">TCG activation &amp; drinks break</div>
+      </div>
+      <div class="timeline-item">
+        <div class="time">8:15 PM</div>
+        <div class="desc">Lightning Talk #3 &mdash; Cross-chain DeFi / Policy</div>
+      </div>
+      <div class="timeline-item">
+        <div class="time">8:30 PM</div>
+        <div class="desc">Live music set begins. Open floor.</div>
+      </div>
+      <div class="timeline-item">
+        <div class="time">8:30 &mdash; Late</div>
+        <div class="desc">Open networking, music, drinks, vibes. No agenda.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Target Audience -->
+  <div class="section">
+    <div class="section-title">Target Audience</div>
+    <div class="tags">
+      <span class="tag">DeFi Builders</span>
+      <span class="tag">Solana Ecosystem</span>
+      <span class="tag">DAS Week Attendees</span>
+      <span class="tag">Brooklyn Locals</span>
+      <span class="tag">TCG / Collectibles Community</span>
+      <span class="tag">Policy &amp; Governance</span>
+      <span class="tag">Cross-chain Builders</span>
+      <span class="tag">Artists &amp; Creatives</span>
+    </div>
+  </div>
+
+  <!-- Budget -->
+  <div class="section">
+    <div class="section-title">Estimated Budget</div>
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Est. Cost</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Venue (Raposa)</td><td>TBD / Partner deal</td></tr>
+        <tr><td>Live music (artist fee + sound)</td><td>$500 &ndash; $1,500</td></tr>
+        <tr><td>Drinks (subsidized or open tab)</td><td>$800 &ndash; $2,000</td></tr>
+        <tr><td>TCG packs / activations</td><td>$200 &ndash; $500</td></tr>
+        <tr><td>Promo &amp; design (flyers, social)</td><td>$100 &ndash; $300</td></tr>
+        <tr><td>Misc (supplies, signage, AV)</td><td>$200 &ndash; $500</td></tr>
+        <tr><td><strong>Estimated Total</strong></td><td><strong>$1,800 &ndash; $4,800</strong></td></tr>
+      </tbody>
+    </table>
+    <div class="callout" style="margin-top: 16px;">
+      <p><strong>Sponsorship model:</strong> Meteora covers the bulk (music + drinks). Co-sponsors (Solana Policy Institute, Phygitals, etc.) contribute smaller amounts in exchange for branding + speaking slot. Raposa potentially waives/reduces venue fee as co-host.</p>
+    </div>
+  </div>
+
+  <!-- Potential Partners -->
+  <div class="section">
+    <div class="section-title">Potential Partners &amp; Co-Sponsors</div>
+    <ul class="clean">
+      <li><div class="bullet"></div><div><strong>Raposa Coffee Co.</strong> &mdash; Venue host. TCG activations. Community draw.</div></li>
+      <li><div class="bullet"></div><div><strong>Meteora</strong> &mdash; Primary sponsor. Music + drinks budget.</div></li>
+      <li><div class="bullet"></div><div><strong>Solana Policy Institute</strong> &mdash; Policy-angle lightning talk speaker. DAS Week cross-promo.</div></li>
+      <li><div class="bullet"></div><div><strong>Phygitals</strong> &mdash; TCG / digital collectibles activation partner.</div></li>
+      <li><div class="bullet"></div><div><strong>Solflare</strong> &mdash; Wallet partner. Potential small sponsorship.</div></li>
+      <li><div class="bullet"></div><div><strong>Local Brooklyn communities</strong> &mdash; Broaden beyond crypto-native attendees.</div></li>
+    </ul>
+  </div>
+
+  <!-- Next Steps -->
+  <div class="section">
+    <div class="section-title">Next Steps</div>
+    <ul class="clean">
+      <li><div class="bullet"></div><div>Confirm date + venue availability with Raposa</div></li>
+      <li><div class="bullet"></div><div>Lock Meteora sponsorship commitment + budget</div></li>
+      <li><div class="bullet"></div><div>Finalize capacity &amp; decide on RSVP cap</div></li>
+      <li><div class="bullet"></div><div>Reach out to co-sponsors / partners</div></li>
+      <li><div class="bullet"></div><div>Lock lightning talk speakers (3&ndash;4 slots)</div></li>
+      <li><div class="bullet"></div><div>Book live music act</div></li>
+      <li><div class="bullet"></div><div>Set up RSVP page (Lu.ma or similar)</div></li>
+      <li><div class="bullet"></div><div>Launch promo &mdash; poster + tweet thread + DMs to key people</div></li>
+    </ul>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>MetClaw &mdash; DeFi After Dark Event Brief</span>
+    <span>Draft v1 &mdash; Prepared April 2026</span>
+  </div>
+
+</div>
+
+</body>
+</html>

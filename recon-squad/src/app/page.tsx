@@ -1,19 +1,17 @@
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
-import InterestForm from "./interest-form";
 
-/* ── Text Scramble (Pentagon-style) ── */
-const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+/* ── Text Scramble ── */
+const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%";
 
-function TextScramble({ text, delay = 800 }: { text: string; delay?: number }) {
+function TextScramble({ text, delay = 600 }: { text: string; delay?: number }) {
   const [display, setDisplay] = useState(text);
   const hasRun = useRef(false);
 
   useEffect(() => {
     if (hasRun.current) return;
     hasRun.current = true;
-
     const chars = text.split("");
     const resolved = new Array(chars.length).fill(false);
     let frame = 0;
@@ -24,337 +22,473 @@ function TextScramble({ text, delay = 800 }: { text: string; delay?: number }) {
         const next = chars.map((ch, i) => {
           if (ch === " ") return " ";
           if (resolved[i]) return ch;
-          if (frame > 3 + i * 2) {
-            resolved[i] = true;
-            return ch;
-          }
+          if (frame > 2 + i * 2) { resolved[i] = true; return ch; }
           return CHARS[Math.floor(Math.random() * CHARS.length)];
         });
         setDisplay(next.join(""));
         if (resolved.every(Boolean)) clearInterval(interval);
-      }, 45);
+      }, 40);
     }, delay);
-
     return () => clearTimeout(timer);
   }, [text, delay]);
 
   return <>{display}</>;
 }
 
-/* ── Animated Counter ── */
-function AnimatedCounter({ end, suffix = "" }: { end: number; suffix?: string }) {
-  const [count, setCount] = useState(0);
-  const ref = useRef<HTMLSpanElement>(null);
-  const hasAnimated = useRef(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
-          const duration = 2000;
-          const startTime = performance.now();
-          function animate(now: number) {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            setCount(Math.round(eased * end));
-            if (progress < 1) requestAnimationFrame(animate);
-          }
-          requestAnimationFrame(animate);
-        }
-      },
-      { threshold: 0.5 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [end]);
-
-  return <span ref={ref}>{count}{suffix}</span>;
-}
-
 /* ── Cursor Glow ── */
 function CursorGlow() {
-  const glowRef = useRef<HTMLDivElement>(null);
-
+  const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     function onMove(e: MouseEvent) {
-      if (glowRef.current) {
-        glowRef.current.style.setProperty("--gx", `${e.clientX}px`);
-        glowRef.current.style.setProperty("--gy", `${e.clientY}px`);
+      if (ref.current) {
+        ref.current.style.setProperty("--gx", `${e.clientX}px`);
+        ref.current.style.setProperty("--gy", `${e.clientY}px`);
       }
     }
     window.addEventListener("mousemove", onMove);
     return () => window.removeEventListener("mousemove", onMove);
   }, []);
-
-  return <div ref={glowRef} className="cursor-glow" />;
+  return <div ref={ref} className="cursor-glow" />;
 }
 
-const MARQUEE_ITEMS = [
-  "DLMM", "DYNAMIC POOLS", "DYNAMIC VAULTS", "DBC", "DAMM V2",
-  "FEE OPTIMIZATION", "BIN LIQUIDITY", "CONCENTRATED LP",
-  "TOKEN LAUNCH", "POOL CREATION", "YIELD STRATEGY",
-];
+/* ── Progress Ring ── */
+function ProgressRing({ progress }: { progress: number }) {
+  const r = 28;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (progress / 100) * circ;
 
-const STEPS = [
-  {
-    num: "01",
-    title: "Apply",
-    desc: "Tell us what you use on Meteora and what you would change. Takes 2 minutes.",
-  },
-  {
-    num: "02",
-    title: "Get selected",
-    desc: "We review weekly. Selected testers get onboarded via X. 10 slots total.",
-  },
-  {
-    num: "03",
-    title: "Test & feedback",
-    desc: "Access unreleased features. Use them like you normally would. Structured prompts for high-signal observations.",
-  },
-  {
-    num: "04",
-    title: "Get paid",
-    desc: "USDC per testing round plus Liquidity NFTs for consistent contributors.",
-  },
-];
+  return (
+    <div className="progress-ring-wrap">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle cx="36" cy="36" r={r} fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="2" />
+        <circle
+          cx="36" cy="36" r={r} fill="none"
+          stroke={progress === 100 ? "#24c98d" : "var(--color-accent)"}
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeDasharray={circ}
+          strokeDashoffset={offset}
+          style={{
+            transform: "rotate(-90deg)",
+            transformOrigin: "center",
+            transition: "stroke-dashoffset 0.5s cubic-bezier(0.22, 1, 0.36, 1), stroke 0.3s ease",
+          }}
+        />
+      </svg>
+      <span className="progress-ring-text">
+        {Math.round(progress)}
+        <span className="progress-ring-pct">%</span>
+      </span>
+    </div>
+  );
+}
+
+/* ── Main ── */
+const GOOGLE_SCRIPT_URL = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL || "";
 
 export default function Home() {
   const [heroVisible, setHeroVisible] = useState(false);
+  const [step, setStep] = useState(0); // 0 = hero, 1-3 = form steps
+  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+
+  // Form state -- trader only
+  const [twitter, setTwitter] = useState("");
+  const [months, setMonths] = useState("");
+  const [volume, setVolume] = useState("");
+  const [products, setProducts] = useState("");
+  const [strategy, setStrategy] = useState("");
+  const [improve, setImprove] = useState("");
+  const [wallet, setWallet] = useState("");
+
+  // Focus tracking for field animations
+  const [focusedField, setFocusedField] = useState<string | null>(null);
 
   useEffect(() => {
-    // Hero entrance
     requestAnimationFrame(() => setHeroVisible(true));
-
-    // Scroll reveals
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("visible");
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -60px 0px" }
-    );
-
-    document.querySelectorAll(".reveal-element").forEach((el) => {
-      observer.observe(el);
-    });
-
-    return () => observer.disconnect();
   }, []);
+
+  // Calculate progress
+  const fields = [twitter, months, volume, products, strategy, wallet];
+  const filled = fields.filter((f) => f.trim().length > 0).length;
+  const progress = Math.round((filled / fields.length) * 100);
+
+  // Step validation
+  const step1Ready = twitter.trim() && months.trim() && volume.trim();
+  const step2Ready = products.trim() && strategy.trim();
+  const step3Ready = wallet.trim();
+
+  function startApplication() {
+    setStep(1);
+    // Scroll to form
+    setTimeout(() => {
+      document.getElementById("application")?.scrollIntoView({ behavior: "smooth" });
+    }, 100);
+  }
+
+  async function handleSubmit() {
+    if (!step3Ready) return;
+    setStatus("submitting");
+
+    const payload = {
+      timestamp: new Date().toISOString(),
+      role: "trader",
+      twitter: twitter.trim(),
+      months_on_meteora: months.trim(),
+      monthly_volume: volume.trim(),
+      products: products.trim(),
+      strategy: strategy.trim(),
+      improve: improve.trim(),
+      wallet: wallet.trim(),
+    };
+
+    try {
+      if (GOOGLE_SCRIPT_URL) {
+        await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+      }
+      setStatus("success");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  if (status === "success") {
+    return (
+      <>
+        <div className="grain" />
+        <CursorGlow />
+        <div className="orange-strip" />
+        <div className="success-page">
+          <div className="success-icon">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#24c98d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" className="check-draw" />
+            </svg>
+          </div>
+          <h1 className="success-title">You&apos;re in the queue</h1>
+          <p className="success-sub">We review applications weekly.<br />If selected, you&apos;ll hear from us on X.</p>
+          <div className="success-handle">@{twitter.replace("@", "")}</div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
       {/* Atmosphere */}
       <div className="grain" />
-      <div className="ambient" />
       <CursorGlow />
-
-      {/* Orange Strip -- structural anchor */}
       <div className="orange-strip" />
 
       {/* Hero */}
       <section className={`hero ${heroVisible ? "hero--visible" : ""}`}>
-        <div className="container-wide">
-          <div className="hero-layout">
-            <div className="hero-content">
-              <div className="hero-stagger hero-stagger-1">
-                <div className="status-pill">
-                  <span className="status-dot" />
-                  <span>Season 01 open</span>
-                </div>
-              </div>
-
-              <div className="hero-stagger hero-stagger-1 hero-eyebrow">
-                METECOX
-              </div>
-
-              <h1 className="hero-stagger hero-stagger-2 hero-title">
-                Shape what{" "}
-                <span className="hero-serif">
-                  <TextScramble text="ships next" delay={1200} />
-                </span>
-              </h1>
-
-              <p className="hero-stagger hero-stagger-3 hero-sub">
-                10 testers get early access to unreleased Meteora ecosystem
-                products. Structured feedback, direct to founders.
-              </p>
-
-              <div className="hero-stagger hero-stagger-4 hero-actions">
-                <a href="#apply" className="btn-primary">
-                  Apply now
-                </a>
-                <a href="#how" className="btn-ghost">
-                  How it works
-                </a>
-              </div>
-            </div>
-
-            <div className="hero-metrics">
-              <div className="hero-stagger hero-stagger-2 metric-block">
-                <span className="metric-value">
-                  <AnimatedCounter end={10} />
-                </span>
-                <span className="metric-label">Testers</span>
-              </div>
-              <div className="metric-separator" />
-              <div className="hero-stagger hero-stagger-3 metric-block">
-                <span className="metric-value">
-                  <AnimatedCounter end={7} />
-                  <span className="metric-small">/3</span>
-                </span>
-                <span className="metric-label">Traders / Creators</span>
-              </div>
-              <div className="metric-separator" />
-              <div className="hero-stagger hero-stagger-4 metric-block">
-                <span className="metric-value">USDC</span>
-                <span className="metric-label">Compensation</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Marquee */}
-      <div className="marquee-wrap">
-        <div className="marquee-track">
-          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
-            <span key={i} className="marquee-item">
-              {item}
-              <span className="marquee-dot" />
+        <div className="hero-inner">
+          <div className="hero-stagger s1 hero-label">RECON SQUAD</div>
+          <h1 className="hero-stagger s2 hero-title">
+            Test what{" "}
+            <span className="hero-accent">
+              <TextScramble text="ships next" delay={1000} />
             </span>
-          ))}
-        </div>
-      </div>
+          </h1>
+          <p className="hero-stagger s3 hero-sub">
+            7 traders. Early access to unreleased Meteora products.
+            <br />Feedback direct to founders. USDC compensation.
+          </p>
 
-      {/* Capabilities */}
-      <section className="section-lg">
-        <div className="container-wide">
-          <div className="reveal-element">
-            <span className="section-eyebrow">What you get</span>
-            <h2 className="section-title">
-              Not a survey.{" "}
-              <span className="title-serif">A direct line.</span>
-            </h2>
+          <div className="hero-stagger s4 hero-stats">
+            <div className="hero-stat">
+              <span className="hero-stat-value">7</span>
+              <span className="hero-stat-label">SLOTS</span>
+            </div>
+            <div className="hero-stat-sep" />
+            <div className="hero-stat">
+              <span className="hero-stat-value">S01</span>
+              <span className="hero-stat-label">SEASON</span>
+            </div>
+            <div className="hero-stat-sep" />
+            <div className="hero-stat">
+              <span className="hero-stat-value">USDC</span>
+              <span className="hero-stat-label">PER ROUND</span>
+            </div>
           </div>
 
-          <div className="reveal-element capability-list">
-            <div className="capability stagger-child">
-              <span className="capability-num">01</span>
-              <div className="capability-content">
-                <h4>Early access</h4>
-                <p>
-                  Test unreleased products weeks before public launch. DLMM
-                  features, vault strategies, new pool types.
-                </p>
-              </div>
-              <span className="capability-tag live">LIVE</span>
-            </div>
-            <div className="capability stagger-child">
-              <span className="capability-num">02</span>
-              <div className="capability-content">
-                <h4>Direct to founders</h4>
-                <p>
-                  Your feedback goes straight to the teams building. No
-                  middlemen, no support tickets, no void.
-                </p>
-              </div>
-            </div>
-            <div className="capability stagger-child">
-              <span className="capability-num">03</span>
-              <div className="capability-content">
-                <h4>Compensation</h4>
-                <p>
-                  USDC per testing round plus Liquidity NFTs. Quality feedback
-                  is worth paying for.
-                </p>
-              </div>
-              <span className="capability-tag usdc">USDC</span>
-            </div>
-            <div className="capability stagger-child">
-              <span className="capability-num">04</span>
-              <div className="capability-content">
-                <h4>Reputation</h4>
-                <p>
-                  Build a track record as a product scout. Top testers get
-                  priority for future seasons and ecosystem roles.
-                </p>
-              </div>
-            </div>
+          <button
+            className="hero-stagger s5 btn-apply"
+            onClick={startApplication}
+          >
+            Apply now
+          </button>
+
+          <div className="hero-stagger s5 scroll-hint">
+            <div className="scroll-line" />
           </div>
         </div>
       </section>
 
-      {/* How it works -- Timeline */}
-      <section id="how" className="section-lg">
-        <div className="container-wide">
-          <div className="reveal-element">
-            <span className="section-eyebrow">Process</span>
-            <h2 className="section-title">
-              Apply. Test.{" "}
-              <span className="title-serif">Ship.</span>
-            </h2>
+      {/* Application */}
+      <section id="application" className="app-section">
+        <div className="app-container">
+
+          {/* Left: context + progress */}
+          <div className="app-sidebar">
+            <div className="app-sidebar-sticky">
+              <ProgressRing progress={progress} />
+              <div className="app-sidebar-info">
+                <h3 className="app-sidebar-title">
+                  {step === 0 && "Ready when you are"}
+                  {step === 1 && "Who you are"}
+                  {step === 2 && "How you trade"}
+                  {step === 3 && "Final details"}
+                </h3>
+                <p className="app-sidebar-desc">
+                  {step === 0 && "Click apply above to start your application."}
+                  {step === 1 && "Your X handle and trading activity on Meteora."}
+                  {step === 2 && "Which products you use and your approach."}
+                  {step === 3 && "One optional question and your wallet for compensation."}
+                </p>
+              </div>
+
+              <div className="step-dots">
+                {[1, 2, 3].map((s) => (
+                  <button
+                    key={s}
+                    className={`step-dot ${step === s ? "active" : ""} ${step > s ? "done" : ""}`}
+                    onClick={() => { if (s <= step || (s === 2 && step1Ready) || (s === 3 && step2Ready)) setStep(s); }}
+                    disabled={s > step && !(s === 2 && step1Ready) && !(s === 3 && step1Ready && step2Ready)}
+                  >
+                    <span className="step-dot-num">{s}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
 
-          <div className="reveal-element timeline">
-            {STEPS.map((step, i) => (
-              <div key={step.num} className="timeline-item stagger-child">
-                <div className="timeline-marker">
-                  <span className="timeline-num">{step.num}</span>
-                  {i < STEPS.length - 1 && <div className="timeline-line" />}
+          {/* Right: form steps */}
+          <div className="app-form">
+            {step === 0 && (
+              <div className="form-placeholder">
+                <div className="form-placeholder-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
                 </div>
-                <div className="timeline-content">
-                  <h4>{step.title}</h4>
-                  <p>{step.desc}</p>
+                <p className="form-placeholder-text">Click &quot;Apply now&quot; above to start</p>
+              </div>
+            )}
+
+            {/* Step 1: Identity */}
+            {step === 1 && (
+              <div className="form-step" key="step1">
+                <div className="form-step-header">
+                  <span className="form-step-num">01</span>
+                  <h2 className="form-step-title">Identity</h2>
+                </div>
+
+                <div className="form-fields">
+                  <div className={`field-group ${focusedField === "twitter" ? "focused" : ""}`}>
+                    <label htmlFor="twitter" className="field-label">X handle</label>
+                    <input
+                      id="twitter"
+                      type="text"
+                      value={twitter}
+                      onChange={(e) => setTwitter(e.target.value)}
+                      onFocus={() => setFocusedField("twitter")}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="@yourhandle"
+                      className="field-input"
+                      autoComplete="off"
+                    />
+                  </div>
+
+                  <div className="field-row">
+                    <div className={`field-group ${focusedField === "months" ? "focused" : ""}`}>
+                      <label htmlFor="months" className="field-label">Months on Meteora</label>
+                      <input
+                        id="months"
+                        type="text"
+                        value={months}
+                        onChange={(e) => setMonths(e.target.value)}
+                        onFocus={() => setFocusedField("months")}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder="e.g. 6"
+                        className="field-input"
+                        autoComplete="off"
+                      />
+                    </div>
+                    <div className={`field-group ${focusedField === "volume" ? "focused" : ""}`}>
+                      <label htmlFor="volume" className="field-label">Monthly volume (USD)</label>
+                      <input
+                        id="volume"
+                        type="text"
+                        value={volume}
+                        onChange={(e) => setVolume(e.target.value)}
+                        onFocus={() => setFocusedField("volume")}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder="e.g. 50k"
+                        className="field-input"
+                        autoComplete="off"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="form-nav">
+                  <div />
+                  <button
+                    className="btn-next"
+                    disabled={!step1Ready}
+                    onClick={() => setStep(2)}
+                  >
+                    Continue
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </button>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            )}
 
-      {/* Callout */}
-      <section className="section-sm">
-        <div className="container-narrow">
-          <div className="reveal-element callout">
-            <strong>This is not a bug bounty.</strong> We are looking for
-            product thinkers -- people who can articulate what is confusing,
-            what is missing, and what would make them use something daily.
-            Technical skills help but product intuition matters more.
-          </div>
-        </div>
-      </section>
+            {/* Step 2: Experience */}
+            {step === 2 && (
+              <div className="form-step" key="step2">
+                <div className="form-step-header">
+                  <span className="form-step-num">02</span>
+                  <h2 className="form-step-title">Experience</h2>
+                </div>
 
-      {/* Application form */}
-      <section id="apply" className="form-section">
-        <div className="container-narrow">
-          <div className="reveal-element form-header">
-            <span className="section-eyebrow">Apply</span>
-            <h2 className="section-title" style={{ marginTop: 12 }}>
-              Join <span className="title-serif">Recon Squad</span>
-            </h2>
-            <p className="form-header-sub">
-              Season 01 is open. 10 slots total.
-            </p>
-          </div>
+                <div className="form-fields">
+                  <div className={`field-group ${focusedField === "products" ? "focused" : ""}`}>
+                    <label htmlFor="products" className="field-label">
+                      Which Meteora products do you actively LP on?
+                    </label>
+                    <textarea
+                      id="products"
+                      value={products}
+                      onChange={(e) => setProducts(e.target.value)}
+                      onFocus={() => setFocusedField("products")}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="DLMM, Dynamic Pools, Dynamic Vaults..."
+                      rows={2}
+                      className="field-textarea"
+                    />
+                  </div>
 
-          <div className="reveal-element">
-            <InterestForm />
+                  <div className={`field-group ${focusedField === "strategy" ? "focused" : ""}`}>
+                    <label htmlFor="strategy" className="field-label">
+                      What&apos;s your typical LP strategy?
+                    </label>
+                    <textarea
+                      id="strategy"
+                      value={strategy}
+                      onChange={(e) => setStrategy(e.target.value)}
+                      onFocus={() => setFocusedField("strategy")}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="Concentrated ranges, wide bins, vault-and-forget, active rebalancing..."
+                      rows={3}
+                      className="field-textarea"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-nav">
+                  <button className="btn-back" onClick={() => setStep(1)}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg>
+                    Back
+                  </button>
+                  <button
+                    className="btn-next"
+                    disabled={!step2Ready}
+                    onClick={() => setStep(3)}
+                  >
+                    Continue
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: Vision + Submit */}
+            {step === 3 && (
+              <div className="form-step" key="step3">
+                <div className="form-step-header">
+                  <span className="form-step-num">03</span>
+                  <h2 className="form-step-title">Final</h2>
+                </div>
+
+                <div className="form-fields">
+                  <div className={`field-group ${focusedField === "improve" ? "focused" : ""}`}>
+                    <label htmlFor="improve" className="field-label">
+                      What&apos;s one thing about Meteora&apos;s LP experience you&apos;d change?
+                      <span className="field-optional">optional -- this is the real filter</span>
+                    </label>
+                    <textarea
+                      id="improve"
+                      value={improve}
+                      onChange={(e) => setImprove(e.target.value)}
+                      onFocus={() => setFocusedField("improve")}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="Fee structure, position management, analytics, bin UX..."
+                      rows={4}
+                      className="field-textarea"
+                    />
+                  </div>
+
+                  <div className={`field-group ${focusedField === "wallet" ? "focused" : ""}`}>
+                    <label htmlFor="wallet" className="field-label">
+                      Wallet address
+                      <span className="field-hint">for compensation</span>
+                    </label>
+                    <input
+                      id="wallet"
+                      type="text"
+                      value={wallet}
+                      onChange={(e) => setWallet(e.target.value)}
+                      onFocus={() => setFocusedField("wallet")}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="Solana public key"
+                      className="field-input field-mono"
+                      autoComplete="off"
+                    />
+                  </div>
+                </div>
+
+                <div className="form-nav">
+                  <button className="btn-back" onClick={() => setStep(2)}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M19 12H5M12 19l-7-7 7-7" />
+                    </svg>
+                    Back
+                  </button>
+                  <button
+                    className="btn-submit"
+                    disabled={!step3Ready || status === "submitting"}
+                    onClick={handleSubmit}
+                  >
+                    {status === "submitting" ? "Submitting..." : "Submit application"}
+                  </button>
+                </div>
+
+                {status === "error" && (
+                  <p className="form-error">Something went wrong. Try again.</p>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="footer">
-        <div className="container-wide footer-inner">
-          <span className="footer-brand">MetEcoX</span>
-          <span className="footer-sep" />
-          <span className="footer-sub">by Meteora</span>
-        </div>
+        <span className="footer-brand">RECON SQUAD</span>
+        <span className="footer-sep" />
+        <span className="footer-sub">by Meteora</span>
       </footer>
     </>
   );

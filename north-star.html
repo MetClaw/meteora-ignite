@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>North Star | Meteora LP Dashboard</title>
+<meta name="description" content="Wallet-level measurement dashboard tracking LP growth and retention across Meteora protocol.">
+<meta name="theme-color" content="#08080c">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⭐</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  :root {
+    --primary: #6e45ff;
+    --primary-dim: rgba(110, 69, 255, 0.15);
+    --primary-glow: rgba(110, 69, 255, 0.35);
+    --accent: #f54b00;
+    --accent-dim: rgba(245, 75, 0, 0.15);
+    --bg-deepest: #08080c;
+    --bg-deep: #12121c;
+    --bg-card: #181825;
+    --bg-card-hover: #1e1e2e;
+    --text-primary: #f9f9fb;
+    --text-secondary: #9595b2;
+    --text-muted: #5c5c7a;
+    --border-primary: #434360;
+    --border-secondary: #2a2a3c;
+    --grad-gold: #f5c842;
+    --grad-orange: #f57a1f;
+    --grad-purple: #6e45ff;
+    --grad-pink: #c84fff;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-deepest);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Grain overlay */
+  .grain {
+    position: fixed; inset: 0; z-index: 9999;
+    pointer-events: none; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+
+  /* Ambient glow */
+  .ambient {
+    position: fixed; top: -40%; left: -20%; width: 140%; height: 140%;
+    background: radial-gradient(ellipse at 25% 15%, rgba(110, 69, 255, 0.07) 0%, transparent 55%),
+                radial-gradient(ellipse at 75% 85%, rgba(245, 75, 0, 0.04) 0%, transparent 55%);
+    pointer-events: none; z-index: 0;
+    animation: ambientDrift 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes ambientDrift {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-2%, 1%) scale(1.02); }
+  }
+
+  .container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .dash-header {
+    text-align: center;
+    padding: 64px 0 12px;
+  }
+
+  .dash-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 14px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.1s;
+  }
+
+  .dash-title {
+    font-size: clamp(30px, 5vw, 46px);
+    font-weight: 900;
+    line-height: 1.08;
+    margin-bottom: 10px;
+    letter-spacing: -1.5px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.2s;
+  }
+
+  .dash-title .star {
+    background: linear-gradient(135deg, var(--grad-gold), var(--grad-orange), var(--grad-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .dash-subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.55;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.3s;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes countUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* View Tabs */
+  .view-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    margin: 36px 0 28px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.35s;
+  }
+
+  .view-tab {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 10px 22px;
+    border-radius: 10px;
+    border: 1px solid var(--border-secondary);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .view-tab::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--primary-dim), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .view-tab:hover {
+    border-color: var(--border-primary);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+  }
+
+  .view-tab:hover::before { opacity: 1; }
+
+  .view-tab.active {
+    background: var(--primary-dim);
+    border-color: var(--primary);
+    color: var(--text-primary);
+    box-shadow: 0 0 20px rgba(110, 69, 255, 0.15);
+  }
+
+  .view-tab.active::before { opacity: 1; }
+
+  /* Metric Cards */
+  .metric-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.4s;
+  }
+
+  .metric-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-secondary);
+    border-radius: 14px;
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .metric-card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .metric-card:hover {
+    border-color: var(--border-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .metric-card:hover::after { opacity: 1; }
+
+  .metric-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .metric-value {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 6px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .metric-value.counting {
+    animation: countUp 0.4s ease forwards;
+  }
+
+  .metric-delta {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px;
+    border-radius: 6px;
+  }
+
+  .metric-delta.up {
+    color: var(--success);
+    background: rgba(34, 197, 94, 0.1);
+  }
+
+  .metric-delta.down {
+    color: var(--danger);
+    background: rgba(239, 68, 68, 0.1);
+  }
+
+  /* Chart Container */
+  .chart-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-secondary);
+    border-radius: 16px;
+    padding: 28px 24px 20px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.45s;
+  }
+
+  .chart-panel-title {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .chart-legend {
+    display: flex;
+    gap: 16px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 3px;
+  }
+
+  /* SVG Chart Styles */
+  .chart-svg {
+    width: 100%;
+    overflow: visible;
+  }
+
+  .chart-svg text {
+    font-family: var(--font-mono);
+    fill: var(--text-muted);
+  }
+
+  .axis-line {
+    stroke: var(--border-secondary);
+    stroke-width: 1;
+  }
+
+  .grid-line {
+    stroke: var(--border-secondary);
+    stroke-width: 0.5;
+    stroke-dasharray: 3, 4;
+    opacity: 0.5;
+  }
+
+  /* Tooltip */
+  .tooltip {
+    position: fixed;
+    pointer-events: none;
+    background: var(--bg-card);
+    border: 1px solid var(--border-primary);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+    backdrop-filter: blur(12px);
+    min-width: 180px;
+  }
+
+  .tooltip.visible { opacity: 1; }
+
+  .tooltip-title {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 0;
+    gap: 16px;
+  }
+
+  .tooltip-label {
+    color: var(--text-secondary);
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .tooltip-val {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .tooltip-divider {
+    height: 1px;
+    background: var(--border-secondary);
+    margin: 6px 0;
+  }
+
+  /* Heatmap */
+  .heatmap-row {
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+  }
+
+  .heatmap-row:hover rect.heat-cell {
+    stroke: var(--text-secondary);
+    stroke-width: 1.5;
+  }
+
+  .heatmap-row.selected rect.heat-cell {
+    stroke: var(--grad-gold);
+    stroke-width: 2;
+  }
+
+  /* View Panels */
+  .view-panel {
+    display: none;
+  }
+
+  .view-panel.active {
+    display: block;
+  }
+
+  /* Data Source Badge */
+  .source-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-secondary);
+    background: var(--bg-deep);
+    margin-top: 16px;
+    letter-spacing: 0.5px;
+  }
+
+  .source-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--success);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  .footer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-bottom: 48px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.5s;
+  }
+
+  .footer-note {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    letter-spacing: 0.3px;
+  }
+
+  /* Hover crosshair for area chart */
+  .crosshair-line {
+    stroke: var(--border-primary);
+    stroke-width: 1;
+    stroke-dasharray: 4, 3;
+    pointer-events: none;
+  }
+
+  .hover-dot {
+    pointer-events: none;
+    transition: opacity 0.1s ease;
+  }
+
+  /* Narrative Insight */
+  .narrative {
+    text-align: center;
+    margin: 0 auto 8px;
+    max-width: 640px;
+    min-height: 28px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease forwards 0.32s;
+  }
+
+  .narrative-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+
+  .narrative-text .nar-accent {
+    color: var(--grad-gold);
+    font-weight: 700;
+  }
+
+  .narrative-text.switching {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  /* Funnel Stage */
+  .funnel-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin-top: 4px;
+  }
+
+  .funnel-stage {
+    position: relative;
+    display: grid;
+    grid-template-columns: 120px 1fr 80px;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 0;
+    transition: background 0.2s ease;
+  }
+
+  .funnel-stage::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border-secondary);
+    opacity: 0.5;
+  }
+
+  .funnel-stage:last-child::after { display: none; }
+
+  .funnel-stage-label {
+    text-align: right;
+  }
+
+  .funnel-stage-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  .funnel-stage-grade {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    margin-top: 3px;
+    letter-spacing: 0.5px;
+  }
+
+  .grade-a { color: var(--success); }
+  .grade-b { color: var(--primary); }
+  .grade-c { color: var(--accent); }
+  .grade-d { color: var(--danger); }
+
+  .funnel-bar-track {
+    height: 44px;
+    background: rgba(42, 42, 60, 0.2);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .funnel-bar-fill {
+    height: 100%;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 14px;
+    width: 0;
+    transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+    position: relative;
+  }
+
+  .funnel-bar-fill.bottleneck {
+    background: linear-gradient(135deg, var(--accent), rgba(245, 75, 0, 0.7));
+    box-shadow: 0 0 20px rgba(245, 75, 0, 0.2);
+  }
+
+  .funnel-bar-fill.bottleneck::before {
+    content: 'BOTTLENECK';
+    position: absolute;
+    top: 50%;
+    left: 14px;
+    transform: translateY(-50%);
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
+  .funnel-bar-fill.normal {
+    background: linear-gradient(135deg, var(--primary), rgba(110, 69, 255, 0.65));
+  }
+
+  .funnel-bar-value {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    opacity: 0;
+    transition: opacity 0.4s ease 0.8s;
+  }
+
+  .funnel-conversion {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  .funnel-conversion .conv-pct {
+    display: block;
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-secondary);
+    margin-bottom: 1px;
+  }
+
+  .funnel-stage.is-bottleneck .funnel-conversion .conv-pct {
+    color: var(--accent);
+  }
+
+  .funnel-leak {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+    padding: 14px 20px;
+    border: 1px solid rgba(245, 75, 0, 0.25);
+    border-radius: 10px;
+    background: rgba(245, 75, 0, 0.04);
+  }
+
+  .funnel-leak-icon {
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .funnel-leak-text {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .funnel-leak-text strong {
+    color: var(--accent);
+    font-weight: 700;
+  }
+
+  /* Distribution */
+  .dist-threshold-label {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .dist-bar-track {
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+  }
+
+  .dist-bar-track:hover rect.dist-bar {
+    filter: brightness(1.2);
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .metric-row { grid-template-columns: 1fr; }
+    .chart-panel { padding: 20px 14px 16px; }
+    .dash-header { padding: 40px 0 8px; }
+    .view-tabs { gap: 4px; flex-wrap: wrap; }
+    .view-tab { padding: 8px 14px; font-size: 11px; }
+    .metric-value { font-size: 26px; }
+    .chart-legend { flex-direction: column; gap: 6px; }
+    .funnel-stage { grid-template-columns: 90px 1fr 60px; gap: 10px; }
+    .funnel-stage-name { font-size: 12px; }
+    .funnel-bar-fill.bottleneck::before { display: none; }
+    .narrative-text { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="ambient"></div>
+
+<div class="container">
+  <header class="dash-header">
+    <div class="dash-eyebrow">Meteora Protocol</div>
+    <h1 class="dash-title"><span class="star">North Star</span> Dashboard</h1>
+    <p class="dash-subtitle">Wallet-level LP measurement across DLMM and Dynamic Pools. The metric the fleet runs on.</p>
+  </header>
+
+  <div class="narrative" id="narrative">
+    <p class="narrative-text" id="narrative-text">Meteora retains LPs because the fees are real -- <span class="nar-accent">4.05% monthly yield</span> vs 0.97% industry average.</p>
+  </div>
+
+  <div class="view-tabs">
+    <button class="view-tab active" data-view="wallets">Weekly Active LPs</button>
+    <button class="view-tab" data-view="retention">Cohort Retention</button>
+    <button class="view-tab" data-view="funnel">Adoption Arc</button>
+    <button class="view-tab" data-view="distribution">Position Distribution</button>
+  </div>
+
+  <!-- VIEW 1: Weekly Active LPs -->
+  <div class="view-panel active" id="view-wallets">
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="metric-label">Total Active LPs</div>
+        <div class="metric-value counting" id="metric-total">--</div>
+        <span class="metric-delta up" id="delta-total"></span>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">DLMM LPs</div>
+        <div class="metric-value counting" id="metric-dlmm" style="color: var(--primary)">--</div>
+        <span class="metric-delta up" id="delta-dlmm"></span>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Dynamic Pool LPs</div>
+        <div class="metric-value counting" id="metric-dyn" style="color: var(--accent)">--</div>
+        <span class="metric-delta up" id="delta-dyn"></span>
+      </div>
+    </div>
+
+    <div class="chart-panel">
+      <div class="chart-panel-title">
+        <span>Weekly Unique Wallets (&gt;$1K Positions)</span>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background: var(--primary)"></div> DLMM</div>
+          <div class="legend-item"><div class="legend-dot" style="background: var(--accent)"></div> Dynamic Pools</div>
+        </div>
+      </div>
+      <div id="area-chart"></div>
+    </div>
+  </div>
+
+  <!-- VIEW 2: Cohort Retention -->
+  <div class="view-panel" id="view-retention">
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="metric-label">Avg 7d Retention</div>
+        <div class="metric-value counting" id="metric-7d" style="color: var(--primary)">--</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Avg 30d Retention</div>
+        <div class="metric-value counting" id="metric-30d" style="color: var(--grad-orange)">--</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Avg 90d Retention</div>
+        <div class="metric-value counting" id="metric-90d" style="color: var(--grad-gold)">--</div>
+      </div>
+    </div>
+
+    <div class="chart-panel">
+      <div class="chart-panel-title">
+        <span>Cohort Retention by First-Deposit Week</span>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background: rgba(110, 69, 255, 0.3)"></div> Low</div>
+          <div class="legend-item"><div class="legend-dot" style="background: rgba(110, 69, 255, 0.65)"></div> Mid</div>
+          <div class="legend-item"><div class="legend-dot" style="background: var(--primary)"></div> High</div>
+        </div>
+      </div>
+      <div id="heatmap-chart"></div>
+    </div>
+  </div>
+
+  <!-- VIEW 3: Adoption Arc / Funnel -->
+  <div class="view-panel" id="view-funnel">
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="metric-label">Top of Funnel</div>
+        <div class="metric-value counting" id="metric-tof" style="color: var(--success)">--</div>
+        <span class="metric-delta up">Academy Grads</span>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">North Star Cohort</div>
+        <div class="metric-value counting" id="metric-ns" style="color: var(--primary)">--</div>
+        <span class="metric-delta up">Active LPs &gt;$1K</span>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Full-Funnel Conv.</div>
+        <div class="metric-value counting" id="metric-conv" style="color: var(--accent)">--</div>
+        <span class="metric-delta down">Academy to Active</span>
+      </div>
+    </div>
+
+    <div class="chart-panel">
+      <div class="chart-panel-title">
+        <span>AARRR Adoption Funnel</span>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background: var(--primary)"></div> Healthy</div>
+          <div class="legend-item"><div class="legend-dot" style="background: var(--accent)"></div> Bottleneck</div>
+        </div>
+      </div>
+      <div id="funnel-chart"></div>
+    </div>
+  </div>
+
+  <!-- VIEW 4: Position Distribution -->
+  <div class="view-panel" id="view-distribution">
+    <div class="metric-row">
+      <div class="metric-card">
+        <div class="metric-label">Total LP Wallets</div>
+        <div class="metric-value counting" id="metric-total-wallets">--</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Above $1K Threshold</div>
+        <div class="metric-value counting" id="metric-above-1k" style="color: var(--primary)">--</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Pipeline (Below $1K)</div>
+        <div class="metric-value counting" id="metric-pipeline" style="color: var(--grad-gold)">--</div>
+      </div>
+    </div>
+
+    <div class="chart-panel">
+      <div class="chart-panel-title">
+        <span>LP Position Size Distribution</span>
+        <div class="chart-legend">
+          <div class="legend-item"><div class="legend-dot" style="background: var(--text-muted)"></div> Below Threshold</div>
+          <div class="legend-item"><div class="legend-dot" style="background: var(--primary)"></div> North Star Cohort</div>
+        </div>
+      </div>
+      <div id="dist-chart"></div>
+    </div>
+  </div>
+
+  <div class="footer-row">
+    <div class="source-badge">
+      <span class="source-dot"></span>
+      MOCK DATA -- Dune API integration pending
+    </div>
+    <div class="footer-note">Programs: LBUZKh... (DLMM) + Eo7WjK... (DAMM v1)</div>
+  </div>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+// ============================================================
+// NORTH STAR DASHBOARD
+// Meteora Protocol -- Wallet-Level LP Measurement
+// ============================================================
+// Dune API integration point:
+// Replace generateMockData() with fetchDuneData(queryId) calls
+// Dune v3 API: POST https://api.dune.com/api/v1/query/{id}/execute
+// ============================================================
+
+const COLORS = {
+  primary: '#6e45ff',
+  accent: '#f54b00',
+  gold: '#f5c842',
+  orange: '#f57a1f',
+  textMuted: '#5c5c7a',
+  textSecondary: '#9595b2',
+  textPrimary: '#f9f9fb',
+  border: '#2a2a3c',
+  success: '#22c55e',
+};
+
+// ---- Mock Data Generation ----
+function generateWeeklyData() {
+  const weeks = [];
+  const startDate = new Date('2025-10-06');
+  let dlmmBase = 1680;
+  let dynBase = 520;
+
+  for (let i = 0; i < 26; i++) {
+    const weekDate = new Date(startDate);
+    weekDate.setDate(weekDate.getDate() + i * 7);
+
+    // Organic growth with some variance
+    const dlmmGrowth = 25 + Math.random() * 40;
+    const dynGrowth = 8 + Math.random() * 18;
+
+    // Seasonal bumps (week 8-10 and 18-20)
+    const seasonalDlmm = (i >= 8 && i <= 10) ? 120 : (i >= 18 && i <= 20) ? 90 : 0;
+    const seasonalDyn = (i >= 8 && i <= 10) ? 45 : (i >= 18 && i <= 20) ? 30 : 0;
+
+    dlmmBase += dlmmGrowth + seasonalDlmm;
+    dynBase += dynGrowth + seasonalDyn;
+
+    // Small dips occasionally
+    if (i === 14 || i === 22) {
+      dlmmBase -= 80 + Math.random() * 40;
+      dynBase -= 25 + Math.random() * 15;
+    }
+
+    weeks.push({
+      week: weekDate,
+      weekLabel: `W${i + 1}`,
+      dateLabel: weekDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      dlmm: Math.round(dlmmBase),
+      dynamic: Math.round(dynBase),
+      total: Math.round(dlmmBase + dynBase),
+    });
+  }
+  return weeks;
+}
+
+function generateCohortData() {
+  const cohorts = [];
+  const startDate = new Date('2026-01-05');
+
+  for (let i = 0; i < 12; i++) {
+    const cohortDate = new Date(startDate);
+    cohortDate.setDate(cohortDate.getDate() + i * 7);
+
+    const newWallets = 180 + Math.round(Math.random() * 120);
+
+    // Realistic retention decay with some variance
+    const base7d = 72 + Math.random() * 10;
+    const base30d = 44 + Math.random() * 14;
+    const base90d = i < 4 ? (24 + Math.random() * 12) : null; // only first 4 cohorts have 90d data
+
+    cohorts.push({
+      cohortWeek: cohortDate,
+      label: cohortDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      newWallets,
+      retention7d: Math.round(base7d * 10) / 10,
+      retention30d: i < 8 ? Math.round(base30d * 10) / 10 : null,
+      retention90d: base90d !== null ? Math.round(base90d * 10) / 10 : null,
+    });
+  }
+  return cohorts;
+}
+
+const weeklyData = generateWeeklyData();
+const cohortData = generateCohortData();
+
+// ---- Animated Counter ----
+function animateCounter(el, target, suffix = '', prefix = '', duration = 900) {
+  const start = performance.now();
+  const startVal = 0;
+
+  function step(now) {
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+    const current = Math.round(startVal + (target - startVal) * eased);
+    el.textContent = prefix + current.toLocaleString() + suffix;
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ---- Populate Wallet Metrics ----
+function updateWalletMetrics() {
+  const latest = weeklyData[weeklyData.length - 1];
+  const prev = weeklyData[weeklyData.length - 2];
+
+  animateCounter(document.getElementById('metric-total'), latest.total);
+  animateCounter(document.getElementById('metric-dlmm'), latest.dlmm);
+  animateCounter(document.getElementById('metric-dyn'), latest.dynamic);
+
+  const totalDelta = ((latest.total - prev.total) / prev.total * 100).toFixed(1);
+  const dlmmDelta = ((latest.dlmm - prev.dlmm) / prev.dlmm * 100).toFixed(1);
+  const dynDelta = ((latest.dynamic - prev.dynamic) / prev.dynamic * 100).toFixed(1);
+
+  setDelta('delta-total', totalDelta);
+  setDelta('delta-dlmm', dlmmDelta);
+  setDelta('delta-dyn', dynDelta);
+}
+
+function setDelta(id, val) {
+  const el = document.getElementById(id);
+  const num = parseFloat(val);
+  const isUp = num >= 0;
+  el.className = `metric-delta ${isUp ? 'up' : 'down'}`;
+  el.textContent = `${isUp ? '+' : ''}${val}% WoW`;
+}
+
+// ---- Populate Retention Metrics ----
+function updateRetentionMetrics() {
+  const valid7d = cohortData.filter(c => c.retention7d !== null);
+  const valid30d = cohortData.filter(c => c.retention30d !== null);
+  const valid90d = cohortData.filter(c => c.retention90d !== null);
+
+  const avg7d = valid7d.reduce((s, c) => s + c.retention7d, 0) / valid7d.length;
+  const avg30d = valid30d.reduce((s, c) => s + c.retention30d, 0) / valid30d.length;
+  const avg90d = valid90d.length ? valid90d.reduce((s, c) => s + c.retention90d, 0) / valid90d.length : 0;
+
+  animateCounter(document.getElementById('metric-7d'), Math.round(avg7d), '%');
+  animateCounter(document.getElementById('metric-30d'), Math.round(avg30d), '%');
+  animateCounter(document.getElementById('metric-90d'), Math.round(avg90d), '%');
+}
+
+// ---- Tooltip ----
+const tooltip = document.getElementById('tooltip');
+
+function showTooltip(evt, html) {
+  tooltip.innerHTML = html;
+  tooltip.classList.add('visible');
+  positionTooltip(evt);
+}
+
+function positionTooltip(evt) {
+  const pad = 16;
+  const rect = tooltip.getBoundingClientRect();
+  let x = evt.clientX + pad;
+  let y = evt.clientY - rect.height / 2;
+
+  if (x + rect.width + pad > window.innerWidth) x = evt.clientX - rect.width - pad;
+  if (y < pad) y = pad;
+  if (y + rect.height + pad > window.innerHeight) y = window.innerHeight - rect.height - pad;
+
+  tooltip.style.left = x + 'px';
+  tooltip.style.top = y + 'px';
+}
+
+function hideTooltip() {
+  tooltip.classList.remove('visible');
+}
+
+// ---- Area Chart (D3) ----
+function drawAreaChart() {
+  const container = document.getElementById('area-chart');
+  container.innerHTML = '';
+
+  const rect = container.getBoundingClientRect();
+  const margin = { top: 12, right: 16, bottom: 36, left: 52 };
+  const width = rect.width - margin.left - margin.right;
+  const height = Math.min(360, Math.max(240, rect.width * 0.38)) - margin.top - margin.bottom;
+
+  const svg = d3.select(container)
+    .append('svg')
+    .attr('class', 'chart-svg')
+    .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet');
+
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const x = d3.scaleTime()
+    .domain(d3.extent(weeklyData, d => d.week))
+    .range([0, width]);
+
+  const maxTotal = d3.max(weeklyData, d => d.total);
+  const y = d3.scaleLinear()
+    .domain([0, maxTotal * 1.1])
+    .range([height, 0]);
+
+  // Grid lines
+  const yTicks = y.ticks(5);
+  yTicks.forEach(tick => {
+    g.append('line')
+      .attr('class', 'grid-line')
+      .attr('x1', 0).attr('x2', width)
+      .attr('y1', y(tick)).attr('y2', y(tick));
+  });
+
+  // Y axis labels
+  yTicks.forEach(tick => {
+    g.append('text')
+      .attr('x', -10)
+      .attr('y', y(tick))
+      .attr('dy', '0.35em')
+      .attr('text-anchor', 'end')
+      .attr('font-size', '10px')
+      .text(tick >= 1000 ? (tick / 1000).toFixed(1) + 'K' : tick);
+  });
+
+  // X axis labels
+  const xTicks = x.ticks(d3.timeWeek.every(4));
+  xTicks.forEach(tick => {
+    g.append('text')
+      .attr('x', x(tick))
+      .attr('y', height + 24)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '10px')
+      .text(d3.timeFormat('%b %d')(tick));
+  });
+
+  // Gradient definitions
+  const defs = svg.append('defs');
+
+  const dlmmGrad = defs.append('linearGradient').attr('id', 'dlmmFill').attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 1);
+  dlmmGrad.append('stop').attr('offset', '0%').attr('stop-color', COLORS.primary).attr('stop-opacity', 0.4);
+  dlmmGrad.append('stop').attr('offset', '100%').attr('stop-color', COLORS.primary).attr('stop-opacity', 0.02);
+
+  const dynGrad = defs.append('linearGradient').attr('id', 'dynFill').attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 1);
+  dynGrad.append('stop').attr('offset', '0%').attr('stop-color', COLORS.accent).attr('stop-opacity', 0.35);
+  dynGrad.append('stop').attr('offset', '100%').attr('stop-color', COLORS.accent).attr('stop-opacity', 0.02);
+
+  // Stacked areas
+  const areaDynamic = d3.area()
+    .x(d => x(d.week))
+    .y0(height)
+    .y1(d => y(d.dynamic))
+    .curve(d3.curveMonotoneX);
+
+  const areaTotal = d3.area()
+    .x(d => x(d.week))
+    .y0(d => y(d.dynamic))
+    .y1(d => y(d.total))
+    .curve(d3.curveMonotoneX);
+
+  // Draw dynamic pool area (bottom)
+  g.append('path')
+    .datum(weeklyData)
+    .attr('d', areaDynamic)
+    .attr('fill', 'url(#dynFill)')
+    .attr('opacity', 0)
+    .transition().duration(800).delay(200)
+    .attr('opacity', 1);
+
+  // Draw DLMM area (top, stacked)
+  g.append('path')
+    .datum(weeklyData)
+    .attr('d', areaTotal)
+    .attr('fill', 'url(#dlmmFill)')
+    .attr('opacity', 0)
+    .transition().duration(800).delay(300)
+    .attr('opacity', 1);
+
+  // Lines on top
+  const lineDynamic = d3.line()
+    .x(d => x(d.week))
+    .y(d => y(d.dynamic))
+    .curve(d3.curveMonotoneX);
+
+  const lineTotal = d3.line()
+    .x(d => x(d.week))
+    .y(d => y(d.total))
+    .curve(d3.curveMonotoneX);
+
+  g.append('path')
+    .datum(weeklyData)
+    .attr('d', lineDynamic)
+    .attr('fill', 'none')
+    .attr('stroke', COLORS.accent)
+    .attr('stroke-width', 2)
+    .attr('opacity', 0.8);
+
+  g.append('path')
+    .datum(weeklyData)
+    .attr('d', lineTotal)
+    .attr('fill', 'none')
+    .attr('stroke', COLORS.primary)
+    .attr('stroke-width', 2)
+    .attr('opacity', 0.9);
+
+  // Interactive overlay
+  const crosshair = g.append('line')
+    .attr('class', 'crosshair-line')
+    .attr('y1', 0).attr('y2', height)
+    .attr('opacity', 0);
+
+  const dotTotal = g.append('circle')
+    .attr('class', 'hover-dot')
+    .attr('r', 5)
+    .attr('fill', COLORS.primary)
+    .attr('stroke', '#fff')
+    .attr('stroke-width', 2)
+    .attr('opacity', 0);
+
+  const dotDyn = g.append('circle')
+    .attr('class', 'hover-dot')
+    .attr('r', 5)
+    .attr('fill', COLORS.accent)
+    .attr('stroke', '#fff')
+    .attr('stroke-width', 2)
+    .attr('opacity', 0);
+
+  // Hover rect
+  g.append('rect')
+    .attr('width', width).attr('height', height)
+    .attr('fill', 'transparent')
+    .on('mousemove', function(evt) {
+      const [mx] = d3.pointer(evt);
+      const bisect = d3.bisector(d => d.week).left;
+      const date = x.invert(mx);
+      let idx = bisect(weeklyData, date, 1);
+      if (idx >= weeklyData.length) idx = weeklyData.length - 1;
+
+      // Snap to nearest
+      const d0 = weeklyData[idx - 1];
+      const d1 = weeklyData[idx];
+      const d = (d1 && date - d0.week > d1.week - date) ? d1 : d0;
+      const di = weeklyData.indexOf(d);
+
+      const cx = x(d.week);
+      crosshair.attr('x1', cx).attr('x2', cx).attr('opacity', 1);
+      dotTotal.attr('cx', cx).attr('cy', y(d.total)).attr('opacity', 1);
+      dotDyn.attr('cx', cx).attr('cy', y(d.dynamic)).attr('opacity', 1);
+
+      const prev = di > 0 ? weeklyData[di - 1] : null;
+      const totalWoW = prev ? ((d.total - prev.total) / prev.total * 100).toFixed(1) : '--';
+      const dlmmWoW = prev ? ((d.dlmm - prev.dlmm) / prev.dlmm * 100).toFixed(1) : '--';
+
+      showTooltip(evt, `
+        <div class="tooltip-title">${d.dateLabel}</div>
+        <div class="tooltip-row">
+          <span class="tooltip-label"><span class="legend-dot" style="background:${COLORS.primary};display:inline-block;width:6px;height:6px;border-radius:2px"></span> DLMM</span>
+          <span class="tooltip-val" style="color:${COLORS.primary}">${d.dlmm.toLocaleString()}</span>
+        </div>
+        <div class="tooltip-row">
+          <span class="tooltip-label"><span class="legend-dot" style="background:${COLORS.accent};display:inline-block;width:6px;height:6px;border-radius:2px"></span> Dynamic</span>
+          <span class="tooltip-val" style="color:${COLORS.accent}">${d.dynamic.toLocaleString()}</span>
+        </div>
+        <div class="tooltip-divider"></div>
+        <div class="tooltip-row">
+          <span class="tooltip-label">Total</span>
+          <span class="tooltip-val">${d.total.toLocaleString()}</span>
+        </div>
+        <div class="tooltip-row">
+          <span class="tooltip-label">WoW</span>
+          <span class="tooltip-val" style="color:${parseFloat(totalWoW) >= 0 ? COLORS.success : '#ef4444'}">${totalWoW !== '--' ? (parseFloat(totalWoW) >= 0 ? '+' : '') + totalWoW + '%' : '--'}</span>
+        </div>
+      `);
+    })
+    .on('mouseleave', function() {
+      crosshair.attr('opacity', 0);
+      dotTotal.attr('opacity', 0);
+      dotDyn.attr('opacity', 0);
+      hideTooltip();
+    });
+}
+
+// ---- Heatmap Chart (D3) ----
+function drawHeatmap() {
+  const container = document.getElementById('heatmap-chart');
+  container.innerHTML = '';
+
+  const rect = container.getBoundingClientRect();
+  const margin = { top: 40, right: 16, bottom: 16, left: 90 };
+  const width = rect.width - margin.left - margin.right;
+  const height = cohortData.length * 48;
+  const columns = ['retention7d', 'retention30d', 'retention90d'];
+  const colLabels = ['7-Day', '30-Day', '90-Day'];
+
+  const svg = d3.select(container)
+    .append('svg')
+    .attr('class', 'chart-svg')
+    .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet');
+
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const cellW = Math.min(width / columns.length, 180);
+  const cellH = 38;
+  const cellGap = 4;
+  const gridStartX = (width - (cellW * columns.length + cellGap * (columns.length - 1))) / 2;
+
+  // Color scale
+  const colorScale = d3.scaleLinear()
+    .domain([0, 50, 100])
+    .range(['rgba(110, 69, 255, 0.08)', 'rgba(110, 69, 255, 0.4)', 'rgba(110, 69, 255, 0.9)']);
+
+  // Column headers
+  colLabels.forEach((label, i) => {
+    g.append('text')
+      .attr('x', gridStartX + i * (cellW + cellGap) + cellW / 2)
+      .attr('y', -14)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '11px')
+      .attr('font-weight', '600')
+      .attr('fill', COLORS.textSecondary)
+      .text(label);
+  });
+
+  let selectedRow = null;
+
+  // Rows
+  cohortData.forEach((cohort, ri) => {
+    const rowG = g.append('g')
+      .attr('class', 'heatmap-row')
+      .attr('transform', `translate(0, ${ri * (cellH + cellGap)})`)
+      .attr('opacity', 0)
+      .transition().duration(400).delay(ri * 50)
+      .attr('opacity', 1);
+
+    const rowGStatic = g.append('g')
+      .attr('class', 'heatmap-row')
+      .attr('transform', `translate(0, ${ri * (cellH + cellGap)})`);
+
+    // Row label
+    rowGStatic.append('text')
+      .attr('x', -12)
+      .attr('y', cellH / 2)
+      .attr('dy', '0.35em')
+      .attr('text-anchor', 'end')
+      .attr('font-size', '11px')
+      .attr('fill', COLORS.textSecondary)
+      .text(cohort.label);
+
+    // Wallets count label
+    rowGStatic.append('text')
+      .attr('x', -12)
+      .attr('y', cellH / 2 + 13)
+      .attr('dy', '0.35em')
+      .attr('text-anchor', 'end')
+      .attr('font-size', '9px')
+      .attr('fill', COLORS.textMuted)
+      .text(`${cohort.newWallets} new`);
+
+    columns.forEach((col, ci) => {
+      const val = cohort[col];
+      const cx = gridStartX + ci * (cellW + cellGap);
+
+      if (val === null) {
+        // No data yet
+        rowGStatic.append('rect')
+          .attr('class', 'heat-cell')
+          .attr('x', cx).attr('y', 0)
+          .attr('width', cellW).attr('height', cellH)
+          .attr('rx', 6)
+          .attr('fill', 'rgba(255,255,255,0.02)')
+          .attr('stroke', COLORS.border)
+          .attr('stroke-width', 1);
+
+        rowGStatic.append('text')
+          .attr('x', cx + cellW / 2)
+          .attr('y', cellH / 2)
+          .attr('dy', '0.35em')
+          .attr('text-anchor', 'middle')
+          .attr('font-size', '11px')
+          .attr('fill', COLORS.textMuted)
+          .text('--');
+      } else {
+        rowGStatic.append('rect')
+          .attr('class', 'heat-cell')
+          .attr('x', cx).attr('y', 0)
+          .attr('width', cellW).attr('height', cellH)
+          .attr('rx', 6)
+          .attr('fill', colorScale(val))
+          .attr('stroke', 'transparent')
+          .attr('stroke-width', 1.5)
+          .style('transition', 'all 0.2s ease');
+
+        rowGStatic.append('text')
+          .attr('x', cx + cellW / 2)
+          .attr('y', cellH / 2)
+          .attr('dy', '0.35em')
+          .attr('text-anchor', 'middle')
+          .attr('font-size', '14px')
+          .attr('font-weight', '700')
+          .attr('fill', val > 50 ? COLORS.textPrimary : COLORS.textSecondary)
+          .text(val.toFixed(1) + '%');
+      }
+    });
+
+    // Row hover interaction
+    rowGStatic.append('rect')
+      .attr('x', -margin.left).attr('y', -cellGap / 2)
+      .attr('width', width + margin.left + margin.right)
+      .attr('height', cellH + cellGap)
+      .attr('fill', 'transparent')
+      .style('cursor', 'pointer')
+      .on('mousemove', function(evt) {
+        const parts = [];
+        if (cohort.retention7d !== null) parts.push(`<div class="tooltip-row"><span class="tooltip-label">7-Day</span><span class="tooltip-val" style="color:${COLORS.primary}">${cohort.retention7d}%</span></div>`);
+        if (cohort.retention30d !== null) parts.push(`<div class="tooltip-row"><span class="tooltip-label">30-Day</span><span class="tooltip-val" style="color:${COLORS.orange}">${cohort.retention30d}%</span></div>`);
+        if (cohort.retention90d !== null) parts.push(`<div class="tooltip-row"><span class="tooltip-label">90-Day</span><span class="tooltip-val" style="color:${COLORS.gold}">${cohort.retention90d}%</span></div>`);
+
+        showTooltip(evt, `
+          <div class="tooltip-title">Cohort: ${cohort.label}</div>
+          <div class="tooltip-row"><span class="tooltip-label">New Wallets</span><span class="tooltip-val">${cohort.newWallets}</span></div>
+          <div class="tooltip-divider"></div>
+          ${parts.join('')}
+        `);
+      })
+      .on('mouseleave', hideTooltip)
+      .on('click', function() {
+        const allRows = container.querySelectorAll('.heatmap-row');
+        if (selectedRow === ri) {
+          selectedRow = null;
+          allRows.forEach(r => r.classList.remove('selected'));
+          allRows.forEach(r => r.style.opacity = '1');
+        } else {
+          selectedRow = ri;
+          allRows.forEach((r, i) => {
+            r.classList.remove('selected');
+            // Each cohort has 2 groups (animated + static), so selected is at index ri*2+1
+            r.style.opacity = '0.35';
+          });
+          // Highlight clicked row pair
+          const idx = ri * 2;
+          if (allRows[idx]) allRows[idx].style.opacity = '1';
+          if (allRows[idx + 1]) {
+            allRows[idx + 1].style.opacity = '1';
+            allRows[idx + 1].classList.add('selected');
+          }
+        }
+      });
+  });
+}
+
+// ---- Narrative Switcher ----
+const narratives = {
+  wallets: 'Meteora retains LPs because the fees are real -- <span class="nar-accent">4.05% monthly yield</span> vs 0.97% industry average.',
+  retention: '50% of LPs stay past 6 months. The question is what happens in the <span class="nar-accent">first 7 days</span>.',
+  funnel: 'Activation is the bottleneck. We acquire well, retain well, but <span class="nar-accent">lose users before first deposit</span>.',
+  distribution: 'The North Star counts wallets above $1K. Everything below is the <span class="nar-accent">growth pipeline</span>.',
+};
+
+function switchNarrative(view) {
+  const el = document.getElementById('narrative-text');
+  el.classList.add('switching');
+  setTimeout(() => {
+    el.innerHTML = narratives[view];
+    el.classList.remove('switching');
+  }, 300);
+}
+
+// ---- Funnel Data & Rendering ----
+const funnelStages = [
+  { name: 'Academy Grad', count: 18500, grade: 'B+', gradeClass: 'grade-b', aarrr: 'ACQUISITION', bottleneck: false },
+  { name: 'Wallet Connect', count: 9200, grade: 'C-', gradeClass: 'grade-c', aarrr: 'ACTIVATION', bottleneck: true },
+  { name: 'First Deposit', count: 4600, grade: 'C-', gradeClass: 'grade-c', aarrr: 'ACTIVATION', bottleneck: true },
+  { name: 'Active LP >$1K', count: 2800, grade: 'B', gradeClass: 'grade-b', aarrr: 'RETENTION', bottleneck: false },
+  { name: 'Evangelist', count: 420, grade: 'D', gradeClass: 'grade-d', aarrr: 'REFERRAL', bottleneck: false },
+];
+
+function drawFunnel() {
+  const container = document.getElementById('funnel-chart');
+  container.innerHTML = '';
+
+  const wrap = document.createElement('div');
+  wrap.className = 'funnel-wrap';
+
+  const maxCount = funnelStages[0].count;
+
+  funnelStages.forEach((stage, i) => {
+    const pct = (stage.count / maxCount) * 100;
+    const convRate = i > 0 ? ((stage.count / funnelStages[i - 1].count) * 100).toFixed(0) : null;
+
+    const row = document.createElement('div');
+    row.className = 'funnel-stage' + (stage.bottleneck ? ' is-bottleneck' : '');
+
+    row.innerHTML = `
+      <div class="funnel-stage-label">
+        <div class="funnel-stage-name">${stage.name}</div>
+        <div class="funnel-stage-grade ${stage.gradeClass}">${stage.aarrr} ${stage.grade}</div>
+      </div>
+      <div class="funnel-bar-track">
+        <div class="funnel-bar-fill ${stage.bottleneck ? 'bottleneck' : 'normal'}" data-pct="${Math.max(pct, 6)}">
+          <span class="funnel-bar-value">${stage.count.toLocaleString()}</span>
+        </div>
+      </div>
+      <div class="funnel-conversion">
+        ${convRate !== null ? `<span class="conv-pct">${convRate}%</span><span>conv.</span>` : '<span style="color:var(--text-muted)">--</span>'}
+      </div>
+    `;
+
+    wrap.appendChild(row);
+  });
+
+  // Leak callout
+  const leak = document.createElement('div');
+  leak.className = 'funnel-leak';
+  leak.innerHTML = `
+    <span class="funnel-leak-icon">&#9888;</span>
+    <span class="funnel-leak-text"><strong>50% drop</strong> from Academy to Wallet Connect. Activation friction (DLMM complexity, no guided onboarding) is where we bleed most.</span>
+  `;
+  wrap.appendChild(leak);
+
+  container.appendChild(wrap);
+
+  // Animate bars
+  setTimeout(() => {
+    wrap.querySelectorAll('.funnel-bar-fill').forEach((bar, i) => {
+      setTimeout(() => {
+        bar.style.width = bar.dataset.pct + '%';
+        bar.querySelector('.funnel-bar-value').style.opacity = '1';
+      }, i * 120);
+    });
+  }, 100);
+}
+
+function updateFunnelMetrics() {
+  animateCounter(document.getElementById('metric-tof'), 18500);
+  animateCounter(document.getElementById('metric-ns'), 2800);
+  animateCounter(document.getElementById('metric-conv'), 15, '%');
+}
+
+// ---- Distribution Data & Rendering ----
+const distBuckets = [
+  { label: '<$100', wallets: 18200, aboveThreshold: false },
+  { label: '$100-$1K', wallets: 9800, aboveThreshold: false },
+  { label: '$1K-$5K', wallets: 4300, aboveThreshold: true },
+  { label: '$5K-$25K', wallets: 2100, aboveThreshold: true },
+  { label: '$25K-$100K', wallets: 680, aboveThreshold: true },
+  { label: '>$100K', wallets: 190, aboveThreshold: true },
+];
+
+function drawDistribution() {
+  const container = document.getElementById('dist-chart');
+  container.innerHTML = '';
+
+  const rect = container.getBoundingClientRect();
+  const margin = { top: 12, right: 80, bottom: 28, left: 100 };
+  const width = rect.width - margin.left - margin.right;
+  const height = distBuckets.length * 58;
+
+  const svg = d3.select(container)
+    .append('svg')
+    .attr('class', 'chart-svg')
+    .attr('viewBox', `0 0 ${width + margin.left + margin.right} ${height + margin.top + margin.bottom}`)
+    .attr('preserveAspectRatio', 'xMidYMid meet');
+
+  const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+  const maxWallets = d3.max(distBuckets, d => d.wallets);
+
+  const x = d3.scaleLinear()
+    .domain([0, maxWallets * 1.15])
+    .range([0, width]);
+
+  const y = d3.scaleBand()
+    .domain(distBuckets.map(d => d.label))
+    .range([0, height])
+    .padding(0.28);
+
+  // Grid lines
+  const xTicks = x.ticks(5);
+  xTicks.forEach(tick => {
+    g.append('line')
+      .attr('class', 'grid-line')
+      .attr('x1', x(tick)).attr('x2', x(tick))
+      .attr('y1', 0).attr('y2', height);
+  });
+
+  // Threshold line at the split between below/above
+  const thresholdY = y('$1K-$5K');
+  g.append('line')
+    .attr('x1', -8).attr('x2', width + 50)
+    .attr('y1', thresholdY - 4).attr('y2', thresholdY - 4)
+    .attr('stroke', COLORS.gold)
+    .attr('stroke-width', 2)
+    .attr('stroke-dasharray', '6, 4')
+    .attr('opacity', 0.7);
+
+  g.append('text')
+    .attr('class', 'dist-threshold-label')
+    .attr('x', width + 50)
+    .attr('y', thresholdY - 10)
+    .attr('text-anchor', 'end')
+    .attr('font-size', '10px')
+    .attr('fill', COLORS.gold)
+    .text('NORTH STAR THRESHOLD');
+
+  // Bars
+  distBuckets.forEach((bucket, i) => {
+    const barY = y(bucket.label);
+    const barH = y.bandwidth();
+
+    // Gradient defs
+    const gradId = `distGrad${i}`;
+    const defs = svg.select('defs').empty() ? svg.append('defs') : svg.select('defs');
+
+    const grad = defs.append('linearGradient').attr('id', gradId).attr('x1', 0).attr('y1', 0).attr('x2', 1).attr('y2', 0);
+    if (bucket.aboveThreshold) {
+      grad.append('stop').attr('offset', '0%').attr('stop-color', COLORS.primary).attr('stop-opacity', 0.9);
+      grad.append('stop').attr('offset', '100%').attr('stop-color', COLORS.primary).attr('stop-opacity', 0.5);
+    } else {
+      grad.append('stop').attr('offset', '0%').attr('stop-color', '#5c5c7a').attr('stop-opacity', 0.5);
+      grad.append('stop').attr('offset', '100%').attr('stop-color', '#5c5c7a').attr('stop-opacity', 0.2);
+    }
+
+    // Label
+    g.append('text')
+      .attr('x', -12)
+      .attr('y', barY + barH / 2)
+      .attr('dy', '0.35em')
+      .attr('text-anchor', 'end')
+      .attr('font-size', '12px')
+      .attr('font-weight', '600')
+      .attr('fill', bucket.aboveThreshold ? COLORS.textPrimary : COLORS.textSecondary)
+      .text(bucket.label);
+
+    // Bar (animated)
+    const barG = g.append('g').attr('class', 'dist-bar-track');
+
+    barG.append('rect')
+      .attr('class', 'dist-bar')
+      .attr('x', 0)
+      .attr('y', barY)
+      .attr('width', 0)
+      .attr('height', barH)
+      .attr('rx', 6)
+      .attr('fill', `url(#${gradId})`)
+      .transition()
+      .duration(900)
+      .delay(i * 100)
+      .attr('width', x(bucket.wallets));
+
+    // Value label
+    barG.append('text')
+      .attr('x', x(bucket.wallets) + 8)
+      .attr('y', barY + barH / 2)
+      .attr('dy', '0.35em')
+      .attr('font-size', '12px')
+      .attr('font-weight', '700')
+      .attr('fill', bucket.aboveThreshold ? COLORS.primary : COLORS.textMuted)
+      .attr('opacity', 0)
+      .text(bucket.wallets.toLocaleString())
+      .transition()
+      .duration(400)
+      .delay(i * 100 + 600)
+      .attr('opacity', 1);
+
+    // Hover tooltip
+    barG.on('mousemove', function(evt) {
+      const pctOfTotal = ((bucket.wallets / distBuckets.reduce((s, b) => s + b.wallets, 0)) * 100).toFixed(1);
+      showTooltip(evt, `
+        <div class="tooltip-title">${bucket.label} positions</div>
+        <div class="tooltip-row"><span class="tooltip-label">Wallets</span><span class="tooltip-val">${bucket.wallets.toLocaleString()}</span></div>
+        <div class="tooltip-row"><span class="tooltip-label">% of Total</span><span class="tooltip-val">${pctOfTotal}%</span></div>
+        <div class="tooltip-row"><span class="tooltip-label">Status</span><span class="tooltip-val" style="color:${bucket.aboveThreshold ? COLORS.primary : COLORS.textMuted}">${bucket.aboveThreshold ? 'North Star' : 'Pipeline'}</span></div>
+      `);
+    }).on('mouseleave', hideTooltip);
+  });
+}
+
+function updateDistMetrics() {
+  const total = distBuckets.reduce((s, b) => s + b.wallets, 0);
+  const above = distBuckets.filter(b => b.aboveThreshold).reduce((s, b) => s + b.wallets, 0);
+  const below = total - above;
+
+  animateCounter(document.getElementById('metric-total-wallets'), total);
+  animateCounter(document.getElementById('metric-above-1k'), above);
+  animateCounter(document.getElementById('metric-pipeline'), below);
+}
+
+// ---- View Switching ----
+document.querySelectorAll('.view-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const view = tab.dataset.view;
+
+    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(`view-${view}`).classList.add('active');
+
+    switchNarrative(view);
+
+    if (view === 'wallets') {
+      updateWalletMetrics();
+      drawAreaChart();
+    } else if (view === 'retention') {
+      updateRetentionMetrics();
+      drawHeatmap();
+    } else if (view === 'funnel') {
+      updateFunnelMetrics();
+      drawFunnel();
+    } else if (view === 'distribution') {
+      updateDistMetrics();
+      drawDistribution();
+    }
+  });
+});
+
+// ---- Resize Handler ----
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    const activeView = document.querySelector('.view-tab.active').dataset.view;
+    if (activeView === 'wallets') drawAreaChart();
+    else if (activeView === 'retention') drawHeatmap();
+    else if (activeView === 'funnel') drawFunnel();
+    else if (activeView === 'distribution') drawDistribution();
+  }, 200);
+});
+
+// ---- Init ----
+updateWalletMetrics();
+requestAnimationFrame(() => {
+  drawAreaChart();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,2093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRAXIS — Work Operating System</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg-base: #060a12;
+  --bg-surface: #0c1220;
+  --bg-elevated: #111827;
+  --bg-input: #0f1629;
+  --border: #1e293b;
+  --border-focus: #d97706;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #475569;
+  --accent: #f59e0b;
+  --accent-dim: #b45309;
+  --accent-glow: rgba(245, 158, 11, 0.08);
+  --success: #22c55e;
+  --warning: #ef4444;
+  --cat-founder: #f59e0b;
+  --cat-distribution: #3b82f6;
+  --cat-content: #8b5cf6;
+  --cat-events: #ec4899;
+  --cat-intros: #14b8a6;
+  --cat-product: #6366f1;
+  --cat-ops: #64748b;
+  --cat-campaign: #f97316;
+  --cat-training: #22d3ee;
+  --radius: 6px;
+  --radius-lg: 10px;
+}
+
+html { font-size: 15px; }
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* HEADER */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(6, 10, 18, 0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.logo span {
+  color: var(--text-muted);
+  font-weight: 300;
+  letter-spacing: 0.1em;
+  margin-left: 0.75rem;
+  font-size: 0.7rem;
+}
+
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--bg-surface);
+  border-radius: var(--radius);
+  padding: 3px;
+}
+
+.tab {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  padding: 0.4rem 0.9rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.tab:hover { color: var(--text-secondary); }
+.tab.active {
+  background: var(--bg-elevated);
+  color: var(--accent);
+}
+
+/* MAIN */
+.main {
+  margin-top: 56px;
+  padding: 1.5rem;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.layer { display: none; animation: fadeIn 0.25s ease; }
+.layer.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* LAYER HEADER */
+.layer-header {
+  margin-bottom: 1.5rem;
+}
+
+.layer-header h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.layer-header p {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-family: 'DM Mono', monospace;
+}
+
+/* FORM STYLES */
+.capture-form {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.form-group { display: flex; flex-direction: column; gap: 0.3rem; }
+.form-group.full { grid-column: 1 / -1; }
+
+.form-group label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+input, select, textarea {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.85rem;
+  padding: 0.55rem 0.75rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--border-focus);
+}
+
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23475569'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  padding-right: 2rem;
+}
+
+/* VISIBILITY TOGGLE */
+.visibility-toggle {
+  display: flex;
+  gap: 2px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.vis-btn {
+  flex: 1;
+  padding: 0.55rem 0.5rem;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.04em;
+}
+
+.vis-btn.active {
+  background: var(--accent-dim);
+  color: var(--text-primary);
+}
+
+/* SUBMIT */
+.submit-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.75rem;
+}
+
+.btn-submit {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.6rem 1.5rem;
+  background: var(--accent);
+  color: var(--bg-base);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+
+.btn-submit:hover { background: #fbbf24; }
+.btn-submit:active { transform: scale(0.97); }
+
+/* LOG TABLE */
+.log-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.log-search {
+  flex: 1;
+  min-width: 200px;
+}
+
+.log-filter {
+  min-width: 140px;
+}
+
+.log-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.log-table th {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg-base);
+}
+
+.log-table td {
+  font-size: 0.8rem;
+  padding: 0.55rem 0.6rem;
+  border-bottom: 1px solid rgba(30, 41, 59, 0.4);
+  vertical-align: top;
+}
+
+.log-table tr:hover td { background: var(--accent-glow); }
+
+.cat-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.vis-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.proof-link {
+  color: var(--accent);
+  text-decoration: none;
+  font-size: 0.7rem;
+  font-family: 'DM Mono', monospace;
+}
+
+.proof-link:hover { text-decoration: underline; }
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.75rem;
+  padding: 0.2rem;
+  opacity: 0.4;
+  transition: all 0.15s;
+}
+
+.delete-btn:hover { opacity: 1; color: var(--warning); }
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+}
+
+/* INSIGHTS */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+}
+
+.stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+.stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1;
+}
+
+.stat-value small {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 400;
+  margin-left: 0.3rem;
+}
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.insight-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+
+.insight-card h3 {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.insight-card.full-width { grid-column: 1 / -1; }
+
+/* CSS CHARTS */
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.bar-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  width: 90px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.bar-track {
+  flex: 1;
+  height: 18px;
+  background: var(--bg-input);
+  border-radius: 3px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.5s ease;
+  min-width: 2px;
+}
+
+.bar-count {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  width: 30px;
+  text-align: right;
+}
+
+/* DONUT */
+.donut-container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.donut {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.donut-center {
+  position: absolute;
+  inset: 25px;
+  background: var(--bg-surface);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.donut-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* CAPACITY ALERT */
+.capacity-alert {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  color: #fca5a5;
+}
+
+.capacity-alert strong { color: var(--warning); }
+
+/* OUTCOMES LIST */
+.outcome-item {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(30, 41, 59, 0.3);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.outcome-text { font-size: 0.8rem; color: var(--text-secondary); flex: 1; }
+.outcome-who { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--text-muted); }
+.outcome-date { font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--text-muted); white-space: nowrap; }
+
+/* PLAYBOOKS */
+.playbooks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.playbook-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  transition: border-color 0.2s;
+}
+
+.playbook-card:hover { border-color: rgba(245, 158, 11, 0.3); }
+
+.playbook-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
+.playbook-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.playbook-runs {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  background: var(--bg-input);
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+}
+
+.playbook-desc {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.playbook-steps {
+  display: none;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.playbook-steps.open { display: block; }
+
+.playbook-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.3rem 0;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.playbook-step input[type="checkbox"] {
+  accent-color: var(--accent);
+  margin-top: 0.15rem;
+}
+
+.playbook-actions {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.btn-sm {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+.btn-sm.primary { background: var(--accent); color: var(--bg-base); border-color: var(--accent); }
+.btn-sm.primary:hover { background: #fbbf24; }
+
+/* NEW PLAYBOOK FORM */
+.new-playbook-form {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  display: none;
+}
+
+.new-playbook-form.open { display: block; }
+
+/* PORTFOLIO */
+.portfolio-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.portfolio-stat {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  text-align: center;
+}
+
+.portfolio-stat .stat-value { font-size: 2rem; color: var(--accent); }
+
+.timeline {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+
+.timeline-item {
+  position: relative;
+  padding: 0.6rem 0;
+  padding-left: 1rem;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -1.5rem;
+  top: 0.85rem;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg-base);
+}
+
+.timeline-date {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+}
+
+.timeline-text {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 0.15rem;
+}
+
+.export-section {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+
+.export-section h3 {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+}
+
+.export-preview {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 0.75rem;
+}
+
+.btn-export {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.55rem 1.2rem;
+  background: var(--accent);
+  color: var(--bg-base);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-export:hover { background: #fbbf24; }
+
+/* MOBILE */
+@media (max-width: 640px) {
+  .header { padding: 0 0.75rem; }
+  .logo span { display: none; }
+  .tabs { gap: 0; }
+  .tab { padding: 0.35rem 0.55rem; font-size: 0.6rem; }
+  .main { padding: 1rem; }
+  .form-grid { grid-template-columns: 1fr; }
+  .insights-grid { grid-template-columns: 1fr; }
+  .playbooks-grid { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .portfolio-stats { grid-template-columns: repeat(2, 1fr); }
+  .log-table th:nth-child(4),
+  .log-table td:nth-child(4),
+  .log-table th:nth-child(5),
+  .log-table td:nth-child(5) { display: none; }
+  .donut-container { flex-direction: column; }
+}
+
+/* DROP ZONE */
+.drop-zone {
+  background: var(--bg-surface);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.25s;
+  cursor: text;
+}
+
+.drop-zone:focus-within {
+  border-color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.drop-zone-icon {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-input);
+  border-radius: var(--radius);
+  transition: all 0.25s;
+}
+
+.drop-zone:focus-within .drop-zone-icon {
+  background: var(--accent-dim);
+  color: var(--text-primary);
+}
+
+.drop-zone input {
+  flex: 1;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 0.85rem;
+}
+
+.drop-zone input:focus { border: none; }
+
+.drop-zone-hint {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.drop-zone-status {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  display: none;
+}
+
+.drop-zone-status.active { display: inline; }
+
+.drop-zone-hint.hidden { display: none; }
+
+/* PARSED PREVIEW */
+.parsed-preview {
+  background: var(--bg-surface);
+  border: 1px solid var(--accent-dim);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  display: none;
+  animation: fadeIn 0.25s ease;
+}
+
+.parsed-preview.active { display: block; }
+
+.parsed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+}
+
+.parsed-source {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.parsed-dismiss {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0.1rem 0.3rem;
+  border-radius: 3px;
+  transition: all 0.15s;
+}
+
+.parsed-dismiss:hover { color: var(--text-primary); background: var(--bg-input); }
+
+.parsed-text {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 0.6rem;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.parsed-meta {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.parsed-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+  background: var(--bg-input);
+  color: var(--text-muted);
+}
+
+.parsed-tag.cat {
+  color: var(--accent);
+  background: rgba(245, 158, 11, 0.1);
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: var(--bg-elevated);
+  border: 1px solid var(--accent-dim);
+  border-radius: var(--radius);
+  padding: 0.6rem 1rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--accent);
+  transform: translateY(80px);
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 200;
+}
+
+.toast.show { transform: translateY(0); opacity: 1; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">PRAXIS <span>work os</span></div>
+  <nav class="tabs">
+    <button class="tab active" data-layer="capture">Capture</button>
+    <button class="tab" data-layer="insights">Insights</button>
+    <button class="tab" data-layer="playbooks">Playbooks</button>
+    <button class="tab" data-layer="portfolio">Portfolio</button>
+  </nav>
+</header>
+
+<main class="main">
+
+  <!-- ═══ LAYER 1: CAPTURE ═══ -->
+  <section class="layer active" id="capture">
+    <div class="layer-header">
+      <h2>Capture</h2>
+      <p>Log work as it happens. Every entry compounds.</p>
+    </div>
+
+    <div class="drop-zone" id="dropZone">
+      <div class="drop-zone-icon">+</div>
+      <input type="text" id="dropInput" placeholder="Paste any URL — tweet, Spaces, YouTube, LinkedIn, Warpcast..." autocomplete="off">
+      <span class="drop-zone-hint" id="dropHint">tweet · spaces · youtube · linkedin · warpcast · any url</span>
+      <span class="drop-zone-status" id="dropStatus">parsing...</span>
+    </div>
+
+    <div class="parsed-preview" id="parsedPreview">
+      <div class="parsed-header">
+        <span class="parsed-source" id="parsedSource">TWEET</span>
+        <button class="parsed-dismiss" id="parsedDismiss">×</button>
+      </div>
+      <div class="parsed-text" id="parsedText"></div>
+      <div class="parsed-meta" id="parsedMeta"></div>
+    </div>
+
+    <form class="capture-form" id="captureForm">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label for="action">What I did</label>
+          <input type="text" id="action" placeholder="Hosted Spaces with 3 founders on LP strategy" required>
+        </div>
+        <div class="form-group">
+          <label for="who">Who for</label>
+          <input type="text" id="who" placeholder="Founder / team / project">
+        </div>
+        <div class="form-group">
+          <label for="category">Category</label>
+          <select id="category">
+            <option value="Founder Success">Founder Success</option>
+            <option value="Distribution">Distribution</option>
+            <option value="Content">Content</option>
+            <option value="Events">Events</option>
+            <option value="Intros">Intros</option>
+            <option value="Product Testing">Product Testing</option>
+            <option value="Ops">Ops</option>
+            <option value="Campaign">Campaign</option>
+            <option value="Training">Training</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="outcome">Outcome</label>
+          <input type="text" id="outcome" placeholder="Result or 'in progress'">
+        </div>
+        <div class="form-group">
+          <label>Visibility</label>
+          <div class="visibility-toggle" id="visToggle">
+            <button type="button" class="vis-btn active" data-vis="Internal">Internal</button>
+            <button type="button" class="vis-btn" data-vis="Public">Public</button>
+            <button type="button" class="vis-btn" data-vis="Both">Both</button>
+          </div>
+        </div>
+        <div class="form-group full">
+          <label for="proof">Proof link (optional)</label>
+          <input type="url" id="proof" placeholder="https://...">
+        </div>
+      </div>
+      <div class="submit-row">
+        <button type="submit" class="btn-submit">Log Entry</button>
+      </div>
+    </form>
+
+    <div class="log-controls">
+      <input type="text" class="log-search" id="logSearch" placeholder="Search entries...">
+      <select class="log-filter" id="logFilter">
+        <option value="">All Categories</option>
+        <option value="Founder Success">Founder Success</option>
+        <option value="Distribution">Distribution</option>
+        <option value="Content">Content</option>
+        <option value="Events">Events</option>
+        <option value="Intros">Intros</option>
+        <option value="Product Testing">Product Testing</option>
+        <option value="Ops">Ops</option>
+        <option value="Campaign">Campaign</option>
+        <option value="Training">Training</option>
+      </select>
+    </div>
+
+    <div style="overflow-x: auto;">
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Action</th>
+            <th>Category</th>
+            <th>Who</th>
+            <th>Outcome</th>
+            <th>Vis</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="logBody"></tbody>
+      </table>
+    </div>
+    <div class="empty-state" id="emptyState">No entries yet. Log your first action above.</div>
+  </section>
+
+  <!-- ═══ LAYER 2: INSIGHTS ═══ -->
+  <section class="layer" id="insights">
+    <div class="layer-header">
+      <h2>Insights</h2>
+      <p>Where your time goes. What it produces.</p>
+    </div>
+
+    <div class="stats-row" id="statsRow"></div>
+    <div id="capacityAlerts"></div>
+    <div class="insights-grid">
+      <div class="insight-card">
+        <h3>Category Allocation</h3>
+        <div id="categoryBars"></div>
+      </div>
+      <div class="insight-card">
+        <h3>Visibility Ratio</h3>
+        <div id="visDonut"></div>
+      </div>
+      <div class="insight-card full-width">
+        <h3>Recent Outcomes</h3>
+        <div id="outcomesList"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ LAYER 3: PLAYBOOKS ═══ -->
+  <section class="layer" id="playbooks">
+    <div class="layer-header">
+      <h2>Playbooks</h2>
+      <p>Repeatable systems. Run them, track them, refine them.</p>
+    </div>
+
+    <div style="margin-bottom: 1rem;">
+      <button class="btn-sm primary" id="toggleNewPlaybook">+ New Playbook</button>
+    </div>
+
+    <div class="new-playbook-form" id="newPlaybookForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="pbTitle" placeholder="Playbook name">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="pbCategory">
+            <option value="Founder Success">Founder Success</option>
+            <option value="Distribution">Distribution</option>
+            <option value="Content">Content</option>
+            <option value="Events">Events</option>
+            <option value="Intros">Intros</option>
+            <option value="Campaign">Campaign</option>
+            <option value="Training">Training</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Description</label>
+          <input type="text" id="pbDesc" placeholder="What this playbook does">
+        </div>
+        <div class="form-group full">
+          <label>Steps (one per line)</label>
+          <textarea id="pbSteps" rows="4" placeholder="Step 1&#10;Step 2&#10;Step 3"></textarea>
+        </div>
+      </div>
+      <div class="submit-row" style="margin-top:0.75rem;">
+        <button class="btn-sm" id="cancelPlaybook" style="margin-right:0.4rem;">Cancel</button>
+        <button class="btn-sm primary" id="savePlaybook">Save Playbook</button>
+      </div>
+    </div>
+
+    <div class="playbooks-grid" id="playbooksGrid"></div>
+  </section>
+
+  <!-- ═══ LAYER 4: PORTFOLIO ═══ -->
+  <section class="layer" id="portfolio">
+    <div class="layer-header">
+      <h2>Portfolio</h2>
+      <p>Auto-generated proof of work. Always current.</p>
+    </div>
+
+    <div class="portfolio-stats" id="portfolioStats"></div>
+
+    <div class="insight-card" style="margin-bottom:1.5rem;">
+      <h3>Public Work Timeline</h3>
+      <div class="timeline" id="portfolioTimeline"></div>
+    </div>
+
+    <div class="insight-card" style="margin-bottom:1.5rem;">
+      <h3>Top Outcomes</h3>
+      <div id="topOutcomes"></div>
+    </div>
+
+    <div class="export-section">
+      <h3>Resume Export</h3>
+      <div class="export-preview" id="exportPreview"></div>
+      <button class="btn-export" id="btnExport">Copy to Clipboard</button>
+    </div>
+  </section>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA LAYER
+// ═══════════════════════════════════════════
+
+const STORAGE_KEY = 'praxis_entries';
+const PLAYBOOK_KEY = 'praxis_playbooks';
+
+function getEntries() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch { return []; }
+}
+
+function saveEntries(entries) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+}
+
+function getPlaybooks() {
+  try {
+    const pb = JSON.parse(localStorage.getItem(PLAYBOOK_KEY));
+    if (pb && pb.length) return pb;
+  } catch {}
+  return defaultPlaybooks();
+}
+
+function savePlaybooks(playbooks) {
+  localStorage.setItem(PLAYBOOK_KEY, JSON.stringify(playbooks));
+}
+
+function defaultPlaybooks() {
+  return [
+    {
+      id: 'pb1', title: 'Founder Onboarding', category: 'Founder Success',
+      desc: 'End-to-end onboarding for new founders entering the ecosystem.',
+      steps: ['Initial intro call — understand their project, stage, and needs', 'Share ecosystem resource kit (docs, tools, contacts)', 'Connect with relevant team members / partners', 'Set up in founder tracking system', 'Schedule 2-week check-in', 'Capture onboarding feedback'],
+      runs: 0
+    },
+    {
+      id: 'pb2', title: 'Event Launch Sequence', category: 'Events',
+      desc: 'From concept to packed room. Full event production playbook. Every event is portfolio proof — capture hard numbers (registered, showed up, conversion rate, notable attendees).',
+      steps: ['Define event concept, format, and target audience', 'Secure venue / platform and confirm date', 'Create event page with signup flow — track conversion rate from campaign to signup', 'Design promotional assets (poster, banner, social)', 'Launch ad campaign — 3 waves (announce, remind, urgency)', 'Coordinate speakers / panelists — every outreach is a relationship-opener for YOUR network', 'Run event and capture content (photos, video, attendee list)', 'Post recap thread — lead with one real insight from the room, not just "great event" (specificity test)', 'Document metrics: signups, turnout, conversion rate, notable names — this is your interview portfolio'],
+      runs: 0
+    },
+    {
+      id: 'pb3', title: 'Spaces Recap → Distribution', category: 'Distribution',
+      desc: 'Turn a Twitter Space into a multi-format content engine. Every piece of recap content should pass the specificity test and position you as the convener.',
+      steps: ['Record Space and download audio', 'Clip 3-5 best moments (60-90s each)', 'Write recap thread — lead with the single most surprising or contrarian insight, not a summary', 'Specificity check: does this recap sound like it could be from any Space? Add the detail that makes it unique', 'Create quote graphics from best takes — attribute clearly', 'Post thread + clips across channels', 'Tag speakers and relevant projects — you\'re the host telling the story, that positioning matters', 'Add disclaimer: featuring ≠ endorsement', 'Engage replies within 30 min — the recap thread IS a networking surface'],
+      runs: 0
+    },
+    {
+      id: 'pb4', title: 'Partnership Close', category: 'Intros',
+      desc: 'From first intro to confirmed partnership.',
+      steps: ['Initial outreach / warm intro', 'Discovery call — mutual value alignment', 'Define partnership scope and deliverables', 'Get internal alignment / approval', 'Draft and share partnership brief', 'Confirm and announce (if public)', 'Log in partnership tracker'],
+      runs: 0
+    },
+    {
+      id: 'pb5', title: 'Campaign Clip & Post', category: 'Campaign',
+      desc: 'Clip, format, and distribute campaign content across channels.',
+      steps: ['Source raw content (video, audio, screenshots)', 'Identify top 3-5 moments to clip', 'Edit clips with captions and branding', 'Write post copy per platform (X, LinkedIn, etc.) — specificity test: could anyone else post this? If yes, rewrite', 'Schedule posts across distribution calendar', 'Monitor engagement and respond to replies', 'Log performance metrics'],
+      runs: 0
+    },
+    {
+      id: 'pb6', title: 'Twitter Growth Post', category: 'Content',
+      desc: 'High-signal tweet or thread that builds your public reputation. Every post must pass the specificity test: could anyone else have posted this? If yes, don\'t post it.',
+      steps: [
+        'Pick ONE format: (A) Lead with specific win — "Helped [founder] go from X → Y using [tactic]", (B) Name the problem — "Most founders building on [ecosystem] have a product and zero distribution plan", (C) Pattern thread — "I talk to 10+ founders a week. Same 3 problems keep coming up:", (D) Open playbook — share your actual process, invite DMs for help',
+        'Specificity check — does this reference real work, real numbers, or real patterns you\'ve seen? Generic = no engagement',
+        'No "ask us anything" or "DMs open" without proof-of-value first — earn the ask by showing the work',
+        'Include ONE concrete detail: a number, a name (with permission), a specific tactic',
+        'CTA should lower the bar — "what\'s your biggest blocker?" beats "DM me" (people answer questions, they don\'t cold-DM)',
+        'Post and engage replies within first 30 min — algorithm rewards early conversation',
+        'Log in PRAXIS with proof link and outcome'
+      ],
+      runs: 0
+    },
+    {
+      id: 'pb7', title: 'Founder Signal Boost', category: 'Founder Success',
+      desc: 'Amplify a founder\'s win publicly. You tell their story — they get the spotlight, you get the association. This is the highest-ROI content type for ecosystem roles.',
+      steps: [
+        'Identify a founder win you contributed to (launch, milestone, integration)',
+        'Draft a 3-5 tweet thread: what they built, the growth journey, what worked',
+        'Frame it about THEM, not you — but you\'re the one telling the story (that\'s what people remember)',
+        'Include real numbers where possible (signups, TVL, users, conversion rate)',
+        'Tag the founder and their project — they\'ll RT and engage',
+        'Add disclaimer if needed: featuring ≠ endorsement',
+        'Log as Founder Success + Public visibility in PRAXIS'
+      ],
+      runs: 0
+    },
+    {
+      id: 'pb8', title: 'Distribution Framework Post', category: 'Distribution',
+      desc: 'Share a reusable framework or system you\'ve built. Positions you as a strategist, not just an executor. "I built the distribution system" > "I ran socials."',
+      steps: [
+        'Pick one system you\'ve built (event signup flow, content pipeline, campaign sequence, founder onboarding)',
+        'Write the framework as steps anyone can steal — be genuinely useful',
+        'Include at least one real metric: "this converted at X%" or "drove Y signups"',
+        'End with an open door: "If you want help running this for your project — DM me"',
+        'The give-away IS the lead gen — people who can steal it will, people who want you to run it will DM',
+        'Post as thread, not single tweet — threads get bookmarked and shared',
+        'Log in PRAXIS with proof link'
+      ],
+      runs: 0
+    }
+  ];
+}
+
+// ═══════════════════════════════════════════
+// CATEGORY COLORS
+// ═══════════════════════════════════════════
+
+const CAT_COLORS = {
+  'Founder Success': 'var(--cat-founder)',
+  'Distribution': 'var(--cat-distribution)',
+  'Content': 'var(--cat-content)',
+  'Events': 'var(--cat-events)',
+  'Intros': 'var(--cat-intros)',
+  'Product Testing': 'var(--cat-product)',
+  'Ops': 'var(--cat-ops)',
+  'Campaign': 'var(--cat-campaign)',
+  'Training': 'var(--cat-training)',
+};
+
+function catColor(cat) { return CAT_COLORS[cat] || 'var(--text-muted)'; }
+
+// ═══════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.layer').forEach(l => l.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.layer).classList.add('active');
+    if (tab.dataset.layer === 'insights') renderInsights();
+    if (tab.dataset.layer === 'playbooks') renderPlaybooks();
+    if (tab.dataset.layer === 'portfolio') renderPortfolio();
+  });
+});
+
+// ═══════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ═══════════════════════════════════════════
+// LAYER 1: CAPTURE
+// ═══════════════════════════════════════════
+
+let currentVis = 'Internal';
+
+document.querySelectorAll('.vis-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.vis-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentVis = btn.dataset.vis;
+  });
+});
+
+document.getElementById('captureForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const entry = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+    date: new Date().toISOString(),
+    action: document.getElementById('action').value.trim(),
+    who: document.getElementById('who').value.trim(),
+    category: document.getElementById('category').value,
+    outcome: document.getElementById('outcome').value.trim() || 'in progress',
+    visibility: currentVis,
+    proof: document.getElementById('proof').value.trim(),
+  };
+  const entries = getEntries();
+  entries.unshift(entry);
+  saveEntries(entries);
+  e.target.reset();
+  document.querySelectorAll('.vis-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('.vis-btn[data-vis="Internal"]').classList.add('active');
+  currentVis = 'Internal';
+  renderLog();
+  showToast('Entry logged');
+});
+
+function formatDate(iso) {
+  const d = new Date(iso);
+  const mon = d.toLocaleString('en', { month: 'short' });
+  return `${mon} ${d.getDate()}`;
+}
+
+function formatTime(iso) {
+  const d = new Date(iso);
+  return d.toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+function renderLog() {
+  const entries = getEntries();
+  const search = document.getElementById('logSearch').value.toLowerCase();
+  const filter = document.getElementById('logFilter').value;
+  const empty = document.getElementById('emptyState');
+
+  const filtered = entries.filter(e => {
+    if (filter && e.category !== filter) return false;
+    if (search && !(e.action + e.who + e.outcome).toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  empty.style.display = filtered.length ? 'none' : 'block';
+
+  document.getElementById('logBody').innerHTML = filtered.map(e => `
+    <tr>
+      <td style="white-space:nowrap;">
+        <span style="color:var(--text-secondary);font-size:0.78rem;">${formatDate(e.date)}</span>
+        <br><span style="font-family:'DM Mono',monospace;font-size:0.6rem;color:var(--text-muted);">${formatTime(e.date)}</span>
+      </td>
+      <td style="color:var(--text-primary);max-width:280px;">${esc(e.action)}</td>
+      <td><span class="cat-badge" style="background:${catColor(e.category)}22;color:${catColor(e.category)}">${e.category}</span></td>
+      <td style="color:var(--text-secondary);font-size:0.78rem;">${esc(e.who)}</td>
+      <td style="font-size:0.78rem;color:${e.outcome === 'in progress' ? 'var(--text-muted)' : 'var(--success)'};">${esc(e.outcome)}${e.proof ? ` <a class="proof-link" href="${esc(e.proof)}" target="_blank">↗</a>` : ''}</td>
+      <td><span class="vis-badge">${e.visibility}</span></td>
+      <td><button class="delete-btn" onclick="deleteEntry('${e.id}')">×</button></td>
+    </tr>
+  `).join('');
+}
+
+function deleteEntry(id) {
+  const entries = getEntries().filter(e => e.id !== id);
+  saveEntries(entries);
+  renderLog();
+  showToast('Entry removed');
+}
+
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str || '';
+  return d.innerHTML;
+}
+
+document.getElementById('logSearch').addEventListener('input', renderLog);
+document.getElementById('logFilter').addEventListener('change', renderLog);
+
+// ═══════════════════════════════════════════
+// LAYER 2: INSIGHTS
+// ═══════════════════════════════════════════
+
+function renderInsights() {
+  const entries = getEntries();
+  const now = new Date();
+  const weekAgo = new Date(now - 7 * 86400000);
+  const monthAgo = new Date(now - 30 * 86400000);
+
+  const thisWeek = entries.filter(e => new Date(e.date) >= weekAgo);
+  const thisMonth = entries.filter(e => new Date(e.date) >= monthAgo);
+
+  // Stats row
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">This Week</div>
+      <div class="stat-value">${thisWeek.length}<small>entries</small></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">This Month</div>
+      <div class="stat-value">${thisMonth.length}<small>entries</small></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">All Time</div>
+      <div class="stat-value">${entries.length}<small>entries</small></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Public Ratio</div>
+      <div class="stat-value">${entries.length ? Math.round(entries.filter(e => e.visibility !== 'Internal').length / entries.length * 100) : 0}<small>%</small></div>
+    </div>
+  `;
+
+  // Category bars
+  const cats = {};
+  entries.forEach(e => { cats[e.category] = (cats[e.category] || 0) + 1; });
+  const maxCat = Math.max(...Object.values(cats), 1);
+
+  const sortedCats = Object.entries(cats).sort((a, b) => b[1] - a[1]);
+  document.getElementById('categoryBars').innerHTML = sortedCats.length ? sortedCats.map(([cat, count]) => `
+    <div class="bar-row">
+      <span class="bar-label">${cat}</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${(count / maxCat) * 100}%;background:${catColor(cat)}"></div>
+      </div>
+      <span class="bar-count">${count}</span>
+    </div>
+  `).join('') : '<div class="empty-state">No data yet</div>';
+
+  // Capacity alerts
+  const total = entries.length;
+  const alerts = sortedCats.filter(([, count]) => total > 4 && count / total > 0.4);
+  document.getElementById('capacityAlerts').innerHTML = alerts.map(([cat, count]) => `
+    <div class="capacity-alert">
+      <strong>${cat}</strong> accounts for ${Math.round(count / total * 100)}% of your work — you may be over-indexed here. Consider delegating or systematizing.
+    </div>
+  `).join('');
+
+  // Visibility donut
+  const visInternal = entries.filter(e => e.visibility === 'Internal').length;
+  const visPublic = entries.filter(e => e.visibility === 'Public').length;
+  const visBoth = entries.filter(e => e.visibility === 'Both').length;
+  const visTotal = entries.length || 1;
+
+  const pInternal = visInternal / visTotal * 100;
+  const pPublic = visPublic / visTotal * 100;
+  const pBoth = visBoth / visTotal * 100;
+
+  document.getElementById('visDonut').innerHTML = entries.length ? `
+    <div class="donut-container">
+      <div class="donut" style="background:conic-gradient(
+        var(--text-muted) 0% ${pInternal}%,
+        var(--accent) ${pInternal}% ${pInternal + pPublic}%,
+        var(--cat-intros) ${pInternal + pPublic}% 100%
+      )">
+        <div class="donut-center">${entries.length}</div>
+      </div>
+      <div class="donut-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--text-muted)"></div> Internal (${visInternal})</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--accent)"></div> Public (${visPublic})</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--cat-intros)"></div> Both (${visBoth})</div>
+      </div>
+    </div>
+  ` : '<div class="empty-state">No data yet</div>';
+
+  // Recent outcomes
+  const outcomes = entries.filter(e => e.outcome && e.outcome !== 'in progress').slice(0, 10);
+  document.getElementById('outcomesList').innerHTML = outcomes.length ? outcomes.map(e => `
+    <div class="outcome-item">
+      <div class="outcome-text">${esc(e.action)} → <strong style="color:var(--success)">${esc(e.outcome)}</strong></div>
+      <div style="text-align:right;">
+        <div class="outcome-who">${esc(e.who)}</div>
+        <div class="outcome-date">${formatDate(e.date)}</div>
+      </div>
+    </div>
+  `).join('') : '<div class="empty-state">No completed outcomes yet</div>';
+}
+
+// ═══════════════════════════════════════════
+// LAYER 3: PLAYBOOKS
+// ═══════════════════════════════════════════
+
+function renderPlaybooks() {
+  const playbooks = getPlaybooks();
+  document.getElementById('playbooksGrid').innerHTML = playbooks.map((pb, i) => `
+    <div class="playbook-card">
+      <div class="playbook-top">
+        <div class="playbook-title">${esc(pb.title)}</div>
+        <div class="playbook-runs">${pb.runs} runs</div>
+      </div>
+      <span class="cat-badge" style="background:${catColor(pb.category)}22;color:${catColor(pb.category)};margin-bottom:0.5rem;">${pb.category}</span>
+      <div class="playbook-desc">${esc(pb.desc)}</div>
+      <div class="playbook-steps" id="steps-${i}">
+        ${pb.steps.map(s => `
+          <div class="playbook-step">
+            <input type="checkbox">
+            <span>${esc(s)}</span>
+          </div>
+        `).join('')}
+      </div>
+      <div class="playbook-actions">
+        <button class="btn-sm" onclick="toggleSteps(${i})">Steps</button>
+        <button class="btn-sm" onclick="runPlaybook(${i})">Run +1</button>
+        <button class="btn-sm" onclick="deletePlaybook(${i})" style="margin-left:auto;">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleSteps(i) {
+  document.getElementById(`steps-${i}`).classList.toggle('open');
+}
+
+function runPlaybook(i) {
+  const pbs = getPlaybooks();
+  pbs[i].runs++;
+  savePlaybooks(pbs);
+  renderPlaybooks();
+  showToast(`${pbs[i].title} — run logged`);
+}
+
+function deletePlaybook(i) {
+  const pbs = getPlaybooks();
+  pbs.splice(i, 1);
+  savePlaybooks(pbs);
+  renderPlaybooks();
+  showToast('Playbook removed');
+}
+
+document.getElementById('toggleNewPlaybook').addEventListener('click', () => {
+  document.getElementById('newPlaybookForm').classList.toggle('open');
+});
+
+document.getElementById('cancelPlaybook').addEventListener('click', () => {
+  document.getElementById('newPlaybookForm').classList.remove('open');
+});
+
+document.getElementById('savePlaybook').addEventListener('click', () => {
+  const title = document.getElementById('pbTitle').value.trim();
+  const category = document.getElementById('pbCategory').value;
+  const desc = document.getElementById('pbDesc').value.trim();
+  const steps = document.getElementById('pbSteps').value.trim().split('\n').filter(s => s.trim());
+
+  if (!title || !steps.length) return showToast('Need a title and at least one step');
+
+  const pbs = getPlaybooks();
+  pbs.push({ id: Date.now().toString(36), title, category, desc, steps, runs: 0 });
+  savePlaybooks(pbs);
+
+  document.getElementById('pbTitle').value = '';
+  document.getElementById('pbDesc').value = '';
+  document.getElementById('pbSteps').value = '';
+  document.getElementById('newPlaybookForm').classList.remove('open');
+  renderPlaybooks();
+  showToast('Playbook created');
+});
+
+// ═══════════════════════════════════════════
+// LAYER 4: PORTFOLIO
+// ═══════════════════════════════════════════
+
+function renderPortfolio() {
+  const entries = getEntries();
+
+  const counts = {};
+  entries.forEach(e => { counts[e.category] = (counts[e.category] || 0) + 1; });
+
+  const statItems = [
+    { label: 'Events Run', value: counts['Events'] || 0 },
+    { label: 'Founders Supported', value: counts['Founder Success'] || 0 },
+    { label: 'Intros Made', value: counts['Intros'] || 0 },
+    { label: 'Campaigns', value: counts['Campaign'] || 0 },
+    { label: 'Content Pieces', value: counts['Content'] || 0 },
+    { label: 'Distribution', value: counts['Distribution'] || 0 },
+  ];
+
+  document.getElementById('portfolioStats').innerHTML = statItems.map(s => `
+    <div class="portfolio-stat">
+      <div class="stat-value">${s.value}</div>
+      <div class="stat-label">${s.label}</div>
+    </div>
+  `).join('');
+
+  // Public timeline
+  const publicEntries = entries.filter(e => e.visibility !== 'Internal').slice(0, 20);
+  document.getElementById('portfolioTimeline').innerHTML = publicEntries.length ? publicEntries.map(e => `
+    <div class="timeline-item">
+      <div class="timeline-date">${formatDate(e.date)}</div>
+      <div class="timeline-text">
+        ${esc(e.action)}${e.who ? ` — <span style="color:var(--text-muted)">${esc(e.who)}</span>` : ''}
+        ${e.proof ? ` <a class="proof-link" href="${esc(e.proof)}" target="_blank">↗ proof</a>` : ''}
+      </div>
+    </div>
+  `).join('') : '<div class="empty-state">No public-facing work logged yet. Mark entries as Public or Both.</div>';
+
+  // Top outcomes
+  const topOutcomes = entries.filter(e => e.outcome && e.outcome !== 'in progress').slice(0, 8);
+  document.getElementById('topOutcomes').innerHTML = topOutcomes.length ? topOutcomes.map(e => `
+    <div class="outcome-item">
+      <div>
+        <span class="cat-badge" style="background:${catColor(e.category)}22;color:${catColor(e.category)};margin-right:0.5rem;">${e.category}</span>
+        <span class="outcome-text">${esc(e.action)}</span>
+      </div>
+      <div style="text-align:right;">
+        <div style="color:var(--success);font-size:0.8rem;font-weight:500;">${esc(e.outcome)}</div>
+        <div class="outcome-date">${formatDate(e.date)}</div>
+      </div>
+    </div>
+  `).join('') : '<div class="empty-state">Complete some entries to see outcomes here</div>';
+
+  // Export
+  generateExport(entries, counts);
+}
+
+function generateExport(entries, counts) {
+  const publicCount = entries.filter(e => e.visibility !== 'Internal').length;
+  const outcomes = entries.filter(e => e.outcome && e.outcome !== 'in progress');
+
+  let text = `PROFESSIONAL SUMMARY\n`;
+  text += `${'═'.repeat(50)}\n\n`;
+  text += `Ecosystem Growth & Distribution\n\n`;
+
+  text += `KEY METRICS\n`;
+  text += `${'─'.repeat(30)}\n`;
+  if (counts['Events']) text += `• Events produced: ${counts['Events']}\n`;
+  if (counts['Founder Success']) text += `• Founders supported: ${counts['Founder Success']}\n`;
+  if (counts['Intros']) text += `• Ecosystem intros facilitated: ${counts['Intros']}\n`;
+  if (counts['Campaign']) text += `• Campaigns executed: ${counts['Campaign']}\n`;
+  if (counts['Content']) text += `• Content pieces created: ${counts['Content']}\n`;
+  if (counts['Distribution']) text += `• Distribution initiatives: ${counts['Distribution']}\n`;
+  text += `• Public-facing actions: ${publicCount}\n`;
+  text += `• Total documented actions: ${entries.length}\n\n`;
+
+  if (outcomes.length) {
+    text += `NOTABLE OUTCOMES\n`;
+    text += `${'─'.repeat(30)}\n`;
+    outcomes.slice(0, 10).forEach(e => {
+      text += `• ${e.action} → ${e.outcome}`;
+      if (e.who) text += ` (${e.who})`;
+      text += `\n`;
+    });
+    text += `\n`;
+  }
+
+  text += `FUNCTIONAL SCOPE\n`;
+  text += `${'─'.repeat(30)}\n`;
+  text += `Full-stack ecosystem growth: founder onboarding & success,\n`;
+  text += `event production (concept to conversion), content strategy\n`;
+  text += `& team direction, distribution systems, partnership development,\n`;
+  text += `campaign production, and community building.\n\n`;
+  text += `Generated by PRAXIS — ${new Date().toLocaleDateString('en', { year: 'numeric', month: 'long', day: 'numeric' })}`;
+
+  document.getElementById('exportPreview').textContent = text;
+}
+
+document.getElementById('btnExport').addEventListener('click', () => {
+  const text = document.getElementById('exportPreview').textContent;
+  navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard'));
+});
+
+// ═══════════════════════════════════════════
+// SMART DROP ZONE — Tweet Parser
+// ═══════════════════════════════════════════
+
+const dropInput = document.getElementById('dropInput');
+const dropHint = document.getElementById('dropHint');
+const dropStatus = document.getElementById('dropStatus');
+const parsedPreview = document.getElementById('parsedPreview');
+const parsedText = document.getElementById('parsedText');
+const parsedMeta = document.getElementById('parsedMeta');
+const parsedSource = document.getElementById('parsedSource');
+
+// ═══ URL TYPE DETECTION ═══
+function detectUrlType(str) {
+  const s = str.trim();
+  if (/https?:\/\/(twitter\.com|x\.com)\/i\/spaces\//i.test(s)) return 'spaces';
+  if (/https?:\/\/(twitter\.com|x\.com)\/\w+\/status\/\d+/i.test(s)) return 'tweet';
+  if (/https?:\/\/(www\.)?youtube\.com\/watch/i.test(s) || /https?:\/\/youtu\.be\//i.test(s)) return 'youtube';
+  if (/https?:\/\/(www\.)?youtube\.com\/live\//i.test(s)) return 'youtube';
+  if (/https?:\/\/(www\.)?linkedin\.com\/(posts|feed\/update|pulse)\//i.test(s)) return 'linkedin';
+  if (/https?:\/\/(www\.)?warpcast\.com\/\w+\/0x/i.test(s)) return 'warpcast';
+  if (/https?:\/\/(www\.)?warpcast\.com\/~/i.test(s)) return 'warpcast';
+  if (/https?:\/\//i.test(s)) return 'generic';
+  return null;
+}
+
+function normalizeTweetUrl(url) {
+  return url.trim().replace('x.com', 'twitter.com').split('?')[0];
+}
+
+function detectCategory(text) {
+  const t = text.toLowerCase();
+  const rules = [
+    { cat: 'Events', keywords: ['event', 'meetup', 'conference', 'summit', 'hackathon', 'irl', 'venue', 'rsvp', 'attend', 'demo day', 'demo night', 'spaces'] },
+    { cat: 'Founder Success', keywords: ['founder', 'launched', 'shipped', 'building', 'startup', 'raising', 'seed', 'pre-seed', 'mvp', 'onboard'] },
+    { cat: 'Distribution', keywords: ['distribution', 'reach', 'impressions', 'viral', 'growth hack', 'funnel', 'conversion'] },
+    { cat: 'Content', keywords: ['thread', 'wrote', 'published', 'blog', 'article', 'recap', 'newsletter', 'podcast', 'recorded'] },
+    { cat: 'Intros', keywords: ['intro', 'introduced', 'connected', 'meet', 'collab', 'partnership', 'integrate'] },
+    { cat: 'Campaign', keywords: ['campaign', 'promo', 'ad', 'boost', 'sponsor', 'launch', 'announce', 'announcement'] },
+    { cat: 'Product Testing', keywords: ['bug', 'test', 'feedback', 'feature', 'ui', 'ux', 'product', 'beta', 'staging'] },
+    { cat: 'Training', keywords: ['training', 'workshop', 'tutorial', 'guide', 'how to', 'learn', 'course', 'onchain'] },
+    { cat: 'Ops', keywords: ['ops', 'process', 'workflow', 'sop', 'admin', 'internal', 'tooling'] },
+  ];
+  for (const rule of rules) {
+    const matches = rule.keywords.filter(kw => t.includes(kw));
+    if (matches.length >= 2) return rule.cat;
+  }
+  for (const rule of rules) {
+    if (rule.keywords.some(kw => t.includes(kw))) return rule.cat;
+  }
+  return 'Content';
+}
+
+function extractAuthor(html) {
+  const match = html.match(/&mdash; (.+?) \(@(\w+)\)/);
+  if (match) return { name: match[1], handle: match[2] };
+  const match2 = html.match(/— (.+?) \(@(\w+)\)/);
+  if (match2) return { name: match2[1], handle: match2[2] };
+  return null;
+}
+
+function stripHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  const ps = tmp.querySelectorAll('p');
+  const texts = [];
+  ps.forEach(p => {
+    const t = p.textContent.trim();
+    if (t && !t.startsWith('—') && !t.startsWith('&mdash;')) texts.push(t);
+  });
+  return texts.join('\n') || tmp.textContent.trim();
+}
+
+// ═══ FILL FORM HELPER ═══
+function fillForm({ action, who, category, proof, visibility, source, previewText, previewMeta }) {
+  const actionField = document.getElementById('action');
+  const whoField = document.getElementById('who');
+  const categoryField = document.getElementById('category');
+  const proofField = document.getElementById('proof');
+
+  if (action) actionField.value = action.length > 120 ? action.slice(0, 117) + '...' : action;
+  if (who) whoField.value = who;
+  if (category) categoryField.value = category;
+  if (proof) proofField.value = proof;
+
+  if (visibility) {
+    document.querySelectorAll('.vis-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.vis-btn[data-vis="${visibility}"]`)?.classList.add('active');
+    currentVis = visibility;
+  }
+
+  if (previewText) {
+    parsedText.textContent = previewText;
+    parsedSource.textContent = source || 'PARSED';
+    parsedMeta.innerHTML = previewMeta || '';
+    parsedPreview.classList.add('active');
+  }
+}
+
+function finishDrop(msg) {
+  dropStatus.textContent = msg || 'filled ✓';
+  setTimeout(() => {
+    dropStatus.classList.remove('active');
+    dropHint.classList.remove('hidden');
+    dropInput.value = '';
+  }, 2000);
+}
+
+function failDrop(msg) {
+  dropStatus.textContent = msg || 'failed — try again';
+  setTimeout(() => {
+    dropStatus.classList.remove('active');
+    dropHint.classList.remove('hidden');
+  }, 2000);
+}
+
+// ═══ TWEET PARSER ═══
+async function parseTweet(url) {
+  dropHint.classList.add('hidden');
+  dropStatus.classList.add('active');
+  dropStatus.textContent = 'parsing tweet...';
+  try {
+    const normalized = normalizeTweetUrl(url);
+    const oembedUrl = `https://publish.twitter.com/oembed?url=${encodeURIComponent(normalized)}&omit_script=true`;
+    const resp = await fetch(oembedUrl);
+    if (!resp.ok) throw new Error('Could not fetch tweet');
+    const data = await resp.json();
+    const tweetText = stripHtml(data.html);
+    const author = extractAuthor(data.html) || { name: data.author_name, handle: data.author_url?.split('/').pop() };
+    const category = detectCategory(tweetText);
+
+    fillForm({
+      action: tweetText,
+      who: author ? `@${author.handle || author.name}` : '',
+      category,
+      proof: url.trim(),
+      visibility: 'Public',
+      source: 'TWEET PARSED',
+      previewText: tweetText,
+      previewMeta: `
+        ${author ? `<span class="parsed-tag">@${esc(author.handle || author.name)}</span>` : ''}
+        <span class="parsed-tag cat">${category}</span>
+        <span class="parsed-tag">auto-detected</span>
+      `
+    });
+    finishDrop('tweet filled ✓');
+    showToast('Tweet parsed — review & log');
+  } catch (err) {
+    failDrop('tweet failed — try again');
+    console.error('Tweet parse error:', err);
+  }
+}
+
+// ═══ SPACES PARSER ═══
+async function parseSpaces(url) {
+  dropHint.classList.add('hidden');
+  dropStatus.classList.add('active');
+  dropStatus.textContent = 'parsing spaces...';
+
+  // Extract host handle from URL if available
+  const hostMatch = url.match(/(?:twitter\.com|x\.com)\/(\w+)\/status/i) || url.match(/(?:twitter\.com|x\.com)\/i\/spaces\/(\w+)/i);
+  const spaceId = url.match(/spaces\/(\w+)/)?.[1] || '';
+
+  // Try oEmbed for spaces that are linked via a tweet
+  const tweetRef = url.match(/(?:twitter\.com|x\.com)\/\w+\/status\/\d+/i);
+  if (tweetRef) {
+    try {
+      const normalized = normalizeTweetUrl(tweetRef[0]);
+      const oembedUrl = `https://publish.twitter.com/oembed?url=${encodeURIComponent(normalized)}&omit_script=true`;
+      const resp = await fetch(oembedUrl);
+      if (resp.ok) {
+        const data = await resp.json();
+        const text = stripHtml(data.html);
+        const author = extractAuthor(data.html) || { name: data.author_name, handle: data.author_url?.split('/').pop() };
+        fillForm({
+          action: `Spaces: ${text}`,
+          who: author ? `@${author.handle || author.name}` : '',
+          category: 'Events',
+          proof: url.trim(),
+          visibility: 'Public',
+          source: 'SPACES PARSED',
+          previewText: text,
+          previewMeta: `
+            ${author ? `<span class="parsed-tag">@${esc(author.handle || author.name)}</span>` : ''}
+            <span class="parsed-tag cat">Events</span>
+            <span class="parsed-tag">Spaces</span>
+          `
+        });
+        finishDrop('spaces filled ✓');
+        showToast('Spaces parsed — review & log');
+        return;
+      }
+    } catch (e) { /* fall through */ }
+  }
+
+  // Fallback: pre-fill what we can from the URL alone
+  fillForm({
+    action: `Hosted/joined Spaces`,
+    who: '',
+    category: 'Events',
+    proof: url.trim(),
+    visibility: 'Public',
+    source: 'SPACES DETECTED',
+    previewText: `Spaces link detected (ID: ${spaceId || 'unknown'}).\nFill in the topic and participants.`,
+    previewMeta: `
+      <span class="parsed-tag cat">Events</span>
+      <span class="parsed-tag">Spaces</span>
+      <span class="parsed-tag">fill details</span>
+    `
+  });
+  finishDrop('spaces detected ✓');
+  showToast('Spaces link detected — add details & log');
+}
+
+// ═══ YOUTUBE PARSER ═══
+async function parseYouTube(url) {
+  dropHint.classList.add('hidden');
+  dropStatus.classList.add('active');
+  dropStatus.textContent = 'parsing youtube...';
+  try {
+    const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(url.trim())}&format=json`;
+    const resp = await fetch(oembedUrl);
+    if (!resp.ok) throw new Error('Could not fetch YouTube data');
+    const data = await resp.json();
+    const category = detectCategory(data.title);
+
+    fillForm({
+      action: data.title,
+      who: data.author_name || '',
+      category,
+      proof: url.trim(),
+      visibility: 'Public',
+      source: 'YOUTUBE PARSED',
+      previewText: data.title,
+      previewMeta: `
+        <span class="parsed-tag">${esc(data.author_name)}</span>
+        <span class="parsed-tag cat">${category}</span>
+        <span class="parsed-tag">YouTube</span>
+      `
+    });
+    finishDrop('youtube filled ✓');
+    showToast('YouTube parsed — review & log');
+  } catch (err) {
+    // Fallback — extract video ID for reference
+    const vidId = url.match(/(?:v=|youtu\.be\/|\/live\/)([a-zA-Z0-9_-]+)/)?.[1] || '';
+    fillForm({
+      action: 'YouTube video',
+      who: '',
+      category: 'Content',
+      proof: url.trim(),
+      visibility: 'Public',
+      source: 'YOUTUBE DETECTED',
+      previewText: `YouTube link detected${vidId ? ` (${vidId})` : ''}.\nFill in the title and creator.`,
+      previewMeta: `
+        <span class="parsed-tag cat">Content</span>
+        <span class="parsed-tag">YouTube</span>
+        <span class="parsed-tag">fill details</span>
+      `
+    });
+    finishDrop('youtube detected ✓');
+    showToast('YouTube link detected — add details');
+  }
+}
+
+// ═══ LINKEDIN PARSER ═══
+function parseLinkedIn(url) {
+  dropHint.classList.add('hidden');
+  dropStatus.classList.add('active');
+  dropStatus.textContent = 'parsing linkedin...';
+
+  // Extract what we can from URL structure
+  const authorMatch = url.match(/linkedin\.com\/(?:posts|pulse)\/([^/?]+)/);
+  const author = authorMatch ? authorMatch[1].replace(/-/g, ' ') : '';
+  const isArticle = /\/pulse\//i.test(url);
+
+  fillForm({
+    action: isArticle ? 'LinkedIn article' : 'LinkedIn post',
+    who: author || '',
+    category: 'Content',
+    proof: url.trim(),
+    visibility: 'Public',
+    source: 'LINKEDIN DETECTED',
+    previewText: `LinkedIn ${isArticle ? 'article' : 'post'} detected.\n${author ? `Author: ${author}\n` : ''}Paste the post content into the "What I did" field for full detail.`,
+    previewMeta: `
+      ${author ? `<span class="parsed-tag">${esc(author)}</span>` : ''}
+      <span class="parsed-tag cat">Content</span>
+      <span class="parsed-tag">LinkedIn</span>
+      <span class="parsed-tag">add content</span>
+    `
+  });
+  finishDrop('linkedin detected ✓');
+  showToast('LinkedIn detected — paste content & log');
+}
+
+// ═══ WARPCAST / FARCASTER PARSER ═══
+function parseWarpcast(url) {
+  dropHint.classList.add('hidden');
+  dropStatus.classList.add('active');
+  dropStatus.textContent = 'parsing warpcast...';
+
+  // Extract username from URL: warpcast.com/username/0x...
+  const userMatch = url.match(/warpcast\.com\/(\w+)/);
+  const user = userMatch ? userMatch[1] : '';
+  const castHash = url.match(/(0x[a-f0-9]+)/i)?.[1] || '';
+
+  fillForm({
+    action: 'Farcaster cast',
+    who: user ? `@${user}` : '',
+    category: 'Content',
+    proof: url.trim(),
+    visibility: 'Public',
+    source: 'WARPCAST DETECTED',
+    previewText: `Warpcast cast detected.\n${user ? `User: @${user}\n` : ''}${castHash ? `Hash: ${castHash}\n` : ''}Paste the cast content into the "What I did" field.`,
+    previewMeta: `
+      ${user ? `<span class="parsed-tag">@${esc(user)}</span>` : ''}
+      <span class="parsed-tag cat">Content</span>
+      <span class="parsed-tag">Farcaster</span>
+      <span class="parsed-tag">add content</span>
+    `
+  });
+  finishDrop('warpcast detected ✓');
+  showToast('Warpcast detected — paste content & log');
+}
+
+// ═══ GENERIC URL PARSER ═══
+function parseGenericUrl(url) {
+  dropHint.classList.add('hidden');
+  dropStatus.classList.add('active');
+  dropStatus.textContent = 'detecting...';
+
+  // Try to extract meaningful info from the URL itself
+  let domain = '';
+  try { domain = new URL(url).hostname.replace('www.', ''); } catch(e) {}
+
+  // Smart defaults based on common platforms
+  let category = 'Content';
+  let source = domain.toUpperCase();
+  let actionHint = `Link from ${domain}`;
+
+  if (/eventbrite|lu\.ma|partiful|meetup/i.test(domain)) {
+    category = 'Events';
+    actionHint = 'Event page';
+  } else if (/notion|docs\.google|hackmd|gitbook/i.test(domain)) {
+    category = 'Content';
+    actionHint = 'Document / writeup';
+  } else if (/github|gitlab/i.test(domain)) {
+    category = 'Product Testing';
+    actionHint = 'Code / repository';
+  } else if (/figma|canva/i.test(domain)) {
+    category = 'Content';
+    actionHint = 'Design asset';
+  } else if (/dune|defi ?llama|coingecko/i.test(domain)) {
+    category = 'Distribution';
+    actionHint = 'Analytics / data';
+  } else if (/mirror\.xyz|paragraph/i.test(domain)) {
+    category = 'Content';
+    actionHint = 'Web3 article';
+  } else if (/loom|tella|jam/i.test(domain)) {
+    category = 'Content';
+    actionHint = 'Video recording';
+  }
+
+  fillForm({
+    action: actionHint,
+    who: '',
+    category,
+    proof: url.trim(),
+    visibility: 'Public',
+    source: `${source} DETECTED`,
+    previewText: `Link from ${domain} detected.\nAdd details about what this is and who it's for.`,
+    previewMeta: `
+      <span class="parsed-tag">${esc(domain)}</span>
+      <span class="parsed-tag cat">${category}</span>
+      <span class="parsed-tag">add details</span>
+    `
+  });
+  finishDrop('link detected ✓');
+  showToast(`${domain} link detected — add details`);
+}
+
+// ═══ UNIVERSAL PARSE ROUTER ═══
+async function parseUrl(url) {
+  const type = detectUrlType(url);
+  switch (type) {
+    case 'tweet': return parseTweet(url);
+    case 'spaces': return parseSpaces(url);
+    case 'youtube': return parseYouTube(url);
+    case 'linkedin': return parseLinkedIn(url);
+    case 'warpcast': return parseWarpcast(url);
+    case 'generic': return parseGenericUrl(url);
+    default:
+      // Not a URL — drop as text
+      document.getElementById('action').value = url;
+      dropInput.value = '';
+      showToast('Dropped into action field');
+  }
+}
+
+// Listen for paste event
+dropInput.addEventListener('paste', (e) => {
+  setTimeout(() => {
+    const val = dropInput.value.trim();
+    if (val && detectUrlType(val)) {
+      parseUrl(val);
+    }
+  }, 50);
+});
+
+// Also handle Enter key
+dropInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    const val = dropInput.value.trim();
+    if (val) parseUrl(val);
+  }
+});
+
+// Dismiss preview
+document.getElementById('parsedDismiss').addEventListener('click', () => {
+  parsedPreview.classList.remove('active');
+});
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+
+renderLog();
+</script>
+</body>
+</html>

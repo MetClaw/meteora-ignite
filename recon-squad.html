@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recon Squad — Meteora Product Testing Program</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #08080c;
+    --surface: #0e0e14;
+    --orange: #F54B00;
+    --purple: #6E45FF;
+    --pink: #E44D8A;
+    --gold: #FFD700;
+    --white: #f0ede8;
+    --dim: #4a4a5a;
+    --faint: #1a1a24;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    background: var(--black);
+    color: var(--white);
+    font-family: 'JetBrains Mono', monospace;
+    overflow: hidden;
+  }
+
+  body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* --- Texture layer --- */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 79px, var(--faint) 79px, var(--faint) 80px),
+      repeating-linear-gradient(90deg, transparent, transparent 79px, var(--faint) 79px, var(--faint) 80px);
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* --- Noise grain --- */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.035;
+    pointer-events: none;
+    z-index: 1;
+    mix-blend-mode: overlay;
+  }
+
+  /* --- Ambient glow --- */
+  .glow-orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-orb.purple {
+    width: 400px; height: 400px;
+    background: var(--purple);
+    opacity: 0.07;
+    top: -100px; right: -50px;
+  }
+  .glow-orb.orange {
+    width: 350px; height: 350px;
+    background: var(--orange);
+    opacity: 0.05;
+    bottom: -80px; left: 20%;
+  }
+
+  /* --- Header bar --- */
+  .header {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid var(--faint);
+    position: relative;
+    z-index: 2;
+  }
+  .header-left {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .header-left .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .season-tag {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--black);
+    background: var(--orange);
+    padding: 3px 10px 2px;
+    font-weight: 500;
+  }
+  .header-right {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+
+  /* --- Left column: Title + What --- */
+  .col-left {
+    grid-column: 1;
+    padding: 40px 40px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    position: relative;
+    z-index: 2;
+    border-right: 1px solid var(--faint);
+    overflow: hidden;
+  }
+
+  .title-block {
+    position: relative;
+  }
+  .title-block h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(64px, 7vw, 96px);
+    line-height: 0.9;
+    letter-spacing: -2px;
+    text-transform: uppercase;
+    color: var(--white);
+    position: relative;
+  }
+  .title-block h1 span.accent {
+    display: block;
+    background: linear-gradient(135deg, var(--orange), var(--pink), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .title-sub {
+    margin-top: 14px;
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: clamp(18px, 2.2vw, 26px);
+    color: var(--dim);
+    font-weight: 400;
+    letter-spacing: 0.5px;
+  }
+
+  /* --- Geometric diamond --- */
+  .diamond {
+    position: absolute;
+    top: 8px;
+    right: 0;
+    width: 48px;
+    height: 48px;
+    border: 1px solid var(--purple);
+    transform: rotate(45deg);
+    opacity: 0.3;
+  }
+  .diamond::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid var(--orange);
+    opacity: 0.5;
+  }
+
+  /* --- Section styling --- */
+  .section-label {
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--orange);
+    font-weight: 500;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::before {
+    content: '';
+    width: 16px;
+    height: 1px;
+    background: var(--orange);
+    flex-shrink: 0;
+  }
+
+  .info-text {
+    font-size: 13px;
+    line-height: 1.7;
+    color: #b0adb8;
+    font-weight: 300;
+    max-width: 440px;
+  }
+
+  .list-item {
+    font-size: 12px;
+    line-height: 1.6;
+    color: #b0adb8;
+    font-weight: 300;
+    padding-left: 16px;
+    position: relative;
+    margin-bottom: 4px;
+  }
+  .list-item::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--dim);
+  }
+
+  /* --- Right column: Details --- */
+  .col-right {
+    grid-column: 2;
+    padding: 40px 40px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    position: relative;
+    z-index: 2;
+    overflow: hidden;
+  }
+
+  /* --- Reward cards --- */
+  .reward-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .reward-card {
+    background: var(--surface);
+    border: 1px solid var(--faint);
+    padding: 14px 16px;
+    position: relative;
+    transition: border-color 0.3s;
+  }
+  .reward-card:hover {
+    border-color: var(--purple);
+  }
+  .reward-card .rc-label {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+  .reward-card .rc-desc {
+    font-size: 11px;
+    color: #8a8896;
+    font-weight: 300;
+    line-height: 1.5;
+  }
+  .reward-card.primary {
+    border-color: var(--orange);
+    background: linear-gradient(135deg, rgba(245,75,0,0.06), transparent);
+  }
+  .reward-card.primary .rc-label {
+    color: var(--orange);
+  }
+
+  /* --- Who section --- */
+  .who-row {
+    display: flex;
+    gap: 20px;
+  }
+  .who-card {
+    flex: 1;
+    border-left: 2px solid var(--purple);
+    padding-left: 14px;
+  }
+  .who-card.traders {
+    border-color: var(--orange);
+  }
+  .who-card .who-type {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .who-card.traders .who-type { color: var(--orange); }
+  .who-card.creators .who-type { color: var(--purple); }
+  .who-card .who-count {
+    font-size: 10px;
+    color: var(--dim);
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .who-card .who-desc {
+    font-size: 11px;
+    color: #8a8896;
+    font-weight: 300;
+    line-height: 1.5;
+  }
+
+  /* --- Apply block --- */
+  .apply-block {
+    background: var(--surface);
+    border: 1px solid var(--faint);
+    padding: 20px 22px;
+    position: relative;
+  }
+  .apply-block::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--orange), var(--pink), var(--purple));
+  }
+  .apply-items {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 10px;
+  }
+
+  /* --- Rotation --- */
+  .rotation-line {
+    font-size: 11px;
+    color: var(--dim);
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+  .rotation-line strong {
+    color: var(--white);
+    font-weight: 500;
+  }
+
+  /* --- Footer --- */
+  .footer {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 40px;
+    border-top: 1px solid var(--faint);
+    position: relative;
+    z-index: 2;
+  }
+  .footer-tag {
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--dim);
+  }
+  .footer-tag.right {
+    color: var(--purple);
+    font-weight: 500;
+  }
+
+  /* --- Crosshair decoration --- */
+  .crosshair {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    z-index: 2;
+    opacity: 0.2;
+  }
+  .crosshair::before, .crosshair::after {
+    content: '';
+    position: absolute;
+    background: var(--purple);
+  }
+  .crosshair::before {
+    width: 1px; height: 100%;
+    left: 50%; top: 0;
+  }
+  .crosshair::after {
+    width: 100%; height: 1px;
+    top: 50%; left: 0;
+  }
+  .crosshair.tl { top: 14px; left: 14px; }
+  .crosshair.br { bottom: 14px; right: 14px; }
+
+  /* --- Entrance animations --- */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes lineGrow {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+
+  .title-block { animation: fadeUp 0.8s ease-out both; }
+  .col-left .section:nth-child(2) { animation: fadeUp 0.8s ease-out 0.15s both; }
+  .col-left .section:nth-child(3) { animation: fadeUp 0.8s ease-out 0.25s both; }
+  .col-right > *:nth-child(1) { animation: fadeUp 0.8s ease-out 0.2s both; }
+  .col-right > *:nth-child(2) { animation: fadeUp 0.8s ease-out 0.3s both; }
+  .col-right > *:nth-child(3) { animation: fadeUp 0.8s ease-out 0.35s both; }
+  .col-right > *:nth-child(4) { animation: fadeUp 0.8s ease-out 0.4s both; }
+  .col-right > *:nth-child(5) { animation: fadeUp 0.8s ease-out 0.45s both; }
+  .apply-block::before { animation: lineGrow 1s ease-out 0.6s both; transform-origin: left; }
+
+  /* --- Responsive (smaller screens stack) --- */
+  @media (max-width: 900px) {
+    body {
+      grid-template-columns: 1fr;
+      overflow: auto;
+    }
+    .col-left { border-right: none; border-bottom: 1px solid var(--faint); padding-bottom: 32px; }
+    .col-right { padding-bottom: 32px; }
+    .title-block h1 { font-size: 56px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="glow-orb purple"></div>
+  <div class="glow-orb orange"></div>
+  <div class="crosshair tl"></div>
+  <div class="crosshair br"></div>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-left">
+      <span class="logo">Meteora</span>
+      <span class="season-tag">Season 1</span>
+    </div>
+    <div class="header-right">10 Slots</div>
+  </header>
+
+  <!-- Left Column -->
+  <div class="col-left">
+    <div class="title-block">
+      <h1>Recon<br><span class="accent">Squad</span></h1>
+      <div class="title-sub">Meteora Product Testing</div>
+      <div class="diamond"></div>
+    </div>
+
+    <div class="section">
+      <div class="section-label">The program</div>
+      <p class="info-text">
+        10 testers. Early access to Meteora ecosystem products. Give feedback directly to founders.
+      </p>
+    </div>
+
+    <div class="section">
+      <div class="section-label">Who we want</div>
+      <div class="who-row">
+        <div class="who-card traders">
+          <div class="who-type">Traders</div>
+          <div class="who-count">7 slots</div>
+        </div>
+        <div class="who-card creators">
+          <div class="who-type">Creators</div>
+          <div class="who-count">3 slots</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Column -->
+  <div class="col-right">
+
+    <div>
+      <div class="section-label">What you get</div>
+      <div class="reward-grid">
+        <div class="reward-card primary">
+          <div class="rc-label">USDC</div>
+          <div class="rc-desc">Paid for quality feedback</div>
+        </div>
+        <div class="reward-card primary">
+          <div class="rc-label">Liquidity NFTs</div>
+          <div class="rc-desc">From projects you test</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="apply-block">
+      <div class="section-label">Apply</div>
+      <div class="apply-items">
+        <div class="list-item">Drop your wallet + what you use on Meteora</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <span class="footer-tag">powered by meteora ecosystem</span>
+    <span class="footer-tag right">do you defi?</span>
+  </footer>
+
+</body>
+</html>

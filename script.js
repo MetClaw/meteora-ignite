@@ -1,7 +1,7 @@
 (function() {
   'use strict';
 
-  // ── PARTICLE SYSTEM — Living background ──
+  // ── PARTICLE SYSTEM ──
   const canvas = document.createElement('canvas');
   canvas.id = 'particle-canvas';
   document.body.prepend(canvas);
@@ -119,7 +119,7 @@
   }
   updateCursorGlow();
 
-  // ── STAGGERED REVEAL — Cinematic scroll entries ──
+  // ── STAGGERED REVEAL ──
   const revealEls = document.querySelectorAll(
     '.section, .phase-marker, .callout, .listing, .col-card, .template, ' +
     '.clock-widget, .scorecard-section, .checklist, .sequence, .time-table, ' +
@@ -144,7 +144,7 @@
 
   revealEls.forEach(el => revealObserver.observe(el));
 
-  // ── COPY BUTTONS — with satisfying feedback ──
+  // ── COPY BUTTONS ──
   document.querySelectorAll('.copy-btn').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
@@ -168,7 +168,7 @@
     });
   });
 
-  // ── CHECKLISTS — with celebration effect ──
+  // ── CHECKLISTS ──
   const checks = document.querySelectorAll('.check-item input[type="checkbox"]');
   const saved = JSON.parse(localStorage.getItem('playbook-checks') || '{}');
 
@@ -222,7 +222,7 @@
     }
   }
 
-  // ── WEIGHTED SCORE — with animated counter ──
+  // ── WEIGHTED SCORE ──
   function updateScore() {
     let totalWeight = 0;
     let checkedWeight = 0;
@@ -289,7 +289,7 @@
     });
   }
 
-  // ── SCROLL PROGRESS — with gradient animation ──
+  // ── SCROLL PROGRESS ──
   let ticking = false;
   window.addEventListener('scroll', () => {
     if (!ticking) {
@@ -308,7 +308,7 @@
     }
   });
 
-  // ── ACTIVE PHASE NAV — with smooth transitions ──
+  // ── ACTIVE PHASE NAV ──
   const phases = document.querySelectorAll('.phase-marker');
   const phaseLinks = document.querySelectorAll('.phase-link');
   let navTicking = false;
@@ -336,7 +336,7 @@
     });
   });
 
-  // ── 60-SEC CLOCK — with smooth transitions ──
+  // ── 60-SEC CLOCK ──
   const clockItems = document.querySelectorAll('.clock-item');
   let clockIdx = 0;
   if (clockItems.length) {
@@ -347,7 +347,7 @@
     }, 2200);
   }
 
-  // ── MAGNETIC BUTTONS — subtle pull effect ──
+  // ── MAGNETIC BUTTONS ──
   document.querySelectorAll('.btn-primary, .btn-secondary').forEach(btn => {
     btn.addEventListener('mousemove', e => {
       const rect = btn.getBoundingClientRect();
@@ -395,7 +395,7 @@
     }
   });
 
-  // ── TYPING EFFECT FOR HERO (subtle) ──
+  // ── TYPING EFFECT FOR HERO ──
   const heroSub = document.querySelector('.hero-sub');
   if (heroSub) {
     const text = heroSub.textContent;

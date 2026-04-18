@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Distribution Metrics | Meteora Growth Dashboard</title>
+<meta name="description" content="Weekly distribution metrics: content performance, project spotlights, graduation survival, and North Star contribution.">
+<meta name="theme-color" content="#08080c">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📡</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+  :root {
+    --primary: #6e45ff;
+    --primary-dim: rgba(110, 69, 255, 0.15);
+    --primary-glow: rgba(110, 69, 255, 0.35);
+    --accent: #f54b00;
+    --accent-dim: rgba(245, 75, 0, 0.15);
+    --bg-deepest: #08080c;
+    --bg-deep: #12121c;
+    --bg-card: #181825;
+    --bg-card-hover: #1e1e2e;
+    --text-primary: #f9f9fb;
+    --text-secondary: #9595b2;
+    --text-muted: #5c5c7a;
+    --border-primary: #434360;
+    --border-secondary: #2a2a3c;
+    --grad-gold: #f5c842;
+    --grad-orange: #f57a1f;
+    --grad-purple: #6e45ff;
+    --grad-pink: #c84fff;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    /* Launchpad colors */
+    --letsbonk: #6e45ff;
+    --bags: #f54b00;
+    --starfun: #f5c842;
+    --pumpfun: #22c55e;
+    --moonshot: #c84fff;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg-deepest);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .grain {
+    position: fixed; inset: 0; z-index: 9999;
+    pointer-events: none; opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  }
+
+  .ambient {
+    position: fixed; top: -40%; left: -20%; width: 140%; height: 140%;
+    background: radial-gradient(ellipse at 25% 15%, rgba(110, 69, 255, 0.07) 0%, transparent 55%),
+                radial-gradient(ellipse at 75% 85%, rgba(245, 75, 0, 0.04) 0%, transparent 55%);
+    pointer-events: none; z-index: 0;
+    animation: ambientDrift 20s ease-in-out infinite alternate;
+  }
+
+  @keyframes ambientDrift {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(-2%, 1%) scale(1.02); }
+  }
+
+  .container {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .viz-header {
+    text-align: center;
+    padding: 64px 0 16px;
+  }
+
+  .viz-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+  }
+
+  .viz-title {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(135deg, var(--grad-gold), var(--grad-orange), var(--grad-purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+
+  .viz-subtitle {
+    font-size: 15px;
+    color: var(--text-secondary);
+    font-weight: 400;
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.5;
+  }
+
+  .snapshot-date {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 16px;
+  }
+
+  .snapshot-date span {
+    color: var(--success);
+  }
+
+  /* Navigation tabs */
+  .view-tabs {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+    margin: 32px 0 40px;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-secondary);
+    border-radius: 12px;
+    padding: 4px;
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .view-tab {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .view-tab:hover {
+    color: var(--text-primary);
+    background: var(--bg-card);
+  }
+
+  .view-tab.active {
+    background: var(--primary);
+    color: white;
+    font-weight: 600;
+  }
+
+  /* View panels */
+  .view-panel {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .view-panel.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Section headers */
+  .section-header {
+    margin-bottom: 24px;
+  }
+
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 4px;
+  }
+
+  .section-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* ============================================
+     VIEW 1: Content Scorecard
+     ============================================ */
+
+  .scorecard-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .summary-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-secondary);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+
+  .summary-card:hover {
+    border-color: var(--border-primary);
+  }
+
+  .summary-label {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .summary-value {
+    font-size: 28px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    letter-spacing: -1px;
+  }
+
+  .summary-value.purple { color: var(--primary); }
+  .summary-value.orange { color: var(--accent); }
+  .summary-value.gold { color: var(--grad-gold); }
+  .summary-value.green { color: var(--success); }
+
+  .summary-delta {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    margin-top: 4px;
+  }
+
+  .summary-delta.up { color: var(--success); }
+  .summary-delta.down { color: var(--danger); }
+
+  /* Sparkline area in summary card */
+  .sparkline-container {
+    height: 32px;
+    margin-top: 8px;
+  }
+
+  .sparkline-container svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Content table */
+  .content-table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border-secondary);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .content-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .content-table thead th {
+    background: var(--bg-deep);
+    padding: 12px 16px;
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-secondary);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  .content-table thead th:hover {
+    color: var(--text-secondary);
+  }
+
+  .content-table thead th.sorted-asc::after { content: ' ↑'; color: var(--primary); }
+  .content-table thead th.sorted-desc::after { content: ' ↓'; color: var(--primary); }
+
+  .content-table tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-secondary);
+    vertical-align: middle;
+  }
+
+  .content-table tbody tr {
+    transition: background 0.15s;
+  }
+
+  .content-table tbody tr:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .content-table tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  .type-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .type-badge.spotlight { background: var(--primary-dim); color: var(--primary); }
+  .type-badge.thread { background: var(--accent-dim); color: var(--accent); }
+  .type-badge.guide { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+  .type-badge.collab { background: rgba(245, 200, 66, 0.15); color: var(--grad-gold); }
+
+  .ctr-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ctr-bar-track {
+    flex: 1;
+    height: 4px;
+    background: var(--border-secondary);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .ctr-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--primary);
+    transition: width 0.5s ease;
+  }
+
+  .ctr-val {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 38px;
+    text-align: right;
+  }
+
+  .td-sparkline {
+    width: 80px;
+    height: 24px;
+  }
+
+  .td-sparkline svg { width: 100%; height: 100%; }
+
+  /* Inline mini sparkline in table cells */
+  .mini-spark { display: inline-block; vertical-align: middle; }
+
+  /* ============================================
+     VIEW 2: Per-Project Scorecard
+     ============================================ */
+
+  .project-controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .sort-select {
+    background: var(--bg-card);
+    border: 1px solid var(--border-secondary);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .sort-select:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+
+  .tier-filters {
+    display: flex;
+    gap: 6px;
+  }
+
+  .tier-btn {
+    padding: 6px 14px;
+    border: 1px solid var(--border-secondary);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tier-btn:hover { border-color: var(--border-primary); color: var(--text-primary); }
+  .tier-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  .project-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-secondary);
+    border-radius: 12px;
+    padding: 24px;
+    transition: all 0.2s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card:hover {
+    border-color: var(--border-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  .project-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .project-name {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .project-pool-type {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--primary-dim);
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .project-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .project-metric {
+    background: var(--bg-deep);
+    border-radius: 8px;
+    padding: 12px;
+  }
+
+  .project-metric-label {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .project-metric-value {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    letter-spacing: -0.5px;
+  }
+
+  .project-metric-delta {
+    font-size: 11px;
+    font-family: var(--font-mono);
+    margin-top: 2px;
+  }
+
+  .project-metric-delta.up { color: var(--success); }
+  .project-metric-delta.down { color: var(--danger); }
+
+  .project-spotlight-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-secondary);
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .spotlight-growth {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  .spotlight-growth.up { color: var(--success); }
+  .spotlight-growth.down { color: var(--danger); }
+
+  /* ============================================
+     VIEW 3: Post-Graduation Survival Tracker
+     ============================================ */
+
+  .survival-chart-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border-secondary);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+  }
+
+  .survival-legend {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    user-select: none;
+  }
+
+  .legend-item:hover { opacity: 0.8; }
+  .legend-item.dimmed { opacity: 0.3; }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  #survival-svg {
+    width: 100%;
+    height: 340px;
+  }
+
+  .survival-tooltip {
+    position: absolute;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-primary);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 12px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+    z-index: 100;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  .survival-tooltip .tt-source {
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .survival-tooltip .tt-stat {
+    font-family: var(--font-mono);
+    color: var(--text-secondary);
+  }
+
+  /* Graduation table */
+  .grad-table-wrap {
+    background: var(--bg-card);
+    border: 1px solid var(--border-secondary);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .grad-table-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .grad-table-title {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .grad-table-count {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .grad-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .grad-table thead th {
+    background: var(--bg-deep);
+    padding: 10px 16px;
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border-secondary);
+  }
+
+  .grad-table tbody td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border-secondary);
+  }
+
+  .grad-table tbody tr:last-child td { border-bottom: none; }
+  .grad-table tbody tr:hover { background: var(--bg-card-hover); }
+
+  .alive-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .alive-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .alive-dot.yes { background: var(--success); box-shadow: 0 0 6px var(--success); }
+  .alive-dot.no { background: var(--danger); }
+
+  .source-tag {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .source-tag.letsbonk { background: rgba(110, 69, 255, 0.15); color: var(--letsbonk); }
+  .source-tag.bags { background: rgba(245, 75, 0, 0.15); color: var(--bags); }
+  .source-tag.starfun { background: rgba(245, 200, 66, 0.15); color: var(--starfun); }
+  .source-tag.pumpfun { background: rgba(34, 197, 94, 0.15); color: var(--pumpfun); }
+  .source-tag.moonshot { background: rgba(200, 79, 255, 0.15); color: var(--moonshot); }
+
+  /* ============================================
+     VIEW 4: North Star Contribution
+     ============================================ */
+
+  .ns-layout {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 24px;
+  }
+
+  @media (max-width: 768px) {
+    .ns-layout { grid-template-columns: 1fr; }
+    .scorecard-summary { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .donut-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-secondary);
+    border-radius: 12px;
+    padding: 32px 24px;
+    text-align: center;
+  }
+
+  #donut-svg {
+    width: 260px;
+    height: 260px;
+    margin: 0 auto 16px;
+  }
+
+  .donut-center-label {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+
+  .donut-center-value {
+    font-size: 40px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    color: var(--primary);
+    letter-spacing: -2px;
+  }
+
+  .donut-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 20px;
+    text-align: left;
+  }
+
+  .donut-stat {
+    background: var(--bg-deep);
+    border-radius: 8px;
+    padding: 12px;
+  }
+
+  .donut-stat-label {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .donut-stat-value {
+    font-size: 16px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+  }
+
+  .trend-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-secondary);
+    border-radius: 12px;
+    padding: 24px;
+  }
+
+  .trend-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  #trend-svg {
+    width: 100%;
+    height: 300px;
+  }
+
+  /* Footer */
+  .viz-footer {
+    text-align: center;
+    padding: 48px 0 32px;
+  }
+
+  .viz-footer-text {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+  }
+
+  .viz-footer-text a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-secondary); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-primary); }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="ambient"></div>
+
+<div class="container">
+  <!-- Header -->
+  <header class="viz-header">
+    <div class="viz-eyebrow">Meteora Distribution</div>
+    <h1 class="viz-title">Distribution Metrics</h1>
+    <p class="viz-subtitle">Content performance, project spotlights, graduation survival, and LP attribution. Updated weekly.</p>
+    <div class="snapshot-date">Snapshot: <span>2026-03-30 00:00 UTC</span> (Week 13)</div>
+  </header>
+
+  <!-- Tab Nav -->
+  <nav class="view-tabs">
+    <button class="view-tab active" data-view="content">Content</button>
+    <button class="view-tab" data-view="projects">Projects</button>
+    <button class="view-tab" data-view="graduation">Graduation</button>
+    <button class="view-tab" data-view="northstar">North Star</button>
+  </nav>
+
+  <!-- ================================
+       VIEW 1: Content Scorecard
+       ================================ -->
+  <section id="view-content" class="view-panel active">
+    <div class="section-header">
+      <h2 class="section-title">Content Scorecard</h2>
+      <p class="section-desc">Rolling 12-week performance of published content. Posts, impressions, CTR, and new LPs in featured pools within 7 days.</p>
+    </div>
+
+    <div class="scorecard-summary" id="content-summary"></div>
+    <div class="content-table-wrap">
+      <table class="content-table" id="content-table">
+        <thead>
+          <tr>
+            <th data-sort="date">Week</th>
+            <th data-sort="type">Type</th>
+            <th data-sort="project">Project</th>
+            <th data-sort="impressions">Impressions</th>
+            <th data-sort="ctr">CTR</th>
+            <th data-sort="new_lps_7d">New LPs (7d)</th>
+            <th>Trend</th>
+          </tr>
+        </thead>
+        <tbody id="content-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================================
+       VIEW 2: Per-Project Scorecard
+       ================================ -->
+  <section id="view-projects" class="view-panel">
+    <div class="section-header">
+      <h2 class="section-title">Project Scorecard</h2>
+      <p class="section-desc">Spotlighted projects with TVL, volume, fees, wallet count, and growth since spotlight.</p>
+    </div>
+
+    <div class="project-controls">
+      <select class="sort-select" id="project-sort">
+        <option value="tvl">Sort by TVL</option>
+        <option value="volume_7d">Sort by 7d Volume</option>
+        <option value="tvl_30d_change">Sort by 30d Growth</option>
+        <option value="unique_wallets">Sort by Wallets</option>
+      </select>
+      <div class="tier-filters">
+        <button class="tier-btn active" data-tier="all">All</button>
+        <button class="tier-btn" data-tier="tier1">Tier 1</button>
+        <button class="tier-btn" data-tier="tier2">Tier 2</button>
+        <button class="tier-btn" data-tier="tier3">Tier 3</button>
+      </div>
+    </div>
+
+    <div class="project-grid" id="project-grid"></div>
+  </section>
+
+  <!-- ================================
+       VIEW 3: Post-Graduation Survival
+       ================================ -->
+  <section id="view-graduation" class="view-panel">
+    <div class="section-header">
+      <h2 class="section-title">Post-Graduation Survival</h2>
+      <p class="section-desc">Survival curves by launchpad source. X: days since graduation, Y: % of tokens still above $10K TVL.</p>
+    </div>
+
+    <div class="survival-chart-container" style="position:relative;">
+      <div class="survival-legend" id="survival-legend"></div>
+      <svg id="survival-svg"></svg>
+      <div class="survival-tooltip" id="survival-tooltip"></div>
+    </div>
+
+    <div class="grad-table-wrap">
+      <div class="grad-table-header">
+        <span class="grad-table-title">Recent Graduations</span>
+        <span class="grad-table-count" id="grad-count"></span>
+      </div>
+      <table class="grad-table">
+        <thead>
+          <tr>
+            <th>Token</th>
+            <th>Source</th>
+            <th>Graduated</th>
+            <th>TVL at Grad</th>
+            <th>TVL Day 7</th>
+            <th>TVL Day 30</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="grad-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================================
+       VIEW 4: North Star Contribution
+       ================================ -->
+  <section id="view-northstar" class="view-panel">
+    <div class="section-header">
+      <h2 class="section-title">North Star Contribution</h2>
+      <p class="section-desc">What % of weekly active LPs (>$1K) entered via spotlighted pools, and the trend over time.</p>
+    </div>
+
+    <div class="ns-layout">
+      <div class="donut-card">
+        <svg id="donut-svg"></svg>
+        <div class="donut-center-label">Attributable to Spotlights</div>
+        <div class="donut-center-value" id="donut-pct">3.98%</div>
+        <div class="donut-stats" id="donut-stats"></div>
+      </div>
+      <div class="trend-card">
+        <div class="trend-card-title">Attribution % Over Time (12 Weeks)</div>
+        <svg id="trend-svg"></svg>
+      </div>
+    </div>
+  </section>
+
+  <footer class="viz-footer">
+    <p class="viz-footer-text">Data: On-chain (Helius/Flipside) + content metadata (manual). Snapshot Sunday 00:00 UTC. <a href="#">Methodology</a></p>
+  </footer>
+</div>
+
+<script>
+// ============================================================
+// MOCK DATA
+// ============================================================
+
+const MOCK = {
+  content_scorecard: [
+    { date: "2026-03-30", type: "spotlight", project: "PreStocks", impressions: 18200, clicks: 510, new_lps_7d: 24, pool_addresses: ["Pre1...xyz"] },
+    { date: "2026-03-30", type: "thread", project: "Meteora DLMM", impressions: 31400, clicks: 1120, new_lps_7d: 42, pool_addresses: [] },
+    { date: "2026-03-23", type: "spotlight", project: "LetsBonk", impressions: 12400, clicks: 340, new_lps_7d: 18, pool_addresses: ["LBnk...xyz"] },
+    { date: "2026-03-23", type: "collab", project: "Bags", impressions: 8900, clicks: 245, new_lps_7d: 11, pool_addresses: ["Bags...abc"] },
+    { date: "2026-03-16", type: "spotlight", project: "SolPay", impressions: 15600, clicks: 468, new_lps_7d: 21, pool_addresses: ["SolP...xyz"] },
+    { date: "2026-03-16", type: "guide", project: "LP Academy", impressions: 22100, clicks: 884, new_lps_7d: 35, pool_addresses: [] },
+    { date: "2026-03-09", type: "spotlight", project: "Star.fun Launch", impressions: 9800, clicks: 245, new_lps_7d: 13, pool_addresses: ["Star...xyz"] },
+    { date: "2026-03-09", type: "thread", project: "Fee Efficiency", impressions: 27600, clicks: 828, new_lps_7d: 31, pool_addresses: [] },
+    { date: "2026-03-02", type: "spotlight", project: "Moonshot Alpha", impressions: 11200, clicks: 336, new_lps_7d: 16, pool_addresses: ["Moon...xyz"] },
+    { date: "2026-03-02", type: "collab", project: "Jupiter Airdrop", impressions: 41200, clicks: 1648, new_lps_7d: 58, pool_addresses: [] },
+    { date: "2026-02-23", type: "spotlight", project: "DeFi Dragons", impressions: 7400, clicks: 185, new_lps_7d: 9, pool_addresses: ["DeFi...xyz"] },
+    { date: "2026-02-23", type: "guide", project: "DLMM Basics", impressions: 19800, clicks: 693, new_lps_7d: 28, pool_addresses: [] },
+  ],
+
+  project_scorecard: [
+    { project: "PreStocks", pool_type: "DLMM", tier: "tier1", tvl: 2100000, tvl_30d_change: 0.45, volume_7d: 8900000, fees_7d: 26700, unique_wallets: 412, new_wallets_7d: 38, spotlight_date: "2026-03-30", tvl_at_spotlight: 1450000 },
+    { project: "LetsBonk", pool_type: "DLMM", tier: "tier1", tvl: 4800000, tvl_30d_change: 0.22, volume_7d: 15200000, fees_7d: 45600, unique_wallets: 891, new_wallets_7d: 62, spotlight_date: "2026-03-23", tvl_at_spotlight: 3900000 },
+    { project: "SolPay", pool_type: "DLMM", tier: "tier2", tvl: 890000, tvl_30d_change: -0.12, volume_7d: 2100000, fees_7d: 6300, unique_wallets: 156, new_wallets_7d: 11, spotlight_date: "2026-03-16", tvl_at_spotlight: 1010000 },
+    { project: "Bags", pool_type: "Dynamic", tier: "tier2", tvl: 1340000, tvl_30d_change: 0.08, volume_7d: 4500000, fees_7d: 13500, unique_wallets: 234, new_wallets_7d: 19, spotlight_date: "2026-03-23", tvl_at_spotlight: 1240000 },
+    { project: "Star.fun Launch", pool_type: "DLMM", tier: "tier3", tvl: 320000, tvl_30d_change: -0.31, volume_7d: 680000, fees_7d: 2040, unique_wallets: 67, new_wallets_7d: 4, spotlight_date: "2026-03-09", tvl_at_spotlight: 460000 },
+    { project: "Moonshot Alpha", pool_type: "DLMM", tier: "tier2", tvl: 710000, tvl_30d_change: 0.15, volume_7d: 1900000, fees_7d: 5700, unique_wallets: 128, new_wallets_7d: 14, spotlight_date: "2026-03-02", tvl_at_spotlight: 620000 },
+    { project: "DeFi Dragons", pool_type: "Dynamic", tier: "tier3", tvl: 180000, tvl_30d_change: -0.44, volume_7d: 290000, fees_7d: 870, unique_wallets: 31, new_wallets_7d: 2, spotlight_date: "2026-02-23", tvl_at_spotlight: 320000 },
+    { project: "LP Army Token", pool_type: "DLMM", tier: "tier1", tvl: 5200000, tvl_30d_change: 0.33, volume_7d: 18400000, fees_7d: 55200, unique_wallets: 1240, new_wallets_7d: 87, spotlight_date: "2026-02-16", tvl_at_spotlight: 3900000 },
+  ],
+
+  graduation_tracker: [
+    { token: "BINK", source: "LetsBonk", graduation_date: "2026-03-28", tvl_at_graduation: 52000, tvl_day_7: 41000, tvl_day_30: null, alive: true },
+    { token: "MFKN", source: "LetsBonk", graduation_date: "2026-03-25", tvl_at_graduation: 78000, tvl_day_7: 63000, tvl_day_30: null, alive: true },
+    { token: "RUGX", source: "Pump.fun", graduation_date: "2026-03-22", tvl_at_graduation: 34000, tvl_day_7: 8000, tvl_day_30: null, alive: false },
+    { token: "SOLFI", source: "Star.fun", graduation_date: "2026-03-20", tvl_at_graduation: 91000, tvl_day_7: 72000, tvl_day_30: null, alive: true },
+    { token: "LUNA3", source: "Moonshot", graduation_date: "2026-03-15", tvl_at_graduation: 45000, tvl_day_7: 38000, tvl_day_30: 22000, alive: true },
+    { token: "BAGS2", source: "Bags", graduation_date: "2026-03-12", tvl_at_graduation: 120000, tvl_day_7: 95000, tvl_day_30: 68000, alive: true },
+    { token: "DPUMP", source: "Pump.fun", graduation_date: "2026-03-10", tvl_at_graduation: 28000, tvl_day_7: 3200, tvl_day_30: 0, alive: false },
+    { token: "STARX", source: "Star.fun", graduation_date: "2026-03-08", tvl_at_graduation: 65000, tvl_day_7: 48000, tvl_day_30: 31000, alive: true },
+    { token: "BELV2", source: "LetsBonk", graduation_date: "2026-03-05", tvl_at_graduation: 110000, tvl_day_7: 89000, tvl_day_30: 54000, alive: true },
+    { token: "PMOON", source: "Moonshot", graduation_date: "2026-03-01", tvl_at_graduation: 37000, tvl_day_7: 19000, tvl_day_30: 11000, alive: true },
+    { token: "APUMP", source: "Pump.fun", graduation_date: "2026-02-28", tvl_at_graduation: 22000, tvl_day_7: 4500, tvl_day_30: 0, alive: false },
+    { token: "BAGGER", source: "Bags", graduation_date: "2026-02-25", tvl_at_graduation: 85000, tvl_day_7: 71000, tvl_day_30: 42000, alive: true },
+  ],
+
+  // Survival curve data: for each source, % alive at day 0, 1, 3, 7, 14, 21, 30
+  survival_curves: {
+    "LetsBonk": { color: "#6e45ff", data: [100, 95, 88, 80, 72, 68, 64] },
+    "Bags":     { color: "#f54b00", data: [100, 92, 85, 78, 70, 65, 58] },
+    "Star.fun": { color: "#f5c842", data: [100, 88, 75, 62, 50, 42, 35] },
+    "Pump.fun": { color: "#22c55e", data: [100, 72, 48, 30, 18, 12, 8] },
+    "Moonshot": { color: "#c84fff", data: [100, 90, 82, 70, 58, 50, 44] },
+  },
+
+  north_star_contribution: {
+    total_active_lps_1k: 7842,
+    via_spotlighted_pools: 312,
+    pct_attributable: 3.98,
+    first_time_via_spotlight: 89,
+  },
+
+  // 12-week trend for north star
+  north_star_trend: [
+    { week: "W01", pct: 1.2, total: 5200, attributed: 62 },
+    { week: "W02", pct: 1.5, total: 5400, attributed: 81 },
+    { week: "W03", pct: 1.8, total: 5600, attributed: 101 },
+    { week: "W04", pct: 2.1, total: 5900, attributed: 124 },
+    { week: "W05", pct: 2.4, total: 6100, attributed: 146 },
+    { week: "W06", pct: 2.6, total: 6400, attributed: 166 },
+    { week: "W07", pct: 2.9, total: 6700, attributed: 194 },
+    { week: "W08", pct: 3.1, total: 6900, attributed: 214 },
+    { week: "W09", pct: 3.3, total: 7100, attributed: 234 },
+    { week: "W10", pct: 3.5, total: 7300, attributed: 256 },
+    { week: "W11", pct: 3.7, total: 7600, attributed: 281 },
+    { week: "W12", pct: 3.98, total: 7842, attributed: 312 },
+  ],
+};
+
+// ============================================================
+// UTILITIES
+// ============================================================
+
+function fmt(n) {
+  if (n >= 1e6) return '$' + (n / 1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return '$' + (n / 1e3).toFixed(0) + 'K';
+  return '$' + n.toLocaleString();
+}
+
+function fmtNum(n) {
+  return n.toLocaleString();
+}
+
+function fmtPct(n) {
+  return (n * 100).toFixed(1) + '%';
+}
+
+function deltaClass(v) {
+  return v >= 0 ? 'up' : 'down';
+}
+
+function deltaStr(v) {
+  const sign = v >= 0 ? '+' : '';
+  return sign + (v * 100).toFixed(1) + '%';
+}
+
+function sparkData(data, key) {
+  // Generate sparkline data from weekly aggregates
+  const weeks = {};
+  data.forEach(d => {
+    if (!weeks[d.date]) weeks[d.date] = 0;
+    weeks[d.date] += d[key];
+  });
+  return Object.values(weeks).reverse();
+}
+
+// ============================================================
+// TAB NAVIGATION
+// ============================================================
+
+document.querySelectorAll('.view-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('view-' + tab.dataset.view).classList.add('active');
+  });
+});
+
+// ============================================================
+// VIEW 1: Content Scorecard
+// ============================================================
+
+function renderContentScorecard() {
+  const data = MOCK.content_scorecard;
+
+  // Summary cards
+  const totalImpressions = data.reduce((s, d) => s + d.impressions, 0);
+  const totalClicks = data.reduce((s, d) => s + d.clicks, 0);
+  const avgCTR = totalClicks / totalImpressions;
+  const totalNewLPs = data.reduce((s, d) => s + d.new_lps_7d, 0);
+  const totalPosts = data.length;
+
+  const summaryHTML = [
+    { label: 'Posts', value: totalPosts, cls: 'purple', delta: '+3 vs prior' },
+    { label: 'Impressions', value: fmtNum(totalImpressions), cls: 'gold', delta: '+12.4%' },
+    { label: 'Avg CTR', value: (avgCTR * 100).toFixed(1) + '%', cls: 'orange', delta: '+0.3pp' },
+    { label: 'New LPs (7d)', value: fmtNum(totalNewLPs), cls: 'green', delta: '+18.2%' },
+  ].map(c => `
+    <div class="summary-card">
+      <div class="summary-label">${c.label}</div>
+      <div class="summary-value ${c.cls}">${c.value}</div>
+      <div class="summary-delta up">${c.delta}</div>
+    </div>
+  `).join('');
+
+  document.getElementById('content-summary').innerHTML = summaryHTML;
+
+  // Table
+  let sortKey = 'date';
+  let sortDir = -1;
+
+  function renderTable() {
+    const sorted = [...data].sort((a, b) => {
+      let av = a[sortKey], bv = b[sortKey];
+      if (typeof av === 'string') return sortDir * av.localeCompare(bv);
+      return sortDir * (av - bv);
+    });
+
+    // Compute CTR for each row
+    sorted.forEach(d => { d.ctr = d.clicks / d.impressions; });
+
+    const maxCTR = Math.max(...sorted.map(d => d.ctr));
+
+    document.getElementById('content-tbody').innerHTML = sorted.map(d => {
+      const ctrPct = (d.ctr * 100).toFixed(1);
+      const ctrWidth = (d.ctr / maxCTR * 100).toFixed(0);
+      return `
+        <tr>
+          <td style="font-family:var(--font-mono);font-size:12px;color:var(--text-secondary)">${d.date}</td>
+          <td><span class="type-badge ${d.type}">${d.type}</span></td>
+          <td style="font-weight:600">${d.project}</td>
+          <td style="font-family:var(--font-mono)">${fmtNum(d.impressions)}</td>
+          <td>
+            <div class="ctr-bar">
+              <div class="ctr-bar-track"><div class="ctr-bar-fill" style="width:${ctrWidth}%"></div></div>
+              <span class="ctr-val">${ctrPct}%</span>
+            </div>
+          </td>
+          <td style="font-family:var(--font-mono);font-weight:600;color:var(--success)">${d.new_lps_7d}</td>
+          <td class="td-sparkline"><svg class="row-spark" data-lps="${d.new_lps_7d}"></svg></td>
+        </tr>
+      `;
+    }).join('');
+
+    // Mini sparklines per row (simple random-ish trend)
+    document.querySelectorAll('.row-spark').forEach(svg => {
+      const lps = +svg.dataset.lps;
+      const pts = Array.from({length: 6}, (_, i) => Math.max(1, lps - 10 + Math.floor(Math.random() * 20) - (5 - i) * 2));
+      pts.push(lps);
+      const w = 80, h = 24;
+      const xScale = d3.scaleLinear().domain([0, pts.length - 1]).range([2, w - 2]);
+      const yScale = d3.scaleLinear().domain([d3.min(pts) * 0.8, d3.max(pts) * 1.1]).range([h - 2, 2]);
+      const line = d3.line().x((_, i) => xScale(i)).y(d => yScale(d)).curve(d3.curveCatmullRom);
+      const area = d3.area().x((_, i) => xScale(i)).y0(h).y1(d => yScale(d)).curve(d3.curveCatmullRom);
+
+      const sel = d3.select(svg).attr('viewBox', `0 0 ${w} ${h}`);
+      sel.append('path').attr('d', area(pts)).attr('fill', 'rgba(110, 69, 255, 0.15)');
+      sel.append('path').attr('d', line(pts)).attr('fill', 'none').attr('stroke', '#6e45ff').attr('stroke-width', 1.5);
+      sel.append('circle').attr('cx', xScale(pts.length - 1)).attr('cy', yScale(lps)).attr('r', 2.5).attr('fill', '#6e45ff');
+    });
+  }
+
+  renderTable();
+
+  // Sorting
+  document.querySelectorAll('#content-table thead th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.sort;
+      if (sortKey === key) sortDir *= -1;
+      else { sortKey = key; sortDir = -1; }
+      document.querySelectorAll('#content-table thead th').forEach(h => h.classList.remove('sorted-asc', 'sorted-desc'));
+      th.classList.add(sortDir === 1 ? 'sorted-asc' : 'sorted-desc');
+      renderTable();
+    });
+  });
+}
+
+// ============================================================
+// VIEW 2: Per-Project Scorecard
+// ============================================================
+
+function renderProjectScorecard() {
+  const data = MOCK.project_scorecard;
+  let currentSort = 'tvl';
+  let currentTier = 'all';
+
+  function renderCards() {
+    let filtered = currentTier === 'all' ? [...data] : data.filter(d => d.tier === currentTier);
+    filtered.sort((a, b) => {
+      if (currentSort === 'tvl_30d_change') return b[currentSort] - a[currentSort];
+      return b[currentSort] - a[currentSort];
+    });
+
+    document.getElementById('project-grid').innerHTML = filtered.map(p => {
+      const growthSinceSpotlight = (p.tvl - p.tvl_at_spotlight) / p.tvl_at_spotlight;
+      return `
+        <div class="project-card">
+          <div class="project-card-header">
+            <span class="project-name">${p.project}</span>
+            <span class="project-pool-type">${p.pool_type}</span>
+          </div>
+          <div class="project-metrics">
+            <div class="project-metric">
+              <div class="project-metric-label">TVL</div>
+              <div class="project-metric-value">${fmt(p.tvl)}</div>
+              <div class="project-metric-delta ${deltaClass(p.tvl_30d_change)}">${deltaStr(p.tvl_30d_change)} (30d)</div>
+            </div>
+            <div class="project-metric">
+              <div class="project-metric-label">7d Volume</div>
+              <div class="project-metric-value">${fmt(p.volume_7d)}</div>
+            </div>
+            <div class="project-metric">
+              <div class="project-metric-label">7d Fees</div>
+              <div class="project-metric-value">${fmt(p.fees_7d)}</div>
+            </div>
+            <div class="project-metric">
+              <div class="project-metric-label">Wallets</div>
+              <div class="project-metric-value">${fmtNum(p.unique_wallets)}</div>
+              <div class="project-metric-delta up">+${p.new_wallets_7d} this week</div>
+            </div>
+          </div>
+          <div class="project-spotlight-bar">
+            <span>Spotlighted ${p.spotlight_date}</span>
+            <span style="flex:1"></span>
+            <span>Growth since:</span>
+            <span class="spotlight-growth ${deltaClass(growthSinceSpotlight)}">${growthSinceSpotlight >= 0 ? '+' : ''}${(growthSinceSpotlight * 100).toFixed(0)}%</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  renderCards();
+
+  document.getElementById('project-sort').addEventListener('change', e => {
+    currentSort = e.target.value;
+    renderCards();
+  });
+
+  document.querySelectorAll('.tier-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tier-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentTier = btn.dataset.tier;
+      renderCards();
+    });
+  });
+}
+
+// ============================================================
+// VIEW 3: Post-Graduation Survival
+// ============================================================
+
+function renderSurvivalTracker() {
+  const curves = MOCK.survival_curves;
+  const days = [0, 1, 3, 7, 14, 21, 30];
+  const sources = Object.keys(curves);
+  const activeSet = new Set(sources);
+
+  // Legend
+  document.getElementById('survival-legend').innerHTML = sources.map(s => `
+    <div class="legend-item" data-source="${s}">
+      <div class="legend-dot" style="background:${curves[s].color}"></div>
+      <span>${s}</span>
+    </div>
+  `).join('');
+
+  // SVG setup
+  const svg = d3.select('#survival-svg');
+  const svgEl = document.getElementById('survival-svg');
+  const margin = { top: 16, right: 24, bottom: 40, left: 48 };
+
+  function draw() {
+    svg.selectAll('*').remove();
+    const rect = svgEl.getBoundingClientRect();
+    const w = rect.width || 800;
+    const h = rect.height || 340;
+    const iw = w - margin.left - margin.right;
+    const ih = h - margin.top - margin.bottom;
+
+    svg.attr('viewBox', `0 0 ${w} ${h}`);
+    const g = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+    const x = d3.scaleLinear().domain([0, 30]).range([0, iw]);
+    const y = d3.scaleLinear().domain([0, 100]).range([ih, 0]);
+
+    // Grid
+    g.selectAll('.grid-y').data(y.ticks(5)).enter()
+      .append('line').attr('x1', 0).attr('x2', iw).attr('y1', d => y(d)).attr('y2', d => y(d))
+      .attr('stroke', '#2a2a3c').attr('stroke-dasharray', '2,4');
+
+    // Axes
+    g.append('g').attr('transform', `translate(0,${ih})`)
+      .call(d3.axisBottom(x).tickValues(days).tickFormat(d => d + 'd'))
+      .selectAll('text').attr('fill', '#9595b2').attr('font-family', 'JetBrains Mono').attr('font-size', 11);
+
+    g.append('g')
+      .call(d3.axisLeft(y).ticks(5).tickFormat(d => d + '%'))
+      .selectAll('text').attr('fill', '#9595b2').attr('font-family', 'JetBrains Mono').attr('font-size', 11);
+
+    g.selectAll('.domain').attr('stroke', '#2a2a3c');
+    g.selectAll('.tick line').attr('stroke', '#2a2a3c');
+
+    // Survival threshold line
+    g.append('line').attr('x1', 0).attr('x2', iw).attr('y1', y(50)).attr('y2', y(50))
+      .attr('stroke', '#ef4444').attr('stroke-dasharray', '6,4').attr('opacity', 0.4);
+    g.append('text').attr('x', iw - 4).attr('y', y(50) - 6).attr('text-anchor', 'end')
+      .attr('fill', '#ef4444').attr('font-size', 10).attr('font-family', 'JetBrains Mono').attr('opacity', 0.6)
+      .text('50% survival');
+
+    const line = d3.line().x((d, i) => x(days[i])).y(d => y(d)).curve(d3.curveCatmullRom);
+    const area = d3.area().x((d, i) => x(days[i])).y0(ih).y1(d => y(d)).curve(d3.curveCatmullRom);
+
+    sources.forEach(s => {
+      if (!activeSet.has(s)) return;
+      const c = curves[s];
+
+      g.append('path').attr('d', area(c.data))
+        .attr('fill', c.color).attr('opacity', 0.06);
+
+      g.append('path').attr('d', line(c.data))
+        .attr('fill', 'none').attr('stroke', c.color).attr('stroke-width', 2.5)
+        .attr('stroke-linecap', 'round');
+
+      // End dot
+      const lastI = c.data.length - 1;
+      g.append('circle').attr('cx', x(days[lastI])).attr('cy', y(c.data[lastI]))
+        .attr('r', 4).attr('fill', c.color);
+
+      // End label
+      g.append('text').attr('x', x(days[lastI]) + 8).attr('y', y(c.data[lastI]) + 4)
+        .attr('fill', c.color).attr('font-size', 11).attr('font-weight', 600)
+        .attr('font-family', 'JetBrains Mono').text(c.data[lastI] + '%');
+    });
+
+    // Hover interaction
+    const hoverLine = g.append('line').attr('y1', 0).attr('y2', ih)
+      .attr('stroke', '#434360').attr('stroke-dasharray', '3,3').attr('opacity', 0);
+
+    const tooltip = document.getElementById('survival-tooltip');
+
+    svg.on('mousemove', function(event) {
+      const [mx] = d3.pointer(event, g.node());
+      const dayVal = Math.round(x.invert(Math.max(0, Math.min(mx, iw))));
+      const closestIdx = days.reduce((best, d, i) => Math.abs(d - dayVal) < Math.abs(days[best] - dayVal) ? i : best, 0);
+      const snapX = x(days[closestIdx]);
+
+      hoverLine.attr('x1', snapX).attr('x2', snapX).attr('opacity', 1);
+
+      let html = `<div style="font-weight:700;margin-bottom:6px">Day ${days[closestIdx]}</div>`;
+      sources.forEach(s => {
+        if (!activeSet.has(s)) return;
+        html += `<div class="tt-stat"><span style="color:${curves[s].color};font-weight:600">${s}:</span> ${curves[s].data[closestIdx]}%</div>`;
+      });
+
+      tooltip.innerHTML = html;
+      tooltip.style.opacity = 1;
+
+      const svgRect = svgEl.getBoundingClientRect();
+      tooltip.style.left = (snapX + margin.left + 16) + 'px';
+      tooltip.style.top = (margin.top + 20) + 'px';
+    });
+
+    svg.on('mouseleave', () => {
+      hoverLine.attr('opacity', 0);
+      tooltip.style.opacity = 0;
+    });
+  }
+
+  draw();
+  window.addEventListener('resize', draw);
+
+  // Legend toggle
+  document.querySelectorAll('.legend-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const s = item.dataset.source;
+      if (activeSet.has(s)) { activeSet.delete(s); item.classList.add('dimmed'); }
+      else { activeSet.add(s); item.classList.remove('dimmed'); }
+      draw();
+    });
+  });
+
+  // Graduation table
+  const grads = MOCK.graduation_tracker;
+  document.getElementById('grad-count').textContent = grads.length + ' tokens';
+
+  document.getElementById('grad-tbody').innerHTML = grads.map(g => {
+    const sourceClass = g.source.toLowerCase().replace('.', '').replace(' ', '');
+    return `
+      <tr>
+        <td style="font-weight:600;font-family:var(--font-mono)">${g.token}</td>
+        <td><span class="source-tag ${sourceClass}">${g.source}</span></td>
+        <td style="font-family:var(--font-mono);font-size:12px;color:var(--text-secondary)">${g.graduation_date}</td>
+        <td style="font-family:var(--font-mono)">${fmt(g.tvl_at_graduation)}</td>
+        <td style="font-family:var(--font-mono);color:${g.tvl_day_7 !== null && g.tvl_day_7 < g.tvl_at_graduation ? 'var(--danger)' : 'var(--text-primary)'}">${g.tvl_day_7 !== null ? fmt(g.tvl_day_7) : '--'}</td>
+        <td style="font-family:var(--font-mono);color:${g.tvl_day_30 !== null && g.tvl_day_30 < g.tvl_at_graduation * 0.5 ? 'var(--danger)' : 'var(--text-primary)'}">${g.tvl_day_30 !== null ? fmt(g.tvl_day_30) : '--'}</td>
+        <td><span class="alive-badge"><span class="alive-dot ${g.alive ? 'yes' : 'no'}"></span>${g.alive ? 'Alive' : 'Dead'}</span></td>
+      </tr>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// VIEW 4: North Star Contribution
+// ============================================================
+
+function renderNorthStar() {
+  const ns = MOCK.north_star_contribution;
+  const trend = MOCK.north_star_trend;
+
+  // Donut chart
+  const donutSvg = d3.select('#donut-svg');
+  const size = 260;
+  const radius = size / 2;
+  const innerRadius = radius * 0.7;
+
+  donutSvg.attr('viewBox', `0 0 ${size} ${size}`);
+  const donutG = donutSvg.append('g').attr('transform', `translate(${radius},${radius})`);
+
+  const pie = d3.pie().sort(null).value(d => d.value);
+  const arc = d3.arc().innerRadius(innerRadius).outerRadius(radius - 4);
+
+  const slices = [
+    { label: 'Via Spotlights', value: ns.via_spotlighted_pools, color: '#6e45ff' },
+    { label: 'Organic', value: ns.total_active_lps_1k - ns.via_spotlighted_pools, color: '#2a2a3c' },
+  ];
+
+  // Animate arcs
+  donutG.selectAll('path').data(pie(slices)).enter()
+    .append('path')
+    .attr('fill', d => d.data.color)
+    .attr('stroke', '#08080c')
+    .attr('stroke-width', 2)
+    .transition().duration(800).attrTween('d', function(d) {
+      const i = d3.interpolate({ startAngle: 0, endAngle: 0 }, d);
+      return t => arc(i(t));
+    });
+
+  // Hover
+  donutG.selectAll('path').on('mouseenter', function(event, d) {
+    d3.select(this).transition().duration(150)
+      .attr('transform', () => {
+        const [cx, cy] = arc.centroid(d);
+        const dist = 6;
+        const angle = Math.atan2(cy, cx);
+        return `translate(${Math.cos(angle) * dist},${Math.sin(angle) * dist})`;
+      });
+  }).on('mouseleave', function() {
+    d3.select(this).transition().duration(150).attr('transform', 'translate(0,0)');
+  });
+
+  // Update percentage with animation
+  const pctEl = document.getElementById('donut-pct');
+  let currentPct = 0;
+  const targetPct = ns.pct_attributable;
+  const pctAnim = setInterval(() => {
+    currentPct += targetPct / 40;
+    if (currentPct >= targetPct) { currentPct = targetPct; clearInterval(pctAnim); }
+    pctEl.textContent = currentPct.toFixed(2) + '%';
+  }, 25);
+
+  // Stats under donut
+  document.getElementById('donut-stats').innerHTML = `
+    <div class="donut-stat">
+      <div class="donut-stat-label">Total LPs >$1K</div>
+      <div class="donut-stat-value" style="color:var(--text-primary)">${fmtNum(ns.total_active_lps_1k)}</div>
+    </div>
+    <div class="donut-stat">
+      <div class="donut-stat-label">Via Spotlights</div>
+      <div class="donut-stat-value" style="color:var(--primary)">${fmtNum(ns.via_spotlighted_pools)}</div>
+    </div>
+    <div class="donut-stat">
+      <div class="donut-stat-label">First-time LPs</div>
+      <div class="donut-stat-value" style="color:var(--accent)">${fmtNum(ns.first_time_via_spotlight)}</div>
+    </div>
+    <div class="donut-stat">
+      <div class="donut-stat-label">Attribution</div>
+      <div class="donut-stat-value" style="color:var(--success)">${ns.pct_attributable}%</div>
+    </div>
+  `;
+
+  // Trend line
+  const trendSvg = d3.select('#trend-svg');
+  const trendEl = document.getElementById('trend-svg');
+  const margin = { top: 16, right: 24, bottom: 36, left: 48 };
+
+  function drawTrend() {
+    trendSvg.selectAll('*').remove();
+    const rect = trendEl.getBoundingClientRect();
+    const w = rect.width || 600;
+    const h = rect.height || 300;
+    const iw = w - margin.left - margin.right;
+    const ih = h - margin.top - margin.bottom;
+
+    trendSvg.attr('viewBox', `0 0 ${w} ${h}`);
+    const g = trendSvg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
+
+    const x = d3.scaleBand().domain(trend.map(d => d.week)).range([0, iw]).padding(0.1);
+    const y = d3.scaleLinear().domain([0, d3.max(trend, d => d.pct) * 1.3]).range([ih, 0]);
+
+    // Grid
+    g.selectAll('.grid').data(y.ticks(5)).enter()
+      .append('line').attr('x1', 0).attr('x2', iw).attr('y1', d => y(d)).attr('y2', d => y(d))
+      .attr('stroke', '#2a2a3c').attr('stroke-dasharray', '2,4');
+
+    // Area
+    const areaGen = d3.area()
+      .x(d => x(d.week) + x.bandwidth() / 2)
+      .y0(ih).y1(d => y(d.pct))
+      .curve(d3.curveCatmullRom);
+
+    const lineGen = d3.line()
+      .x(d => x(d.week) + x.bandwidth() / 2)
+      .y(d => y(d.pct))
+      .curve(d3.curveCatmullRom);
+
+    // Gradient
+    const gradId = 'trend-grad';
+    const defs = trendSvg.append('defs');
+    const grad = defs.append('linearGradient').attr('id', gradId).attr('x1', 0).attr('y1', 0).attr('x2', 0).attr('y2', 1);
+    grad.append('stop').attr('offset', '0%').attr('stop-color', '#6e45ff').attr('stop-opacity', 0.3);
+    grad.append('stop').attr('offset', '100%').attr('stop-color', '#6e45ff').attr('stop-opacity', 0.02);
+
+    g.append('path').datum(trend).attr('d', areaGen).attr('fill', `url(#${gradId})`);
+    g.append('path').datum(trend).attr('d', lineGen)
+      .attr('fill', 'none').attr('stroke', '#6e45ff').attr('stroke-width', 2.5).attr('stroke-linecap', 'round');
+
+    // Dots
+    g.selectAll('.dot').data(trend).enter()
+      .append('circle')
+      .attr('cx', d => x(d.week) + x.bandwidth() / 2)
+      .attr('cy', d => y(d.pct))
+      .attr('r', 4).attr('fill', '#6e45ff').attr('stroke', '#08080c').attr('stroke-width', 2);
+
+    // Value labels on dots
+    g.selectAll('.val-label').data(trend).enter()
+      .append('text')
+      .attr('x', d => x(d.week) + x.bandwidth() / 2)
+      .attr('y', d => y(d.pct) - 12)
+      .attr('text-anchor', 'middle')
+      .attr('fill', '#9595b2').attr('font-size', 10).attr('font-family', 'JetBrains Mono')
+      .text(d => d.pct + '%');
+
+    // X axis
+    g.append('g').attr('transform', `translate(0,${ih})`)
+      .call(d3.axisBottom(x))
+      .selectAll('text').attr('fill', '#9595b2').attr('font-family', 'JetBrains Mono').attr('font-size', 10);
+
+    // Y axis
+    g.append('g')
+      .call(d3.axisLeft(y).ticks(5).tickFormat(d => d + '%'))
+      .selectAll('text').attr('fill', '#9595b2').attr('font-family', 'JetBrains Mono').attr('font-size', 10);
+
+    g.selectAll('.domain').attr('stroke', '#2a2a3c');
+    g.selectAll('.tick line').attr('stroke', '#2a2a3c');
+
+    // Hover tooltip
+    const hoverG = g.append('g').style('display', 'none');
+    hoverG.append('line').attr('class', 'hover-line').attr('y1', 0).attr('y2', ih)
+      .attr('stroke', '#434360').attr('stroke-dasharray', '3,3');
+    const hoverBox = hoverG.append('g');
+    const hoverBg = hoverBox.append('rect').attr('fill', '#12121c').attr('stroke', '#434360').attr('rx', 6).attr('ry', 6);
+    const hoverText1 = hoverBox.append('text').attr('fill', '#f9f9fb').attr('font-size', 12).attr('font-weight', 700);
+    const hoverText2 = hoverBox.append('text').attr('fill', '#9595b2').attr('font-size', 11).attr('font-family', 'JetBrains Mono');
+
+    trendSvg.on('mousemove', function(event) {
+      const [mx] = d3.pointer(event, g.node());
+      const weekIdx = Math.floor(mx / (iw / trend.length));
+      if (weekIdx < 0 || weekIdx >= trend.length) { hoverG.style('display', 'none'); return; }
+
+      const d = trend[weekIdx];
+      const cx = x(d.week) + x.bandwidth() / 2;
+
+      hoverG.style('display', null);
+      hoverG.select('.hover-line').attr('x1', cx).attr('x2', cx);
+
+      hoverText1.text(d.week + ': ' + d.pct + '%').attr('x', cx + 12).attr('y', 20);
+      hoverText2.text(d.attributed + ' / ' + fmtNum(d.total) + ' LPs').attr('x', cx + 12).attr('y', 36);
+      hoverBg.attr('x', cx + 6).attr('y', 4).attr('width', 140).attr('height', 40);
+    });
+
+    trendSvg.on('mouseleave', () => hoverG.style('display', 'none'));
+  }
+
+  drawTrend();
+  window.addEventListener('resize', drawTrend);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+
+renderContentScorecard();
+renderProjectScorecard();
+renderSurvivalTracker();
+renderNorthStar();
+</script>
+</body>
+</html>

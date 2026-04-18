@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fleet Command -- MetClaw Ops</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #08080c;
+            --bg-base: #12121c;
+            --bg-surface: #181825;
+            --bg-elevated: #1e1f35;
+            --bg-hover: #232440;
+            --purple: #6e45ff;
+            --purple-dim: rgba(110,69,255,0.12);
+            --purple-glow: rgba(110,69,255,0.25);
+            --accent: #f54b00;
+            --accent-dim: rgba(245,75,0,0.12);
+            --success: #24c98d;
+            --success-dim: rgba(36,201,141,0.12);
+            --danger: #f04438;
+            --danger-dim: rgba(240,68,56,0.12);
+            --warning: #f79009;
+            --warning-dim: rgba(247,144,9,0.12);
+            --blue: #36bffa;
+            --blue-dim: rgba(54,191,250,0.12);
+            --text-primary: #f9f9fb;
+            --text-secondary: #9595b2;
+            --text-tertiary: #6c6c89;
+            --stroke: #2c2e49;
+            --stroke-active: #3d3f5e;
+            --container: #18192c;
+            --border-secondary: #2a2a3c;
+            --border-tertiary: #202031;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ---- GRAIN OVERLAY ---- */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 200px 200px;
+        }
+
+        /* ---- SCANLINE OVERLAY ---- */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(0,0,0,0.03) 2px,
+                rgba(0,0,0,0.03) 4px
+            );
+        }
+
+        /* ---- SHELL ---- */
+        .shell {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            grid-template-rows: 52px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ---- TOP BAR ---- */
+        .topbar {
+            grid-column: 1 / -1;
+            background: var(--bg-base);
+            border-bottom: 1px solid var(--stroke);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: relative;
+            z-index: 100;
+        }
+
+        .topbar::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--purple) 20%, var(--accent) 80%, transparent);
+            opacity: 0.3;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, var(--purple), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 10px;
+            letter-spacing: -0.02em;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--purple), var(--accent));
+            opacity: 0.15;
+            filter: blur(8px);
+        }
+
+        .topbar-title {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .topbar-title span {
+            color: var(--text-tertiary);
+            font-weight: 400;
+            margin-left: 6px;
+            font-size: 12px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .live-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--success-dim);
+            border: 1px solid rgba(36,201,141,0.2);
+            padding: 3px 10px 3px 8px;
+            border-radius: 100px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--success);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: livePulse 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        .live-dot::after {
+            content: '';
+            position: absolute;
+            inset: -3px;
+            border-radius: 50%;
+            background: var(--success);
+            opacity: 0;
+            animation: livePulseRing 2s ease-in-out infinite;
+        }
+
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes livePulseRing {
+            0% { opacity: 0.4; transform: scale(1); }
+            100% { opacity: 0; transform: scale(2.5); }
+        }
+
+        .clock {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--text-tertiary);
+            font-weight: 500;
+            letter-spacing: 0.02em;
+        }
+
+        /* ---- SIDEBAR ---- */
+        .sidebar {
+            background: var(--bg-base);
+            border-right: 1px solid var(--stroke);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .sidebar-header {
+            padding: 16px 16px 12px;
+            border-bottom: 1px solid var(--border-tertiary);
+        }
+
+        .sidebar-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-tertiary);
+        }
+
+        .agent-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .agent-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            margin-bottom: 1px;
+            position: relative;
+        }
+
+        .agent-row:hover {
+            background: var(--bg-hover);
+        }
+
+        .agent-row.selected {
+            background: var(--purple-dim);
+        }
+
+        .agent-row.selected::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2px;
+            height: 20px;
+            border-radius: 0 2px 2px 0;
+            background: var(--purple);
+        }
+
+        .agent-pip {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 10px;
+            text-transform: uppercase;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .agent-pip-glow {
+            position: absolute;
+            inset: -2px;
+            border-radius: 10px;
+            opacity: 0;
+            filter: blur(6px);
+            transition: opacity 0.3s;
+        }
+
+        .agent-row:hover .agent-pip-glow,
+        .agent-row.selected .agent-pip-glow {
+            opacity: 0.3;
+        }
+
+        .agent-meta {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .agent-meta-name {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            text-transform: capitalize;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .agent-meta-role {
+            font-size: 10px;
+            color: var(--text-tertiary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 1px;
+        }
+
+        .agent-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .agent-dot.active { background: var(--success); box-shadow: 0 0 6px rgba(36,201,141,0.4); }
+        .agent-dot.idle { background: var(--warning); }
+        .agent-dot.offline { background: var(--text-tertiary); }
+
+        /* Sidebar footer */
+        .sidebar-footer {
+            padding: 12px 16px;
+            border-top: 1px solid var(--border-tertiary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-footer-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: var(--text-tertiary);
+            letter-spacing: 0.02em;
+        }
+
+        .fleet-count {
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        /* ---- MAIN AREA ---- */
+        .main {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ---- NAV TABS ---- */
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            padding: 10px 20px;
+            border-bottom: 1px solid var(--border-tertiary);
+            background: var(--bg-base);
+        }
+
+        .nav-tab {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            transition: all 0.15s ease;
+            position: relative;
+            letter-spacing: -0.01em;
+        }
+
+        .nav-tab:hover {
+            color: var(--text-secondary);
+            background: rgba(255,255,255,0.03);
+        }
+
+        .nav-tab.active {
+            color: var(--text-primary);
+            background: var(--bg-elevated);
+        }
+
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -11px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 16px;
+            height: 2px;
+            border-radius: 2px;
+            background: var(--purple);
+        }
+
+        .nav-sep {
+            width: 1px;
+            height: 16px;
+            background: var(--border-tertiary);
+            margin: 0 6px;
+        }
+
+        /* ---- CONTENT VIEWS ---- */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        .view { display: none; animation: viewIn 0.2s ease; }
+        .view.active { display: block; }
+
+        @keyframes viewIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ---- DASHBOARD VIEW ---- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            background: var(--bg-surface);
+            border: 1px solid var(--stroke);
+            border-radius: 10px;
+            padding: 14px 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+        }
+
+        .stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-tertiary);
+            margin-bottom: 8px;
+        }
+
+        .stat-val {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+            line-height: 1;
+        }
+
+        .stat-sub {
+            font-size: 10px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* Agent detail panel */
+        .detail-panel {
+            background: var(--bg-surface);
+            border: 1px solid var(--stroke);
+            border-radius: 12px;
+            overflow: hidden;
+            animation: detailIn 0.25s ease;
+        }
+
+        @keyframes detailIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .detail-top {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 1px solid var(--stroke);
+            position: relative;
+        }
+
+        .detail-top-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200px;
+            height: 100%;
+            opacity: 0.06;
+            filter: blur(40px);
+            pointer-events: none;
+        }
+
+        .detail-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            font-size: 15px;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 1;
+        }
+
+        .detail-name {
+            font-size: 17px;
+            font-weight: 700;
+            text-transform: capitalize;
+            letter-spacing: -0.02em;
+        }
+
+        .detail-role {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        .detail-status-badge {
+            margin-left: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .detail-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .detail-section {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-tertiary);
+        }
+
+        .detail-section:nth-child(even) {
+            border-left: 1px solid var(--border-tertiary);
+        }
+
+        .detail-section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-tertiary);
+            margin-bottom: 8px;
+        }
+
+        .detail-section-content {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .detail-cap-list {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .detail-cap {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-tertiary);
+            color: var(--text-secondary);
+        }
+
+        .detail-placeholder {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-tertiary);
+        }
+
+        .detail-placeholder-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+
+        .detail-placeholder p {
+            font-size: 13px;
+        }
+
+        /* ---- TASK BOARD ---- */
+        .board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            height: calc(100vh - 140px);
+        }
+
+        .board-col {
+            background: var(--bg-base);
+            border: 1px solid var(--stroke);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .board-col-head {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--stroke);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .board-col-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .board-col-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            background: var(--bg-surface);
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .board-col-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .task-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-tertiary);
+            border-radius: 8px;
+            padding: 10px 12px;
+            transition: all 0.15s ease;
+            cursor: default;
+        }
+
+        .task-card:hover {
+            border-color: var(--stroke-active);
+            background: var(--bg-elevated);
+        }
+
+        .task-card-title {
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            line-height: 1.3;
+            margin-bottom: 6px;
+        }
+
+        .task-card-desc {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .task-card-footer {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .task-priority {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        .pri-critical { background: var(--danger-dim); color: var(--danger); }
+        .pri-high { background: var(--warning-dim); color: var(--warning); }
+        .pri-medium { background: var(--blue-dim); color: var(--blue); }
+        .pri-low { background: rgba(255,255,255,0.05); color: var(--text-tertiary); }
+
+        .task-owner-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            margin-left: auto;
+        }
+
+        /* ---- OUTPUT FEED ---- */
+        .feed-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .feed-item {
+            display: flex;
+            gap: 14px;
+            padding: 14px 16px;
+            background: var(--bg-surface);
+            border: 1px solid var(--stroke);
+            border-radius: 10px;
+            transition: all 0.15s ease;
+        }
+
+        .feed-item:hover {
+            border-color: var(--stroke-active);
+        }
+
+        .feed-pip {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 10px;
+            text-transform: uppercase;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .feed-body { flex: 1; min-width: 0; }
+
+        .feed-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .feed-agent {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: capitalize;
+        }
+
+        .feed-action-verb {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 500;
+            color: var(--text-tertiary);
+            background: var(--bg-elevated);
+            padding: 1px 6px;
+            border-radius: 3px;
+        }
+
+        .feed-time {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-tertiary);
+            margin-left: auto;
+        }
+
+        .feed-title {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            margin-bottom: 3px;
+        }
+
+        .feed-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .feed-tags {
+            display: flex;
+            gap: 4px;
+            margin-top: 6px;
+        }
+
+        .feed-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 3px;
+            background: var(--purple-dim);
+            color: var(--purple);
+            letter-spacing: 0.02em;
+        }
+
+        /* ---- CHAT VIEW ---- */
+        .chat-shell {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 140px);
+            background: var(--bg-surface);
+            border: 1px solid var(--stroke);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .chat-topbar {
+            padding: 14px 20px;
+            border-bottom: 1px solid var(--stroke);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-topbar-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: var(--purple-dim);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--purple);
+        }
+
+        .chat-topbar-title {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .chat-topbar-sub {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--text-tertiary);
+            margin-left: auto;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-bubble {
+            max-width: 72%;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+            animation: bubbleIn 0.2s ease;
+        }
+
+        @keyframes bubbleIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bubble-agent {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border-tertiary);
+            align-self: flex-start;
+            color: var(--text-secondary);
+            border-bottom-left-radius: 3px;
+        }
+
+        .bubble-user {
+            background: var(--purple-dim);
+            border: 1px solid rgba(110,69,255,0.25);
+            align-self: flex-end;
+            color: var(--text-primary);
+            border-bottom-right-radius: 3px;
+        }
+
+        .bubble-meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: var(--text-tertiary);
+            margin-top: 4px;
+        }
+
+        .chat-input-row {
+            padding: 12px 16px;
+            border-top: 1px solid var(--stroke);
+            display: flex;
+            gap: 8px;
+            background: var(--bg-base);
+        }
+
+        .chat-field {
+            flex: 1;
+            background: var(--bg-surface);
+            border: 1px solid var(--stroke);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .chat-field:focus {
+            border-color: var(--purple);
+            box-shadow: 0 0 0 3px var(--purple-dim);
+        }
+
+        .chat-field::placeholder { color: var(--text-tertiary); }
+
+        .chat-btn {
+            background: var(--purple);
+            border: none;
+            border-radius: 8px;
+            padding: 0 18px;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+            letter-spacing: -0.01em;
+        }
+
+        .chat-btn:hover { background: #7b55ff; }
+        .chat-btn:active { transform: scale(0.97); }
+
+        /* ---- SCROLLBAR ---- */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-secondary); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--stroke-active); }
+
+        /* ---- MOBILE ---- */
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        @media (max-width: 1100px) {
+            .stats-grid { grid-template-columns: repeat(3, 1fr); }
+            .board { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .shell { grid-template-columns: 1fr; }
+            .sidebar {
+                position: fixed;
+                left: -260px;
+                top: 52px;
+                bottom: 0;
+                width: 240px;
+                z-index: 200;
+                transition: left 0.25s ease;
+            }
+            .sidebar.open { left: 0; }
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                top: 52px;
+                background: rgba(0,0,0,0.5);
+                z-index: 199;
+            }
+            .sidebar-overlay.open { display: block; }
+            .mobile-toggle { display: block; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .board { grid-template-columns: 1fr; height: auto; }
+            .detail-body { grid-template-columns: 1fr; }
+            .detail-section:nth-child(even) { border-left: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <div class="shell">
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <button class="mobile-toggle" onclick="toggleSidebar()">&#9776;</button>
+                <div class="logo">MC</div>
+                <div class="topbar-title">Fleet Command <span>MetClaw Ops</span></div>
+            </div>
+            <div class="topbar-right">
+                <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+                <div class="clock" id="clock">--</div>
+            </div>
+        </div>
+
+        <!-- SIDEBAR -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-label">Agents</div>
+            </div>
+            <div class="agent-list" id="agentList"></div>
+            <div class="sidebar-footer">
+                <div class="agent-dot active" style="width:5px;height:5px"></div>
+                <span class="sidebar-footer-text"><span class="fleet-count" id="fleetCount">7</span> / 7 operational</span>
+            </div>
+        </div>
+
+        <!-- MAIN -->
+        <div class="main">
+            <div class="nav">
+                <button class="nav-tab active" data-view="dashboard" onclick="switchView(this,'dashboard')">Dashboard</button>
+                <button class="nav-tab" data-view="tasks" onclick="switchView(this,'tasks')">Tasks</button>
+                <div class="nav-sep"></div>
+                <button class="nav-tab" data-view="feed" onclick="switchView(this,'feed')">Output Feed</button>
+                <button class="nav-tab" data-view="chat" onclick="switchView(this,'chat')">Chat</button>
+            </div>
+            <div class="content">
+                <div id="v-dashboard" class="view active"></div>
+                <div id="v-tasks" class="view"></div>
+                <div id="v-feed" class="view"></div>
+                <div id="v-chat" class="view"></div>
+            </div>
+        </div>
+    </div>
+
+<script>
+// ================================================================
+// DATA
+// ================================================================
+const AGENTS = [
+    { id:"ophelia", name:"ophelia", role:"COMMAND + SHIP", color:"#6e45ff", status:"active", task:"Command center build, fleet coordination", caps:["Fleet orchestration","Twitter posting","Email/Calendar","Code builds","Pentagon coordination"], output:"Built command center. Deployed all agents. Ecosystem page with live DefiLlama data. Content plan delivered." },
+    { id:"galatea", name:"galatea", role:"MAKE -- Builder", color:"#36bffa", status:"active", task:"MetIgnite Phase 2 -- remaining 4 skills", caps:["Next.js apps","API development","Product builds","Prototyping"], output:"Phase 1 scaffold complete. 4/8 skills live (pool-setup, tokenomics-review, content-draft, growth-playbook). Chat UI with skill invocation." },
+    { id:"orcus",   name:"orcus",   role:"SENSE -- Research", color:"#24c98d", status:"active", task:"Standing by -- research on demand", caps:["On-chain analysis","DefiLlama/Dune","Competitor research","Ecosystem mapping"], output:"Founder Needs Matrix + Ecosystem Catalog (27 projects, 5 tiers). PreStocks top co-marketing candidate." },
+    { id:"proteus", name:"proteus", role:"THINK -- Strategy", color:"#f79009", status:"active", task:"Standing by -- strategy on demand", caps:["AARRR analysis","GTM strategy","Content strategy","Distribution planning"], output:"GTM one-pager, distribution strategy, AARRR diagnostic, North Star dashboard, distribution metrics spec. All approved." },
+    { id:"juliet",  name:"juliet",  role:"MAKE -- Design", color:"#f54b00", status:"active", task:"MetIgnite high-fi mockups", caps:["UI/UX design","Brand system","Social cards","Visual assets"], output:"Design brief with 5 screen wireframes. Approved. Working on high-fi mockups for onboarding + chat." },
+    { id:"atlas",   name:"atlas",   role:"SENSE -- Data", color:"#36bffa", status:"active", task:"Standing by -- data architecture delivered", caps:["Data visualization","Interactive dashboards","D3.js","Analytics"], output:"MetIgnite data architecture -- 6 data sources, 7 Dune queries, 8 API calls. Migration path documented." },
+    { id:"ariel",   name:"ariel",   role:"SENSE -- Legal", color:"#9595b2", status:"active", task:"Phase 2 legal review gate", caps:["Regulatory analysis","Compliance review","Risk assessment","Bedrock Foundation"], output:"Legal risk memo. Content compliance middleware spec. Never-say list implemented in Phase 1." }
+];
+
+const TASKS = [
+    { id:"t1",  title:"MetIgnite technical spec",        status:"done",       pri:"critical", owner:"galatea", desc:"Spec delivered and approved. Next.js + 8 skills API + orchestration." },
+    { id:"t2",  title:"MetIgnite Phase 1 scaffold",      status:"done",       pri:"critical", owner:"galatea", desc:"Landing page, chat UI, 2 skills live, compliance middleware." },
+    { id:"t3",  title:"MetIgnite design brief",          status:"done",       pri:"critical", owner:"juliet",  desc:"5 screens wireframed. Chat-first onboarding." },
+    { id:"t4",  title:"MetIgnite GTM strategy",          status:"done",       pri:"critical", owner:"proteus", desc:"CLI barrier flagged. Web/TG as prerequisite." },
+    { id:"t5",  title:"MetIgnite legal risk scan",       status:"done",       pri:"high",     owner:"ariel",   desc:"Compliance middleware in Phase 1." },
+    { id:"t6",  title:"Founder needs + ecosystem catalog",status:"done",      pri:"critical", owner:"orcus",   desc:"27 projects. PreStocks top candidate." },
+    { id:"t7",  title:"Ecosystem distribution strategy",  status:"done",      pri:"critical", owner:"proteus", desc:"Co-marketing playbook. 2x/week content." },
+    { id:"t8",  title:"MetIgnite data architecture",      status:"done",      pri:"high",     owner:"atlas",   desc:"6 data sources, 7 Dune queries." },
+    { id:"t9",  title:"Distribution metrics spec",        status:"done",      pri:"high",     owner:"proteus", desc:"4 scorecard views." },
+    { id:"t10", title:"North Star dashboard",             status:"done",      pri:"high",     owner:"proteus", desc:"4 views built." },
+    { id:"t11", title:"MetIgnite high-fi mockups",        status:"inProgress",pri:"high",     owner:"juliet",  desc:"Onboarding + chat screens." },
+    { id:"t12", title:"MetIgnite Phase 2 -- remaining 4 skills",status:"done",pri:"high",owner:"galatea",desc:"community-setup, listing-ops, outreach, analytics." },
+    { id:"t13", title:"Fleet command center",             status:"inProgress",pri:"high",     owner:"ophelia", desc:"This dashboard. Phase 2: live Pentagon API." },
+    { id:"t14", title:"MetIgnite wizard flow",            status:"backlog",   pri:"high",     owner:"galatea", desc:"6-step wizard. Blocked on 8/8 skills." },
+    { id:"t15", title:"Phase 2 legal review gate",        status:"backlog",   pri:"high",     owner:"ariel",   desc:"Standing assignment." },
+    { id:"t16", title:"Content engine setup",             status:"backlog",   pri:"medium",   owner:"ophelia", desc:"Weekly calendar, scheduled triggers." },
+    { id:"t17", title:"Media production team",            status:"backlog",   pri:"medium",   owner:"ophelia", desc:"Remotion templates + human recruitment." }
+];
+
+const FEED = [
+    { agent:"ophelia", verb:"built",     title:"Fleet Command Center",                body:"Ops dashboard for Vesper. Phase 1 static data. Phase 2: live Pentagon API + real-time agent chat.", tags:["ops"], time:"Apr 4, 18:00" },
+    { agent:"ophelia", verb:"deployed",  title:"Ecosystem page (live data)",          body:"Rebuilt ecosystem.html with live DefiLlama API calls. All stats fetched on page load. Source attribution + timestamp.", tags:["ecosystem","live-data"], time:"Apr 4, 16:30" },
+    { agent:"galatea", verb:"shipped",   title:"MetIgnite Phase 1 + skills batch 1",  body:"4/8 skills live: pool-setup, tokenomics-review, content-draft, growth-playbook. Chat UI with skill invocation.", tags:["metignite","build"], time:"Apr 4, 15:00" },
+    { agent:"proteus", verb:"delivered", title:"Ecosystem distribution strategy",     body:"Co-marketing playbook (3 tiers), content-as-distribution framework, 2x/week cadence.", tags:["strategy"], time:"Apr 4, 14:00" },
+    { agent:"orcus",   verb:"delivered", title:"Founder Needs Matrix + Ecosystem Catalog", body:"27 projects cataloged across 5 tiers. 98.6% of pump.fun tokens fail. Post-graduation LP liquidity biggest gap.", tags:["research"], time:"Apr 4, 13:00" },
+    { agent:"atlas",   verb:"delivered", title:"MetIgnite data architecture",         body:"6 data sources mapped. 7 Dune queries + 8 API calls cataloged. Migration path documented.", tags:["data"], time:"Apr 4, 12:00" },
+    { agent:"ariel",   verb:"delivered", title:"Legal risk memo",                     body:"Compliance middleware spec. Never-say list for content skills. MetIgnite stays Meteora product.", tags:["legal"], time:"Apr 4, 11:00" },
+    { agent:"juliet",  verb:"delivered", title:"Design brief + wireframes",           body:"5 key screens. Confident mission control direction. Chat-first onboarding. Wallet optional.", tags:["design"], time:"Apr 4, 10:00" },
+    { agent:"ophelia", verb:"delivered", title:"Content plan + engagement protocol",  body:"4 content pillars, weekly calendar Mon-Fri, engagement matrix, production pipeline.", tags:["content"], time:"Apr 4, 09:00" },
+    { agent:"ophelia", verb:"decided",   title:"Full autonomy mode activated",        body:"100% agentic operation. No review queue. Compliance middleware is the safety rail.", tags:["ops","decision"], time:"Apr 4, 08:00" }
+];
+
+// ================================================================
+// STATE
+// ================================================================
+let selectedAgent = null;
+let chatMessages = [
+    { from:"system", text:"Fleet command center is live. All 7 agents operational. Type a message to route it to any agent -- prefix with their name (e.g., \"galatea: build status?\")." }
+];
+
+// ================================================================
+// HELPERS
+// ================================================================
+function getAgent(name) { return AGENTS.find(a => a.name === name) || AGENTS[0]; }
+function h(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+// ================================================================
+// CLOCK
+// ================================================================
+function tickClock() {
+    const now = new Date();
+    document.getElementById('clock').textContent = now.toLocaleString('en-US', {
+        month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false
+    });
+}
+setInterval(tickClock, 1000);
+tickClock();
+
+// ================================================================
+// SIDEBAR
+// ================================================================
+function renderSidebar() {
+    const el = document.getElementById('agentList');
+    el.innerHTML = AGENTS.map(a => `
+        <div class="agent-row ${selectedAgent === a.id ? 'selected' : ''}" onclick="selectAgent('${a.id}')">
+            <div class="agent-pip" style="background:${a.color}15;color:${a.color}">
+                <div class="agent-pip-glow" style="background:${a.color}"></div>
+                ${a.name.slice(0,2)}
+            </div>
+            <div class="agent-meta">
+                <div class="agent-meta-name">${a.name}</div>
+                <div class="agent-meta-role">${a.role}</div>
+            </div>
+            <div class="agent-dot ${a.status}"></div>
+        </div>
+    `).join('');
+    document.getElementById('fleetCount').textContent = AGENTS.filter(a => a.status === 'active').length;
+}
+
+function selectAgent(id) {
+    selectedAgent = id;
+    renderSidebar();
+    renderDashboard();
+    // Switch to dashboard view if not there
+    if (!document.getElementById('v-dashboard').classList.contains('active')) {
+        switchView(document.querySelector('[data-view="dashboard"]'), 'dashboard');
+    }
+}
+
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('open');
+}
+
+// ================================================================
+// DASHBOARD VIEW
+// ================================================================
+function renderDashboard() {
+    const done = TASKS.filter(t => t.status === 'done').length;
+    const ip = TASKS.filter(t => t.status === 'inProgress').length;
+    const bl = TASKS.filter(t => t.status === 'backlog').length;
+    const activeCount = AGENTS.filter(a => a.status === 'active').length;
+
+    let detail = '';
+    if (selectedAgent) {
+        const a = getAgent(selectedAgent);
+        detail = `
+            <div class="detail-panel">
+                <div class="detail-top">
+                    <div class="detail-top-glow" style="background:${a.color}"></div>
+                    <div class="detail-avatar" style="background:${a.color}18;color:${a.color}">${a.name.slice(0,2)}</div>
+                    <div>
+                        <div class="detail-name">${a.name}</div>
+                        <div class="detail-role">${a.role}</div>
+                    </div>
+                    <div class="detail-status-badge" style="background:${a.status==='active' ? 'var(--success-dim)' : 'var(--warning-dim)'};color:${a.status==='active' ? 'var(--success)' : 'var(--warning)'}">${a.status}</div>
+                </div>
+                <div class="detail-body">
+                    <div class="detail-section">
+                        <div class="detail-section-label">Current Task</div>
+                        <div class="detail-section-content">${h(a.task)}</div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="detail-section-label">Capabilities</div>
+                        <ul class="detail-cap-list">
+                            ${a.caps.map(c => `<li class="detail-cap">${h(c)}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div class="detail-section" style="grid-column:1/-1">
+                        <div class="detail-section-label">Recent Output</div>
+                        <div class="detail-section-content">${h(a.output)}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    } else {
+        detail = `
+            <div class="detail-placeholder">
+                <div class="detail-placeholder-icon">&#9673;</div>
+                <p>Select an agent from the sidebar to view details</p>
+            </div>
+        `;
+    }
+
+    document.getElementById('v-dashboard').innerHTML = `
+        <div class="stats-grid">
+            <div class="stat">
+                <div class="stat-label">Active Agents</div>
+                <div class="stat-val" style="color:var(--success)">${activeCount}<span style="font-size:14px;color:var(--text-tertiary);font-weight:400">/${AGENTS.length}</span></div>
+                <div class="stat-sub">all operational</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Done</div>
+                <div class="stat-val" style="color:var(--success)">${done}</div>
+                <div class="stat-sub">tasks completed</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">In Progress</div>
+                <div class="stat-val" style="color:var(--warning)">${ip}</div>
+                <div class="stat-sub">active work</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Backlog</div>
+                <div class="stat-val" style="color:var(--text-tertiary)">${bl}</div>
+                <div class="stat-sub">queued</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Skills Live</div>
+                <div class="stat-val" style="color:var(--purple)">4<span style="font-size:14px;color:var(--text-tertiary);font-weight:400">/8</span></div>
+                <div class="stat-sub">MetIgnite skills</div>
+            </div>
+        </div>
+        ${detail}
+    `;
+}
+
+// ================================================================
+// TASK BOARD VIEW
+// ================================================================
+function renderTasks() {
+    const cols = [
+        { key:"done",       label:"Done",        color:"var(--success)" },
+        { key:"inProgress", label:"In Progress",  color:"var(--warning)" },
+        { key:"backlog",    label:"Backlog",      color:"var(--text-tertiary)" },
+        { key:"review",     label:"Review",       color:"var(--blue)" }
+    ];
+
+    document.getElementById('v-tasks').innerHTML = `<div class="board">${cols.map(col => {
+        const items = TASKS.filter(t => t.status === col.key);
+        return `
+            <div class="board-col">
+                <div class="board-col-head">
+                    <span class="board-col-title" style="color:${col.color}">${col.label}</span>
+                    <span class="board-col-count">${items.length}</span>
+                </div>
+                <div class="board-col-body">
+                    ${items.map(t => `
+                        <div class="task-card">
+                            <div class="task-card-title">${h(t.title)}</div>
+                            <div class="task-card-desc">${h(t.desc)}</div>
+                            <div class="task-card-footer">
+                                <span class="task-priority pri-${t.pri}">${t.pri}</span>
+                                <span class="task-owner-tag">${t.owner}</span>
+                            </div>
+                        </div>
+                    `).join('')}
+                    ${items.length === 0 ? '<div style="padding:20px;text-align:center;color:var(--text-tertiary);font-size:12px">No items</div>' : ''}
+                </div>
+            </div>
+        `;
+    }).join('')}</div>`;
+}
+
+// ================================================================
+// FEED VIEW
+// ================================================================
+function renderFeed() {
+    document.getElementById('v-feed').innerHTML = `<div class="feed-list">${FEED.map(f => {
+        const a = getAgent(f.agent);
+        return `
+            <div class="feed-item">
+                <div class="feed-pip" style="background:${a.color}15;color:${a.color}">${a.name.slice(0,2)}</div>
+                <div class="feed-body">
+                    <div class="feed-head">
+                        <span class="feed-agent" style="color:${a.color}">${f.agent}</span>
+                        <span class="feed-action-verb">${f.verb}</span>
+                        <span class="feed-time">${f.time}</span>
+                    </div>
+                    <div class="feed-title">${h(f.title)}</div>
+                    <div class="feed-text">${h(f.body)}</div>
+                    <div class="feed-tags">${f.tags.map(t => `<span class="feed-tag">${t}</span>`).join('')}</div>
+                </div>
+            </div>
+        `;
+    }).join('')}</div>`;
+}
+
+// ================================================================
+// CHAT VIEW
+// ================================================================
+function renderChat() {
+    const msgs = chatMessages.map(m => {
+        if (m.from === 'system' || m.from === 'agent') {
+            return `<div class="chat-bubble bubble-agent">${h(m.text)}<div class="bubble-meta">ophelia -- system</div></div>`;
+        } else {
+            return `<div class="chat-bubble bubble-user">${h(m.text)}<div class="bubble-meta">vesper -- just now</div></div>`;
+        }
+    }).join('');
+
+    document.getElementById('v-chat').innerHTML = `
+        <div class="chat-shell">
+            <div class="chat-topbar">
+                <div class="chat-topbar-icon">FL</div>
+                <div class="chat-topbar-title">Fleet Chat</div>
+                <div class="chat-topbar-sub">Messages route through Pentagon</div>
+            </div>
+            <div class="chat-messages" id="chatMsgs">${msgs}</div>
+            <div class="chat-input-row">
+                <input class="chat-field" id="chatInput" placeholder="Message the fleet... (e.g., orcus: latest data?)" onkeydown="if(event.key==='Enter')sendMsg()">
+                <button class="chat-btn" onclick="sendMsg()">Send</button>
+            </div>
+        </div>
+    `;
+
+    const box = document.getElementById('chatMsgs');
+    if (box) box.scrollTop = box.scrollHeight;
+}
+
+function sendMsg() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    chatMessages.push({ from:'user', text });
+
+    // Parse target agent
+    const colonIdx = text.indexOf(':');
+    let targetName = null;
+    if (colonIdx > 0 && colonIdx < 12) {
+        const potentialName = text.slice(0, colonIdx).trim().toLowerCase();
+        if (AGENTS.some(a => a.name === potentialName)) {
+            targetName = potentialName;
+        }
+    }
+
+    const reply = targetName
+        ? `Message queued for ${targetName}. Will be relayed via Pentagon in the next session cycle.`
+        : `Message queued for the fleet. Prefix with an agent name (e.g., "galatea: ...") to target a specific agent.`;
+
+    chatMessages.push({ from:'agent', text: reply });
+    input.value = '';
+    renderChat();
+}
+
+// ================================================================
+// VIEW SWITCHING
+// ================================================================
+function switchView(tab, view) {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('v-' + view).classList.add('active');
+
+    if (view === 'dashboard') renderDashboard();
+    if (view === 'tasks') renderTasks();
+    if (view === 'feed') renderFeed();
+    if (view === 'chat') renderChat();
+}
+
+// ================================================================
+// INIT
+// ================================================================
+renderSidebar();
+renderDashboard();
+</script>
+</body>
+</html>

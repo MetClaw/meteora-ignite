@@ -1,0 +1,120 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Meteora Design System Tokens */
+
+  /* Primary Purple */
+  --color-met-primary-25: #f5f3ff;
+  --color-met-primary-50: #ece9fe;
+  --color-met-primary-100: #c9bffd;
+  --color-met-primary-200: #a694fc;
+  --color-met-primary-300: #8a6eff;
+  --color-met-primary-400: #6e45ff;
+  --color-met-primary-500: #5a32e0;
+  --color-met-primary-600: #4726b3;
+  --color-met-primary-700: #351c87;
+  --color-met-primary-800: #24135c;
+  --color-met-primary-900: #140b33;
+  --color-met-primary-950: #0a0519;
+
+  /* Accent Orange */
+  --color-met-accent-25: #fff7f3;
+  --color-met-accent-50: #ffede5;
+  --color-met-accent-100: #ffc9ae;
+  --color-met-accent-200: #ffa577;
+  --color-met-accent-300: #ff7d3b;
+  --color-met-accent-400: #f54b00;
+  --color-met-accent-500: #d14000;
+  --color-met-accent-600: #a63300;
+  --color-met-accent-700: #7c2600;
+  --color-met-accent-800: #531a00;
+  --color-met-accent-900: #2e0e00;
+
+  /* Backgrounds */
+  --color-met-base-deep: #08080c;
+  --color-met-base-dark: #12121c;
+  --color-met-base: #181825;
+
+  /* Containers */
+  --color-met-container: #18192c;
+  --color-met-container-secondary: #1e1f35;
+
+  /* Text */
+  --color-met-text-primary: #f9f9fb;
+  --color-met-text-secondary: #9595b2;
+  --color-met-text-tertiary: #6c6c89;
+
+  /* Borders / Strokes */
+  --color-met-border-primary: #434360;
+  --color-met-border-secondary: #2a2a3c;
+  --color-met-border-tertiary: #202031;
+  --color-met-stroke: #2c2e49;
+  --color-met-stroke-active: #3d3f5e;
+
+  /* Semantic */
+  --color-met-success: #24c98d;
+  --color-met-danger: #f04438;
+  --color-met-warning: #f79009;
+
+  /* Font */
+  --font-sans: var(--font-inter);
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Animations */
+  --animate-fade-in-up: fade-in-up 0.5s ease-out;
+  --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
+
+  @keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+}
+
+/* Base styles */
+html {
+  background-color: var(--color-met-base-deep);
+}
+
+body {
+  background-color: var(--color-met-base-deep);
+  color: var(--color-met-text-primary);
+  font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-met-border-secondary);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-met-border-primary);
+}
+
+/* Gradient text utility */
+.met-gradient-text {
+  background: linear-gradient(259deg, #f7c10b, #f84c00, #5f33ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
