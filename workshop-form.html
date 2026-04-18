@@ -874,7 +874,7 @@
           </div>
           <div>
             <label class="field-label">Website or Twitter</label>
-            <input type="url" name="website" placeholder="https:// or @handle">
+            <input type="text" name="website" placeholder="https:// or @handle">
           </div>
         </div>
 
@@ -1039,14 +1039,34 @@ document.querySelectorAll('[data-r]').forEach(el => obs.observe(el));
 // Google Sheets backend
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7TcIEkmW6wLGRy13iQH-_NhIrSxj8mIf90e4eaRvQhz3vB_YBfTE95cr2BN6_wkFF/exec';
 
+// Rate limiting — prevent double/spam submissions
+let lastSubmitTime = 0;
+const SUBMIT_COOLDOWN = 10000; // 10 seconds between submissions
+
 function handleSubmit(e) {
   e.preventDefault();
+
+  // Rate limit check
+  const now = Date.now();
+  if (now - lastSubmitTime < SUBMIT_COOLDOWN) {
+    alert('Please wait a moment before submitting again.');
+    return;
+  }
+  lastSubmitTime = now;
+
   const form = e.target;
   const btn = document.getElementById('submitBtn');
   const data = new FormData(form);
 
   const helpNeeds = [];
   form.querySelectorAll('input[name="help"]:checked').forEach(cb => helpNeeds.push(cb.value));
+
+  // Client-side validation
+  const email = data.get('email');
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    alert('Please enter a valid email address.');
+    return;
+  }
 
   const submission = {
     name: data.get('name'),
@@ -1058,8 +1078,7 @@ function handleSubmit(e) {
     challenge: data.get('challenge'),
     questions: data.get('questions'),
     l2interest: data.get('l2interest'),
-    email: data.get('email'),
-    timestamp: new Date().toISOString()
+    email: email
   };
 
   btn.disabled = true;

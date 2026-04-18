@@ -64,23 +64,46 @@ function getOrCreateSheet() {
   return sheet;
 }
 
+function sanitize(val, maxLen) {
+  if (!val) return '';
+  var s = String(val).substring(0, maxLen || 1000);
+  // Strip leading = + - @ to prevent spreadsheet formula injection
+  s = s.replace(/^[\s]*[=+\-@]/, ' ');
+  return s;
+}
+
 function doPost(e) {
   try {
-    const data = JSON.parse(e.postData.contents);
-    const sheet = getOrCreateSheet();
+    var data = JSON.parse(e.postData.contents);
 
-    const row = [
-      data.timestamp || new Date().toISOString(),
-      data.name || '',
-      data.role || '',
-      data.project || '',
-      data.website || '',
-      data.stage || '',
-      data.helpNeeds || '',
-      data.challenge || '',
-      data.questions || '',
-      data.l2interest || '',
-      data.email || ''
+    // Basic validation — reject if missing required fields
+    if (!data.name || !data.email || !data.project || !data.challenge) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ status: 'error', message: 'Missing required fields.' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // Validate email format
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ status: 'error', message: 'Invalid email.' }))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+
+    var sheet = getOrCreateSheet();
+
+    var row = [
+      new Date().toISOString(),
+      sanitize(data.name, 200),
+      sanitize(data.role, 100),
+      sanitize(data.project, 200),
+      sanitize(data.website, 500),
+      sanitize(data.stage, 50),
+      sanitize(data.helpNeeds, 500),
+      sanitize(data.challenge, 2000),
+      sanitize(data.questions, 2000),
+      sanitize(data.l2interest, 50),
+      sanitize(data.email, 320)
     ];
 
     sheet.appendRow(row);
@@ -91,7 +114,7 @@ function doPost(e) {
 
   } catch (err) {
     return ContentService
-      .createTextOutput(JSON.stringify({ status: 'error', message: err.toString() }))
+      .createTextOutput(JSON.stringify({ status: 'error', message: 'Submission failed.' }))
       .setMimeType(ContentService.MimeType.JSON);
   }
 }
