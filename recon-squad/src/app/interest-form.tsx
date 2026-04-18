@@ -10,10 +10,14 @@ export default function InterestForm() {
   const [role, setRole] = useState<Role>("");
   const [twitter, setTwitter] = useState("");
   // Trader fields
+  const [traderMonths, setTraderMonths] = useState("");
+  const [traderVolume, setTraderVolume] = useState("");
   const [traderProducts, setTraderProducts] = useState("");
   const [traderStrategy, setTraderStrategy] = useState("");
   const [traderImprove, setTraderImprove] = useState("");
   // Creator fields
+  const [creatorLaunches, setCreatorLaunches] = useState("");
+  const [creatorCommunity, setCreatorCommunity] = useState("");
   const [creatorLaunched, setCreatorLaunched] = useState("");
   const [creatorTools, setCreatorTools] = useState("");
   const [creatorHardest, setCreatorHardest] = useState("");
@@ -23,8 +27,8 @@ export default function InterestForm() {
     "idle" | "submitting" | "success" | "error"
   >("idle");
 
-  const traderReady = traderProducts.trim() && traderStrategy.trim();
-  const creatorReady = creatorLaunched.trim() && creatorTools.trim();
+  const traderReady = traderMonths.trim() && traderVolume.trim() && traderProducts.trim() && traderStrategy.trim();
+  const creatorReady = creatorLaunches.trim() && creatorCommunity.trim() && creatorLaunched.trim() && creatorTools.trim();
   const roleFieldsReady = role === "trader" ? traderReady : role === "creator" ? creatorReady : false;
 
   const canSubmit =
@@ -42,11 +46,15 @@ export default function InterestForm() {
       twitter: twitter.trim(),
       ...(role === "trader"
         ? {
+            months_on_meteora: traderMonths.trim(),
+            monthly_volume: traderVolume.trim(),
             products: traderProducts.trim(),
             strategy: traderStrategy.trim(),
             improve: traderImprove.trim(),
           }
         : {
+            tokens_launched: creatorLaunches.trim(),
+            community_size: creatorCommunity.trim(),
             launched_before: creatorLaunched.trim(),
             tools_used: creatorTools.trim(),
             hardest_part: creatorHardest.trim(),
@@ -167,6 +175,45 @@ export default function InterestForm() {
       {/* Trader-specific questions */}
       {role === "trader" && (
         <>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label
+                htmlFor="traderMonths"
+                className="block mb-2.5 text-[12px] font-medium tracking-[0.5px] uppercase"
+                style={{ color: "var(--color-text-secondary)" }}
+              >
+                Months on Meteora
+              </label>
+              <input
+                id="traderMonths"
+                type="text"
+                value={traderMonths}
+                onChange={(e) => setTraderMonths(e.target.value)}
+                placeholder="e.g. 6"
+                className="form-field w-full px-4 py-3 text-[14px]"
+                required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="traderVolume"
+                className="block mb-2.5 text-[12px] font-medium tracking-[0.5px] uppercase"
+                style={{ color: "var(--color-text-secondary)" }}
+              >
+                Monthly volume (USD)
+              </label>
+              <input
+                id="traderVolume"
+                type="text"
+                value={traderVolume}
+                onChange={(e) => setTraderVolume(e.target.value)}
+                placeholder="e.g. 50k"
+                className="form-field w-full px-4 py-3 text-[14px]"
+                required
+              />
+            </div>
+          </div>
+
           <div>
             <label
               htmlFor="traderProducts"
@@ -234,6 +281,45 @@ export default function InterestForm() {
       {/* Creator-specific questions */}
       {role === "creator" && (
         <>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label
+                htmlFor="creatorLaunches"
+                className="block mb-2.5 text-[12px] font-medium tracking-[0.5px] uppercase"
+                style={{ color: "var(--color-text-secondary)" }}
+              >
+                Tokens launched
+              </label>
+              <input
+                id="creatorLaunches"
+                type="text"
+                value={creatorLaunches}
+                onChange={(e) => setCreatorLaunches(e.target.value)}
+                placeholder="e.g. 3"
+                className="form-field w-full px-4 py-3 text-[14px]"
+                required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="creatorCommunity"
+                className="block mb-2.5 text-[12px] font-medium tracking-[0.5px] uppercase"
+                style={{ color: "var(--color-text-secondary)" }}
+              >
+                Community size
+              </label>
+              <input
+                id="creatorCommunity"
+                type="text"
+                value={creatorCommunity}
+                onChange={(e) => setCreatorCommunity(e.target.value)}
+                placeholder="e.g. 2k holders"
+                className="form-field w-full px-4 py-3 text-[14px]"
+                required
+              />
+            </div>
+          </div>
+
           <div>
             <label
               htmlFor="creatorLaunched"
