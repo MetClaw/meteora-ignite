@@ -121,7 +121,7 @@ export default function InterestForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-7">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-9">
       {/* Role */}
       <div>
         <label
@@ -415,7 +415,7 @@ export default function InterestForm() {
       <button
         type="submit"
         disabled={!canSubmit}
-        className="submit-btn mt-2 w-full py-3.5 text-[14px] font-semibold tracking-[0.3px] rounded-lg"
+        className="submit-btn mt-4 w-full py-3.5 text-[14px] font-semibold tracking-[0.3px] rounded-lg"
       >
         {status === "submitting" ? "Submitting..." : "Apply now"}
       </button>
