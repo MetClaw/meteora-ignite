@@ -266,7 +266,7 @@ function AnimatedNumber({ value, duration = 1200, delay = 0 }: { value: number; 
    MAIN APPLICATION
    ═══════════════════════════════════════════════════════════════ */
 
-const GOOGLE_SCRIPT_URL = process.env.NEXT_PUBLIC_GOOGLE_SCRIPT_URL || "";
+/* submissions go to /api/apply (Vercel Blob storage) */
 
 const STEPS = [
   { id: 1, label: "About you" },
@@ -327,15 +327,17 @@ export default function Home() {
     };
 
     try {
-      if (GOOGLE_SCRIPT_URL) {
-        await fetch(GOOGLE_SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+      const res = await fetch("/api/apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const result = await res.json();
+      if (result.status === "ok") {
+        setStatus("success");
+      } else {
+        setStatus("error");
       }
-      setStatus("success");
     } catch {
       setStatus("error");
     }
