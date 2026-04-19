@@ -1042,8 +1042,8 @@ const obs = new IntersectionObserver((entries) => {
 
 document.querySelectorAll('[data-r]').forEach(el => obs.observe(el));
 
-// Google Sheets backend
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwu5PIknEOScFzXd7eMXmNafCXMxCZ80t3XRBjAP-DzWlHUwGcShE8eT-wbxdJD9GzM/exec';
+// Vercel serverless backend
+const API_URL = '/api/register';
 
 // Bot protection
 const PAGE_LOAD_TIME = Date.now();
@@ -1112,16 +1112,23 @@ function handleSubmit(e) {
   btn.textContent = 'Submitting...';
   btn.style.opacity = '0.6';
 
-  fetch(GOOGLE_SCRIPT_URL, {
+  fetch(API_URL, {
     method: 'POST',
-    mode: 'no-cors',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(submission)
   })
-  .then(() => {
-    document.getElementById('formSection').parentElement.style.display = 'none';
-    document.getElementById('successState').classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  .then(res => {
+    if (!res.ok) throw new Error('Submission failed');
+    return res.json();
+  })
+  .then(result => {
+    if (result.status === 'ok') {
+      document.getElementById('formSection').parentElement.style.display = 'none';
+      document.getElementById('successState').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      throw new Error(result.message || 'Submission failed');
+    }
   })
   .catch(err => {
     console.error('Submission error:', err);
