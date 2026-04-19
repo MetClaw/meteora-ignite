@@ -1098,6 +1098,19 @@ function handleSubmit(e) {
   const helpNeeds = [];
   form.querySelectorAll('input[name="help"]:checked').forEach(cb => helpNeeds.push(cb.value));
 
+  // Required field check
+  const name = (data.get('name') || '').trim();
+  const project = (data.get('project') || '').trim();
+  const challenge = (data.get('challenge') || '').trim();
+  const missing = [];
+  if (!name) missing.push('Your name');
+  if (!project) missing.push('Project name');
+  if (!challenge) missing.push('Biggest challenge right now');
+  if (missing.length) {
+    alert('Please fill in: ' + missing.join(', '));
+    return;
+  }
+
   // Client-side validation
   const website = data.get('website');
   if (website && website.trim()) {
@@ -1139,9 +1152,10 @@ function handleSubmit(e) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(submission)
   })
-  .then(res => {
-    if (!res.ok) throw new Error('Submission failed');
-    return res.json();
+  .then(async res => {
+    const result = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(result.message || 'Submission failed');
+    return result;
   })
   .then(result => {
     if (result.status === 'ok') {
@@ -1157,7 +1171,7 @@ function handleSubmit(e) {
     btn.disabled = false;
     btn.style.opacity = '1';
     btn.innerHTML = 'Register for Workshop <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
-    alert('Something went wrong. Please try again.');
+    alert(err.message || 'Something went wrong. Please try again.');
   });
 }
 </script>
