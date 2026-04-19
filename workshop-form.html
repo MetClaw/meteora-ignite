@@ -1089,6 +1089,17 @@ function handleSubmit(e) {
   form.querySelectorAll('input[name="help"]:checked').forEach(cb => helpNeeds.push(cb.value));
 
   // Client-side validation
+  const website = data.get('website');
+  if (website && website.trim()) {
+    const w = website.trim();
+    const isUrl = /^https?:\/\/.+\..+/.test(w);
+    const isHandle = /^@[\w]{1,50}$/.test(w);
+    if (!isUrl && !isHandle) {
+      alert('Please enter a valid URL (https://...) or Twitter handle (@handle).');
+      return;
+    }
+  }
+
   const email = data.get('email');
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     alert('Please enter a valid email address.');
