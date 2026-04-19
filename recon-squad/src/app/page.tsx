@@ -401,7 +401,7 @@ export default function Home() {
 
           <p className="hero-sub s3">
             Get early access to unreleased products built on Meteora.
-            <br />Give feedback directly to founders. Get paid in USDC.
+            <br />Give USDC rewards &amp; more.
           </p>
 
           <div className="hero-stats s4">
