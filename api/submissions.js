@@ -7,7 +7,10 @@ export default async function handler(req, res) {
 
   // Simple password protection
   const key = req.query.key;
-  const validKey = process.env.SUBMISSIONS_KEY || 'metclaw2024';
+  const validKey = process.env.SUBMISSIONS_KEY;
+  if (!validKey) {
+    return res.status(500).json({ error: 'Server misconfigured — SUBMISSIONS_KEY not set.' });
+  }
   if (!key || key !== validKey) {
     return res.status(401).json({ error: 'Unauthorized. Add ?key=YOUR_KEY' });
   }
