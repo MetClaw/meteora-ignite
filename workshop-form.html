@@ -1116,9 +1116,10 @@ function handleSubmit(e) {
   if (website && website.trim()) {
     const w = website.trim();
     const isUrl = /^https?:\/\/.+\..+/.test(w);
-    const isHandle = /^@[\w]{1,50}$/.test(w);
-    if (!isUrl && !isHandle) {
-      alert('Please enter a valid URL (https://...) or Twitter handle (@handle).');
+    const isDomain = /^[\w-]+(\.[\w-]+)+(\/.*)?$/.test(w);
+    const isHandle = /^@?[\w]{1,50}$/.test(w);
+    if (!isUrl && !isDomain && !isHandle) {
+      alert('Please enter a URL, domain (e.g. meteora.ag), or handle.');
       return;
     }
   }
