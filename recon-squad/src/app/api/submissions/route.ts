@@ -22,9 +22,9 @@ interface Submission {
 
 export async function GET(request: NextRequest) {
   const key = request.nextUrl.searchParams.get("key");
-  const validKey = process.env.SUBMISSIONS_KEY || "metclaw2024";
+  const validKey = process.env.SUBMISSIONS_KEY;
 
-  if (!key || key !== validKey) {
+  if (!validKey || !key || key !== validKey) {
     return Response.json(
       { error: "Unauthorized. Add ?key=YOUR_KEY" },
       { status: 401 }
