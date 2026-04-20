@@ -278,6 +278,7 @@ export default function Home() {
   const [heroVisible, setHeroVisible] = useState(false);
   const [step, setStep] = useState(0); // 0 = hero, 1-3 = form steps
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState<string>("");
 
   // Form state
   const [twitter, setTwitter] = useState("");
@@ -313,6 +314,19 @@ export default function Home() {
 
   async function handleSubmit() {
     if (!step3Ready) return;
+
+    // Check all required fields across steps (server requires twitter + solana_trading_time)
+    const missing: string[] = [];
+    if (!twitter.trim()) missing.push("X handle (step 1)");
+    if (!solanaTime.trim()) missing.push("Trading experience (step 1)");
+    if (!wallet.trim()) missing.push("Solana wallet");
+    if (missing.length) {
+      setErrorMsg("Please fill in: " + missing.join(", "));
+      setStatus("error");
+      return;
+    }
+
+    setErrorMsg("");
     setStatus("submitting");
 
     const payload = {
@@ -332,13 +346,15 @@ export default function Home() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const result = await res.json();
-      if (result.status === "ok") {
+      const result = await res.json().catch(() => ({}));
+      if (res.ok && result.status === "ok") {
         setStatus("success");
       } else {
+        setErrorMsg(result.message || "Submission failed. Please try again.");
         setStatus("error");
       }
     } catch {
+      setErrorMsg("Network error. Check your connection and try again.");
       setStatus("error");
     }
   }
@@ -607,7 +623,7 @@ export default function Home() {
                   </div>
 
                   {status === "error" && (
-                    <p className="form-error">Something went wrong. Try again.</p>
+                    <p className="form-error">{errorMsg || "Something went wrong. Try again."}</p>
                   )}
                 </div>
               )}
