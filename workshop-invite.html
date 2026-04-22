@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meteora on the Frontier — Workshop Invitation</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #0a0a0f;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, sans-serif;
+    color: #e8eaed;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; background: #0a0a0f; }
+
+  .hero {
+    position: relative;
+    background:
+      linear-gradient(180deg, rgba(10,10,15,0) 0%, rgba(10,10,15,0.4) 65%, #0a0a0f 100%),
+      linear-gradient(100deg, #1a0a2e 0%, #2a0e1e 40%, #3a1408 100%);
+    overflow: hidden;
+    border-bottom: 3px solid transparent;
+    border-image: linear-gradient(90deg, #8b5cf6, #f54b00, #ffb830) 1;
+  }
+
+  .hero-inner {
+    position: relative;
+    padding: 56px 40px 48px;
+  }
+
+  .hero-inner::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; bottom: 0;
+    width: 8px;
+    background: linear-gradient(180deg, #8b5cf6 0%, #f54b00 50%, #ffb830 100%);
+  }
+
+  .code-bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0.05;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 10px;
+    line-height: 1.4;
+    color: #888;
+    padding: 20px;
+    overflow: hidden;
+    white-space: pre;
+    pointer-events: none;
+  }
+
+  .eyebrow {
+    position: relative;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #ffb830;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+
+  .title-main {
+    position: relative;
+    font-size: 44px;
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin: 0 0 8px;
+    background: linear-gradient(90deg, #8b5cf6 0%, #d946ef 25%, #f54b00 55%, #ffb830 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-transform: uppercase;
+  }
+
+  .title-frontier {
+    position: relative;
+    font-size: 74px;
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+    margin: 0 0 28px;
+    background: linear-gradient(180deg, #f0f0ff 0%, #a0a8c8 40%, #4a5578 55%, #8b95b5 75%, #c8d0e8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-transform: uppercase;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+  }
+
+  .date-line {
+    position: relative;
+    display: inline-block;
+    font-size: 18px;
+    font-weight: 600;
+    color: #e8eaed;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 8px;
+    margin-bottom: 32px;
+  }
+
+  .hosted-card {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 22px;
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.03);
+  }
+
+  .hosted-label { font-size: 14px; font-weight: 500; color: #b0b3cc; }
+  .hosted-logos { display: flex; flex-direction: column; gap: 6px; }
+  .hosted-logo { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; color: #fff; }
+  .logo-dot { width: 14px; height: 14px; border-radius: 50%; background: linear-gradient(135deg, #f54b00, #8b5cf6); }
+  .unfungible-badge {
+    display: inline-block; padding: 3px 8px; background: #000;
+    border: 1px solid #fff; color: #fff;
+    font-size: 11px; font-weight: 800; letter-spacing: 0.05em;
+  }
+
+  .hosts-row {
+    display: flex; gap: 40px; justify-content: flex-end;
+    margin-top: 32px; align-items: center;
+  }
+  .host { text-align: center; }
+  .host-avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    border: 2px solid #f54b00;
+    background: linear-gradient(135deg, #2a1a0a, #3a2a1a);
+    margin: 0 auto 8px; display: flex;
+    align-items: center; justify-content: center;
+    color: #ffb830; font-size: 22px; font-weight: 800;
+  }
+  .host-handle { font-size: 13px; font-weight: 600; color: #e8eaed; }
+
+  .body-content { padding: 48px 40px; background: #0a0a0f; }
+  .greeting { font-size: 22px; font-weight: 700; color: #fff; margin: 0 0 20px; letter-spacing: -0.01em; }
+  .body-content p { font-size: 15px; line-height: 1.7; color: #b0b3cc; margin: 0 0 18px; }
+  .body-content p strong { color: #e8eaed; }
+
+  .details-card {
+    background: linear-gradient(135deg, rgba(139,92,246,0.06), rgba(245,75,0,0.04));
+    border: 1px solid rgba(245,75,0,0.15);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 32px 0;
+  }
+
+  .details-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: #ffb830;
+    margin-bottom: 16px; font-weight: 600;
+  }
+
+  .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 32px; }
+  .detail-item .k {
+    font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #6e7094; margin-bottom: 4px;
+  }
+  .detail-item .v { font-size: 15px; font-weight: 600; color: #fff; }
+  .detail-item .v.accent { color: #f54b00; }
+
+  .cta-wrap { text-align: center; margin: 40px 0; }
+  .cta {
+    display: inline-block; padding: 16px 40px;
+    background: linear-gradient(135deg, #f54b00 0%, #ff6b1f 100%);
+    color: #fff !important;
+    font-size: 16px; font-weight: 700;
+    border-radius: 10px; text-decoration: none;
+    box-shadow: 0 8px 30px rgba(245,75,0,0.35);
+  }
+  .cta-secondary {
+    display: block; margin-top: 14px;
+    font-size: 13px; color: #6e7094;
+  }
+  .cta-secondary a { color: #ffb830; text-decoration: none; }
+
+  .agenda { margin: 32px 0; }
+  .agenda-title {
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: #ffb830; margin-bottom: 18px;
+  }
+  .agenda-item {
+    display: flex; gap: 16px;
+    padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .agenda-item:last-child { border-bottom: none; }
+  .agenda-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: #f54b00;
+    font-weight: 700; flex-shrink: 0; width: 24px;
+  }
+  .agenda-text .t { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+  .agenda-text .d { font-size: 13px; color: #8a8fa8; line-height: 1.5; }
+
+  .prep {
+    background: rgba(255,255,255,0.02);
+    border-left: 3px solid #ffb830;
+    padding: 20px 24px;
+    margin: 32px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .prep strong {
+    display: block; color: #ffb830;
+    font-size: 13px; letter-spacing: 0.08em;
+    text-transform: uppercase; margin-bottom: 10px;
+  }
+  .prep p { margin: 0 0 10px; font-size: 14px; color: #b0b3cc; }
+  .prep p:last-child { margin-bottom: 0; }
+
+  .footer {
+    padding: 32px 40px 40px;
+    background: #07070b;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    text-align: center;
+  }
+  .footer-logos {
+    display: flex; justify-content: center; gap: 12px;
+    margin-bottom: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: #6e7094;
+  }
+  .footer-logos .sep { color: #3d3f58; }
+  .footer p { font-size: 12px; color: #555a74; margin: 4px 0; }
+  .footer a { color: #f54b00; text-decoration: none; }
+
+  @media (max-width: 540px) {
+    .hero-inner { padding: 40px 24px 36px; }
+    .body-content { padding: 36px 24px; }
+    .footer { padding: 28px 24px; }
+    .details-grid { grid-template-columns: 1fr; gap: 16px; }
+    .hosts-row { justify-content: flex-start; gap: 24px; }
+    .title-main { font-size: 32px; }
+    .title-frontier { font-size: 52px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="code-bg">const runFrontier = (cfg: FrontierConfig) =&gt; {
+  const map = buildMap(cfg);
+  const beacons: Beacon[] = [
+    { id: "vibe-coding", pos: { x: 12, y: -6 }, strength: 8 },
+    { id: "ship-fast", pos: { x: 4, y: 2 }, note: "Learn faster." },
+    { id: "playground", pos: { x: -9, y: 8 }, note: "Try the weird thing." },
+  ];
+  let explorer: Explorer = {
+    id: "explorer-01", pos: { x: 0, y: 0 },
+    intent: "play", curiosity: 0.9, courage: 0.55,
+  };
+  for (let t = 0; t &lt; steps; t++) {
+    const tile = map[explorer.pos.x][explorer.pos.y];
+    explorer = stepExplorer(explorer, tile, beacons);
+  }
+};</div>
+
+    <div class="hero-inner">
+      <div class="eyebrow">◉ Meteora Ecosystem · Special Programming</div>
+      <h1 class="title-main">Meteora on the</h1>
+      <h2 class="title-frontier">Frontier</h2>
+
+      <div class="date-line">Wed 22nd April &nbsp;·&nbsp; Workshop</div>
+
+      <div class="hosted-card">
+        <span class="hosted-label">Hosted by</span>
+        <div class="hosted-logos">
+          <div class="hosted-logo"><span class="logo-dot"></span> Meteora Ecosystem</div>
+          <div class="hosted-logo"><span class="unfungible-badge">UNFUNGIBLE</span></div>
+        </div>
+      </div>
+
+      <div class="hosts-row">
+        <div class="host">
+          <div class="host-avatar">LA</div>
+          <div class="host-handle">@leonabboud</div>
+        </div>
+        <div class="host">
+          <div class="host-avatar">V7</div>
+          <div class="host-handle">@vesper792</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body-content">
+    <p class="greeting">Hey — you're in.</p>
+
+    <p>Thanks for registering for <strong>Meteora on the Frontier</strong>. This is a free, hands-on working session for founders building in the Meteora ecosystem during Colosseum Frontier hackathon season.</p>
+
+    <p>We've read through every submission and designed the agenda around the challenges <em>you</em> raised — content strategy, founder presence, marketing funnels, and distribution. No generic slides.</p>
+
+    <div class="details-card">
+      <div class="details-label">▸ Session details</div>
+      <div class="details-grid">
+        <div class="detail-item">
+          <div class="k">Date</div>
+          <div class="v">Wednesday, 22 April 2026</div>
+        </div>
+        <div class="detail-item">
+          <div class="k">Time</div>
+          <div class="v accent">10:00 AM EST · 1 hour</div>
+        </div>
+        <div class="detail-item">
+          <div class="k">Platform</div>
+          <div class="v">Google Meet</div>
+        </div>
+        <div class="detail-item">
+          <div class="k">Cost</div>
+          <div class="v">Free for registrants</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-wrap">
+      <a href="{{MEETING_LINK}}" class="cta">→ Join the workshop on Google Meet</a>
+      <span class="cta-secondary">A calendar invite with this link is attached.<br>Add it now so you don't miss it.</span>
+    </div>
+
+    <div class="agenda">
+      <div class="agenda-title">◉ What we'll cover</div>
+      <div class="agenda-item">
+        <div class="agenda-num">01</div>
+        <div class="agenda-text">
+          <div class="t">Content strategy that compounds</div>
+          <div class="d">What to post, how often, and why most founders get this wrong.</div>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-num">02</div>
+        <div class="agenda-text">
+          <div class="t">Founder presence &amp; personal brand</div>
+          <div class="d">The thing no one teaches — being the face of your project without burning out.</div>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-num">03</div>
+        <div class="agenda-text">
+          <div class="t">Marketing &amp; founder funnels</div>
+          <div class="d">How to turn attention into believers, and believers into users.</div>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-num">04</div>
+        <div class="agenda-text">
+          <div class="t">Distribution beyond "post and pray"</div>
+          <div class="d">Clipping, repurposing, amplification — Leon's core specialty at Unfungible.</div>
+        </div>
+      </div>
+      <div class="agenda-item">
+        <div class="agenda-num">05</div>
+        <div class="agenda-text">
+          <div class="t">Open Q&amp;A — your project, live</div>
+          <div class="d">Bring your biggest blocker. We'll work through it together.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prep">
+      <strong>◉ Come prepared</strong>
+      <p>• Have your project in one line — we'll go around the room</p>
+      <p>• Pull up your X profile and pinned post — we may workshop it live</p>
+      <p>• Write down your single biggest growth question</p>
+    </div>
+
+    <p>If anything comes up and you can't make it, <strong>reply to this email</strong>. We'll also share the recording + materials after the session.</p>
+
+    <p style="margin-top: 28px;">See you Wednesday,<br><strong>Vesper &amp; Leon</strong></p>
+  </div>
+
+  <div class="footer">
+    <div class="footer-logos">
+      <span>METEORA ECOSYSTEM</span>
+      <span class="sep">/</span>
+      <span>COLOSSEUM FRONTIER</span>
+      <span class="sep">/</span>
+      <span>UNFUNGIBLE</span>
+    </div>
+    <p>Special programming · On the Frontier · April — May 2026</p>
+    <p style="margin-top: 12px;">
+      <a href="https://x.com/meteoraeco">@meteoraeco</a> ·
+      <a href="https://t.me/meteoraeco">Telegram</a> ·
+      <a href="https://unfungible.xyz">unfungible.xyz</a>
+    </p>
+  </div>
+
+</div>
+</body>
+</html>

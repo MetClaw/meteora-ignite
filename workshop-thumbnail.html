@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Meteora on the Frontier — Thumbnail</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1a1a1f;
+    padding: 40px;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .instructions {
+    color: #999;
+    font-size: 13px;
+    max-width: 1200px;
+    text-align: center;
+    line-height: 1.6;
+  }
+
+  .instructions strong { color: #ff5500; }
+
+  /* ─────────── 1200 × 630 THUMBNAIL ─────────── */
+  .thumb {
+    width: 1200px;
+    height: 630px;
+    position: relative;
+    background: #06060a;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+    font-family: 'Inter', sans-serif;
+  }
+
+  /* Ambient glows */
+  .thumb::before {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -15%;
+    width: 700px;
+    height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(255,85,0,0.22) 0%, transparent 65%);
+    filter: blur(80px);
+    pointer-events: none;
+  }
+
+  .thumb::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    right: -10%;
+    width: 650px;
+    height: 650px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(139,106,255,0.18) 0%, rgba(255,45,122,0.08) 45%, transparent 70%);
+    filter: blur(90px);
+    pointer-events: none;
+  }
+
+  /* Gradient stripes top/bottom */
+  .stripe-top {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ff5500 0%, #ff2d7a 50%, #8b6aff 100%);
+    z-index: 3;
+  }
+
+  .stripe-bottom {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #8b6aff 0%, #ff2d7a 50%, #ff5500 100%);
+    z-index: 3;
+  }
+
+  /* Subtle grid pattern */
+  .grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Content */
+  .content {
+    position: relative;
+    z-index: 2;
+    padding: 60px 70px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  /* Top bar */
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .campaign-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #ff5500;
+    font-weight: 600;
+  }
+
+  .live-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ff5500;
+    box-shadow: 0 0 12px rgba(255,85,0,0.6);
+  }
+
+  .date-block {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #8a8fa8;
+    text-align: right;
+  }
+
+  .date-block .d {
+    color: #f5f5fa;
+    font-weight: 700;
+    display: block;
+    font-size: 14px;
+    margin-bottom: 3px;
+  }
+
+  /* Headline */
+  .headline-block {
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  h1 {
+    font-family: 'Instrument Serif', Georgia, serif;
+    font-size: 140px;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: #f5f5fa;
+    font-weight: 400;
+  }
+
+  h1 .gradient {
+    font-style: italic;
+    background: linear-gradient(135deg, #ff5500 0%, #ff2d7a 50%, #8b6aff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+  }
+
+  /* Bottom row */
+  .bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  .subtitle-block {
+    max-width: 680px;
+  }
+
+  .subtitle-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #6e7094;
+    margin-bottom: 10px;
+  }
+
+  .subtitle {
+    font-size: 22px;
+    color: #e0e0e8;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  .subtitle strong {
+    color: #ff5500;
+    font-weight: 700;
+  }
+
+  /* Host card */
+  .host-card {
+    background: rgba(19,19,28,0.85);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 280px;
+  }
+
+  .host-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff5500, #ff2d7a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 18px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .host-info .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #ff5500;
+    margin-bottom: 3px;
+    font-weight: 600;
+  }
+
+  .host-info .name {
+    font-size: 18px;
+    font-weight: 700;
+    color: #f5f5fa;
+    margin-bottom: 2px;
+  }
+
+  .host-info .role {
+    font-size: 12px;
+    color: #8a8fa8;
+  }
+
+  /* Partner strip — floating badge bottom left */
+  .partners {
+    position: absolute;
+    bottom: 32px;
+    left: 70px;
+    z-index: 2;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #6e7094;
+  }
+
+  .partners strong { color: #f5f5fa; font-weight: 600; }
+  .partners span { color: #3d3f58; margin: 0 6px; }
+</style>
+</head>
+<body>
+
+  <div class="instructions">
+    <strong>Screenshot this thumbnail:</strong> right-click the image below → "Save Image As" — OR use <strong>Cmd+Shift+4</strong> and drag to select the thumbnail. Dimensions: 1200×630px (perfect for X, Telegram, LinkedIn, emails).
+  </div>
+
+  <!-- The thumbnail -->
+  <div class="thumb">
+    <div class="stripe-top"></div>
+    <div class="grid"></div>
+
+    <div class="content">
+
+      <!-- Top bar -->
+      <div class="top-bar">
+        <div class="campaign-tag">
+          <span class="live-dot"></span>
+          Workshop · On The Frontier
+        </div>
+        <div class="date-block">
+          <span class="d">Wed, April 22</span>
+          10:00 AM EST · Google Meet
+        </div>
+      </div>
+
+      <!-- Headline -->
+      <div class="headline-block">
+        <h1>Meteora on<br/>the <span class="gradient">Frontier.</span></h1>
+      </div>
+
+      <!-- Bottom row -->
+      <div class="bottom-row">
+        <div class="subtitle-block">
+          <div class="subtitle-label">Founder Workshop</div>
+          <div class="subtitle">
+            Content, presence &amp; distribution for <strong>Meteora ecosystem founders</strong>. Free session hosted in partnership with Unfungible.
+          </div>
+        </div>
+
+        <div class="host-card">
+          <div class="host-avatar">LA</div>
+          <div class="host-info">
+            <div class="label">Hosted by</div>
+            <div class="name">Leon Abboud</div>
+            <div class="role">Founder, Unfungible</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="partners">
+      <strong>Meteora Ecosystem</strong> <span>/</span> <strong>Colosseum Frontier</strong> <span>/</span> <strong>Unfungible</strong>
+    </div>
+
+    <div class="stripe-bottom"></div>
+  </div>
+
+  <div class="instructions">
+    <strong>Tip:</strong> On Mac, press <strong>Cmd+Shift+4</strong>, then hold <strong>Space</strong> and click the thumbnail to capture just that window/element cleanly.
+  </div>
+
+</body>
+</html>
