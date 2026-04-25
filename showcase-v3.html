@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STARTUP SHOWCASE / OP-SKY-001 / MAY 1</title>
+<meta name="description" content="Startup Showcase at Solana Skyline. Demos plus Frontier Founders Lunch. May 1, 1pm. Sponsored by Meteora Ecosystem Projects.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #14100c;
+    --paper-2: #1a1612;
+    --paper-deep: #0d0a07;
+    --ink: #f54b00;
+    --ink-bright: #ff5e15;
+    --ink-soft: #c33a00;
+    --bone: #f0e6d2;
+    --bone-dim: #c4b89e;
+    --bone-faint: #8a7f6a;
+    --frame: #f0e6d2;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--bone);
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--ink); color: var(--bone); }
+
+  /* heavy grain. screen-print noise. */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.22;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    mix-blend-mode: overlay;
+  }
+
+  /* warm vignette */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 99;
+    background:
+      radial-gradient(ellipse at top, rgba(245,75,0,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse at bottom right, rgba(245,75,0,0.04) 0%, transparent 50%);
+  }
+
+  /* ─────────── status bar (brasshands-style) ─────────── */
+  .status-bar {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--paper-deep);
+    border-bottom: 1px solid var(--bone-faint);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .status-bar-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .status-cluster { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+  .status-item {
+    display: flex; align-items: center; gap: 8px;
+    color: var(--bone-faint);
+  }
+  .status-item .lbl { color: var(--bone-faint); }
+  .status-item .val { color: var(--bone); }
+  .status-item .val.ink { color: var(--ink); }
+  .status-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    background: var(--ink);
+    box-shadow: 0 0 8px var(--ink);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse { 50% { opacity: 0.35; } }
+
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+
+  /* ─────────── header bar ─────────── */
+  .header {
+    border-bottom: 1px solid rgba(240,230,210,0.15);
+    padding: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .header-inner {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .header-left { color: var(--bone); font-weight: 700; }
+  .header-left .meteora { color: var(--ink); }
+  .header-right { color: var(--bone-faint); }
+
+  /* ─────────── briefing block (top metadata) ─────────── */
+  .briefing {
+    padding: 64px 0 32px;
+    border-bottom: 1px solid rgba(240,230,210,0.12);
+  }
+  .briefing-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 1px solid rgba(240,230,210,0.18);
+  }
+  .brief-cell {
+    padding: 22px 24px;
+    border-right: 1px solid rgba(240,230,210,0.12);
+    border-bottom: 1px solid rgba(240,230,210,0.12);
+  }
+  .brief-cell:nth-child(4n) { border-right: none; }
+  .brief-cell:nth-last-child(-n+4) { border-bottom: none; }
+  .brief-key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+    margin-bottom: 8px;
+  }
+  .brief-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--bone);
+    font-weight: 500;
+  }
+  .brief-val.ink { color: var(--ink); font-weight: 700; }
+
+  /* ─────────── hero / poster ─────────── */
+  .hero {
+    padding: 80px 0 100px;
+    position: relative;
+  }
+
+  .hero-marks {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+    margin-bottom: 32px;
+  }
+  .hero-marks .mid {
+    flex: 1;
+    margin: 0 18px;
+    height: 1px;
+    background: rgba(240,230,210,0.2);
+  }
+
+  .hero-title-wrap {
+    position: relative;
+    margin: 0 0 48px;
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', 'Inter', sans-serif;
+    font-size: clamp(72px, 14vw, 220px);
+    line-height: 0.86;
+    letter-spacing: -0.01em;
+    margin: 0;
+    color: var(--bone);
+    text-transform: uppercase;
+    font-weight: 400;
+  }
+  .hero-title .row1 { display: block; color: var(--bone); }
+  .hero-title .row2 {
+    display: block;
+    color: var(--ink);
+  }
+  .hero-title .row3 {
+    display: block;
+    color: transparent;
+    -webkit-text-stroke: 2px var(--bone);
+    text-stroke: 2px var(--bone);
+  }
+
+  .hero-sub {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px;
+    align-items: end;
+    border-top: 1px solid rgba(240,230,210,0.18);
+    padding-top: 28px;
+  }
+  .hero-sub-left {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    color: var(--bone-dim);
+    max-width: 560px;
+    line-height: 1.6;
+  }
+  .hero-sub-left strong { color: var(--bone); }
+  .hero-sub-right {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+    line-height: 1;
+    text-align: right;
+  }
+  .hero-sub-right .small {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--bone-faint);
+    margin-bottom: 6px;
+  }
+
+  /* sector tags row */
+  .sector-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 36px;
+  }
+  .sector-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    border: 1px solid var(--bone-faint);
+    color: var(--bone-dim);
+  }
+  .sector-tag.live {
+    border-color: var(--ink);
+    color: var(--ink);
+    background: rgba(245,75,0,0.08);
+  }
+
+  /* countdown row */
+  .countdown {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin-top: 56px;
+    border: 1px solid rgba(240,230,210,0.2);
+  }
+  .cd-cell {
+    padding: 24px 16px;
+    text-align: left;
+    border-right: 1px solid rgba(240,230,210,0.15);
+  }
+  .cd-cell:last-child { border-right: none; }
+  .cd-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    color: var(--ink);
+    line-height: 1;
+    letter-spacing: 0;
+  }
+  .cd-lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+    margin-top: 10px;
+  }
+
+  /* ─────────── section primitives ─────────── */
+  section { padding: 80px 0; border-top: 1px solid rgba(240,230,210,0.12); }
+  .section-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+    margin-bottom: 28px;
+  }
+  .section-eyebrow .num { color: var(--ink); font-weight: 700; }
+  .section-eyebrow .bar {
+    flex: 1;
+    height: 1px;
+    background: rgba(240,230,210,0.18);
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 0.92;
+    letter-spacing: 0;
+    margin: 0 0 24px;
+    color: var(--bone);
+    text-transform: uppercase;
+  }
+  .section-title .ink { color: var(--ink); }
+  .section-lede {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--bone-dim);
+    max-width: 640px;
+    margin: 0 0 48px;
+  }
+
+  /* ─────────── field briefing (what is this) ─────────── */
+  .field-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid rgba(240,230,210,0.18);
+  }
+  .field-cell {
+    padding: 32px 28px;
+    border-right: 1px solid rgba(240,230,210,0.12);
+  }
+  .field-cell:last-child { border-right: none; }
+  .field-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 60px;
+    line-height: 1;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .field-head {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--bone);
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  .field-body {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--bone-dim);
+  }
+
+  /* ─────────── deployment manifest (tracklist) ─────────── */
+  .manifest-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    border: 1px solid var(--ink);
+    background: rgba(245,75,0,0.06);
+    padding: 18px 22px;
+    margin-bottom: 28px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .manifest-banner .left {
+    display: flex; align-items: center; gap: 12px;
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .manifest-banner .right {
+    color: var(--bone-dim);
+  }
+  .manifest-banner .right a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .manifest-header {
+    display: grid;
+    grid-template-columns: 64px 1fr 180px 80px 40px;
+    gap: 16px;
+    padding: 14px 20px;
+    border: 1px solid rgba(240,230,210,0.18);
+    border-bottom: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+    background: var(--paper-deep);
+  }
+
+  .track {
+    display: grid;
+    grid-template-columns: 64px 1fr 180px 80px 40px;
+    gap: 16px;
+    align-items: center;
+    padding: 22px 20px;
+    border: 1px solid rgba(240,230,210,0.18);
+    border-top: none;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .track:hover { background: rgba(245,75,0,0.04); }
+  .track-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .track-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    color: var(--bone);
+    line-height: 1;
+    letter-spacing: 0.02em;
+  }
+  .track-name.locked {
+    color: var(--bone-faint);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+  .track-line {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--bone-dim);
+    margin-top: 4px;
+    letter-spacing: 0.04em;
+  }
+  .track-stage {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+  }
+  .track-runtime {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--bone-dim);
+    text-align: right;
+  }
+  .track-mark {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--bone-faint);
+    text-align: center;
+  }
+
+  /* ─────────── ops schedule ─────────── */
+  .ops {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid rgba(240,230,210,0.18);
+  }
+  .op {
+    padding: 32px 24px;
+    border-right: 1px solid rgba(240,230,210,0.12);
+    position: relative;
+  }
+  .op:last-child { border-right: none; }
+  .op::before {
+    content: attr(data-num);
+    position: absolute;
+    top: 14px; right: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--bone-faint);
+  }
+  .op-time {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+  .op-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--bone);
+    margin-bottom: 10px;
+    font-weight: 700;
+  }
+  .op-desc {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--bone-dim);
+  }
+
+  /* ─────────── affiliated units (sponsors) ─────────── */
+  .units {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid rgba(240,230,210,0.18);
+  }
+  .unit {
+    aspect-ratio: 1.4;
+    border-right: 1px solid rgba(240,230,210,0.12);
+    border-bottom: 1px solid rgba(240,230,210,0.12);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    transition: background 0.15s;
+  }
+  .unit:hover { background: rgba(245,75,0,0.04); }
+  .unit:nth-child(4n) { border-right: none; }
+  .unit:nth-last-child(-n+4) { border-bottom: none; }
+  .unit-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+    margin-bottom: 12px;
+  }
+  .unit-mark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--bone-dim);
+    text-align: center;
+    line-height: 1;
+  }
+
+  /* ─────────── deployment / cta ─────────── */
+  .deploy {
+    background: var(--paper-deep);
+    border: 2px solid var(--bone);
+    padding: 64px 48px;
+    position: relative;
+  }
+  .deploy::before, .deploy::after {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    border: 2px solid var(--bone);
+  }
+  .deploy::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+  .deploy::after { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+  .deploy-stamp {
+    position: absolute;
+    top: 24px; right: 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    padding: 6px 10px;
+  }
+
+  .deploy-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(56px, 9vw, 120px);
+    line-height: 0.9;
+    color: var(--bone);
+    margin: 0 0 24px;
+    text-transform: uppercase;
+  }
+  .deploy-title .ink { color: var(--ink); }
+  .deploy-lede {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--bone-dim);
+    max-width: 640px;
+    margin: 0 0 40px;
+  }
+  .cta-stack { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 18px 28px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    border: 2px solid;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.15s, color 0.15s;
+  }
+  .btn-primary {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--paper);
+  }
+  .btn-primary:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--bone);
+  }
+  .btn-secondary {
+    background: transparent;
+    border-color: var(--bone);
+    color: var(--bone);
+  }
+  .btn-secondary:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--ink);
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+  .btn .arrow { font-family: 'Bebas Neue', sans-serif; font-size: 18px; }
+
+  .deploy-foot {
+    margin-top: 36px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: var(--bone-faint);
+  }
+  .deploy-foot a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ─────────── footer ─────────── */
+  .footer {
+    padding: 48px 0 32px;
+    border-top: 1px solid rgba(240,230,210,0.18);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-bottom: 32px;
+  }
+  .footer-block .ft-key {
+    color: var(--bone-faint);
+    margin-bottom: 8px;
+  }
+  .footer-block .ft-val {
+    color: var(--bone-dim);
+    text-transform: none;
+    letter-spacing: 0.04em;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .footer-bottom {
+    border-top: 1px solid rgba(240,230,210,0.12);
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* ─────────── responsive ─────────── */
+  @media (max-width: 900px) {
+    .briefing-grid { grid-template-columns: repeat(2, 1fr); }
+    .brief-cell:nth-child(4n) { border-right: 1px solid rgba(240,230,210,0.12); }
+    .brief-cell:nth-child(2n) { border-right: none; }
+    .field-grid { grid-template-columns: 1fr; }
+    .field-cell { border-right: none; border-bottom: 1px solid rgba(240,230,210,0.12); }
+    .field-cell:last-child { border-bottom: none; }
+    .ops { grid-template-columns: repeat(2, 1fr); }
+    .op:nth-child(2n) { border-right: none; }
+    .op:nth-child(-n+2) { border-bottom: 1px solid rgba(240,230,210,0.12); }
+    .units { grid-template-columns: repeat(2, 1fr); }
+    .unit:nth-child(4n) { border-right: 1px solid rgba(240,230,210,0.12); }
+    .unit:nth-child(2n) { border-right: none; }
+    .countdown { grid-template-columns: repeat(2, 1fr); }
+    .cd-cell:nth-child(2n) { border-right: none; }
+    .cd-cell:nth-child(-n+2) { border-bottom: 1px solid rgba(240,230,210,0.15); }
+    .manifest-header, .track {
+      grid-template-columns: 48px 1fr 80px;
+    }
+    .manifest-header > div:nth-child(3),
+    .manifest-header > div:nth-child(5),
+    .track > .track-stage,
+    .track > .track-mark { display: none; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .deploy { padding: 48px 28px; }
+    .hero-sub { grid-template-columns: 1fr; }
+    .hero-sub-right { text-align: left; }
+  }
+
+  @media (max-width: 540px) {
+    .wrap { padding: 0 20px; }
+    .status-bar-inner { padding: 10px 20px; }
+    .briefing-grid { grid-template-columns: 1fr; }
+    .brief-cell { border-right: none !important; border-bottom: 1px solid rgba(240,230,210,0.12); }
+    .brief-cell:last-child { border-bottom: none; }
+    .countdown { grid-template-columns: 1fr; }
+    .cd-cell { border-right: none; border-bottom: 1px solid rgba(240,230,210,0.15); }
+    .cd-cell:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─────────── status bar ─────────── -->
+<div class="status-bar">
+  <div class="status-bar-inner">
+    <div class="status-cluster">
+      <div class="status-item"><span class="status-dot"></span><span class="lbl">STATUS:</span> <span class="val ink">DEPLOYING</span></div>
+      <div class="status-item"><span class="lbl">SECTOR:</span> <span class="val">NYC / SKYLINE / FL.8</span></div>
+      <div class="status-item"><span class="lbl">OP-CODE:</span> <span class="val">SKY-001</span></div>
+    </div>
+    <div class="status-cluster">
+      <div class="status-item"><span class="lbl">T-MINUS:</span> <span class="val ink" id="tminus">--D --H --M</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────── header ─────────── -->
+<header class="header">
+  <div class="wrap header-inner">
+    <div class="header-left">THE OFFICE OF <span class="meteora">METEORA ECOSYSTEM</span></div>
+    <div class="header-right">FILED 04.25.26 / NEW YORK CITY</div>
+  </div>
+</header>
+
+<!-- ─────────── briefing block ─────────── -->
+<div class="briefing">
+  <div class="wrap">
+    <div class="briefing-grid">
+      <div class="brief-cell">
+        <div class="brief-key">Operation</div>
+        <div class="brief-val ink">Startup Showcase</div>
+      </div>
+      <div class="brief-cell">
+        <div class="brief-key">Date</div>
+        <div class="brief-val">Fri / May 1, 2026</div>
+      </div>
+      <div class="brief-cell">
+        <div class="brief-key">Window</div>
+        <div class="brief-val">13:00 to 14:00 ET</div>
+      </div>
+      <div class="brief-cell">
+        <div class="brief-key">Coordinates</div>
+        <div class="brief-val">Solana Skyline / 8F</div>
+      </div>
+      <div class="brief-cell">
+        <div class="brief-key">Classification</div>
+        <div class="brief-val">Public / Vetted RSVP</div>
+      </div>
+      <div class="brief-cell">
+        <div class="brief-key">Backed by</div>
+        <div class="brief-val">Meteora Ecosystem Projects</div>
+      </div>
+      <div class="brief-cell">
+        <div class="brief-key">Open call</div>
+        <div class="brief-val">Closes Apr 28 / 23:59</div>
+      </div>
+      <div class="brief-cell">
+        <div class="brief-key">Lineup drops</div>
+        <div class="brief-val ink">Apr 30 / 18:00</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────── hero / poster ─────────── -->
+<section class="hero" style="border-top: none;">
+  <div class="wrap">
+    <div class="hero-marks">
+      <span>VOL. 01 / FRONTIER</span>
+      <span class="mid"></span>
+      <span>SIDE A / DEMOS</span>
+    </div>
+
+    <div class="hero-title-wrap">
+      <h1 class="hero-title">
+        <span class="row1">Startup</span>
+        <span class="row2">Showcase</span>
+        <span class="row3">at Skyline</span>
+      </h1>
+    </div>
+
+    <div class="hero-sub">
+      <div class="hero-sub-left">
+        A live demo set inside <strong>Solana Skyline</strong> during Colosseum Frontier hackathon week. Hackathon teams, meteco projects, incubator founders, and anyone shipping on Solana. Five minutes each. Lunch on us.
+      </div>
+      <div class="hero-sub-right">
+        <span class="small">Doors / Set</span>
+        12:45 / 13:00
+      </div>
+    </div>
+
+    <div class="sector-tags">
+      <span class="sector-tag live">● LIVE OP</span>
+      <span class="sector-tag">DEMOS</span>
+      <span class="sector-tag">FOUNDERS</span>
+      <span class="sector-tag">LIQUIDITY</span>
+      <span class="sector-tag">ECOSYSTEM</span>
+      <span class="sector-tag">SOLANA</span>
+    </div>
+
+    <div class="countdown" id="countdown">
+      <div class="cd-cell">
+        <div class="cd-num" id="cd-d">--</div>
+        <div class="cd-lbl">Days out</div>
+      </div>
+      <div class="cd-cell">
+        <div class="cd-num" id="cd-h">--</div>
+        <div class="cd-lbl">Hours</div>
+      </div>
+      <div class="cd-cell">
+        <div class="cd-num" id="cd-m">--</div>
+        <div class="cd-lbl">Minutes</div>
+      </div>
+      <div class="cd-cell">
+        <div class="cd-num" id="cd-s">--</div>
+        <div class="cd-lbl">Seconds</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── field briefing ─────────── -->
+<section id="briefing">
+  <div class="wrap">
+    <div class="section-eyebrow">
+      <span class="num">01 /</span>
+      <span>Field briefing</span>
+      <span class="bar"></span>
+    </div>
+    <h2 class="section-title">What you're <span class="ink">walking into.</span></h2>
+    <p class="section-lede">
+      One hour. No filler. A small room of operators watching builders ship and talking after. Built for the back end of hackathon week. Nothing rehearsed.
+    </p>
+
+    <div class="field-grid">
+      <div class="field-cell">
+        <div class="field-num">01</div>
+        <div class="field-head">No pitches</div>
+        <div class="field-body">Founders show what they're shipping. Five minutes each. Live demo, screen share, slides, whatever. Q&A keeps it honest.</div>
+      </div>
+      <div class="field-cell">
+        <div class="field-num">02</div>
+        <div class="field-head">Lunch built in</div>
+        <div class="field-body">Pizza, drinks, the room stays sharp through the conversation after. The kind of hang where intros actually happen.</div>
+      </div>
+      <div class="field-cell">
+        <div class="field-num">03</div>
+        <div class="field-head">Curated room</div>
+        <div class="field-body">Vetted RSVPs only. Hackathon teams, meteco projects, incubator founders, ecosystem operators. Real signal, no spectators.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── deployment manifest ─────────── -->
+<section id="manifest">
+  <div class="wrap">
+    <div class="section-eyebrow">
+      <span class="num">02 /</span>
+      <span>Deployment manifest / Side A</span>
+      <span class="bar"></span>
+    </div>
+    <h2 class="section-title">The <span class="ink">lineup.</span></h2>
+    <p class="section-lede">
+      Five minutes each. Vetted from the open call. Final lineup confirmed Apr 30. Until then, all units are classified.
+    </p>
+
+    <div class="manifest-banner">
+      <div class="left">
+        <span class="status-dot"></span>
+        <span>UNITS REVEAL · APR 30 / 18:00</span>
+      </div>
+      <div class="right">
+        Want a slot? <a href="https://forms.gle/tvyirsjWurL4LxxH6" target="_blank" rel="noopener">Submit a project</a>. Open call closes Apr 28.
+      </div>
+    </div>
+
+    <div class="manifest-header">
+      <div>UNIT</div>
+      <div>CALL SIGN / BRIEF</div>
+      <div>STATUS</div>
+      <div style="text-align:right;">RUNTIME</div>
+      <div></div>
+    </div>
+
+    <div class="track">
+      <div class="track-num">A1</div>
+      <div>
+        <div class="track-name locked">// CLASSIFIED · DROPS APR 30</div>
+        <div class="track-line">Slot reserved.</div>
+      </div>
+      <div class="track-stage">PENDING</div>
+      <div class="track-runtime">5:00</div>
+      <div class="track-mark">⊘</div>
+    </div>
+
+    <div class="track">
+      <div class="track-num">A2</div>
+      <div>
+        <div class="track-name locked">// CLASSIFIED · DROPS APR 30</div>
+        <div class="track-line">Slot reserved.</div>
+      </div>
+      <div class="track-stage">PENDING</div>
+      <div class="track-runtime">5:00</div>
+      <div class="track-mark">⊘</div>
+    </div>
+
+    <div class="track">
+      <div class="track-num">A3</div>
+      <div>
+        <div class="track-name locked">// CLASSIFIED · DROPS APR 30</div>
+        <div class="track-line">Slot reserved.</div>
+      </div>
+      <div class="track-stage">PENDING</div>
+      <div class="track-runtime">5:00</div>
+      <div class="track-mark">⊘</div>
+    </div>
+
+    <div class="track">
+      <div class="track-num">A4</div>
+      <div>
+        <div class="track-name locked">// CLASSIFIED · DROPS APR 30</div>
+        <div class="track-line">Slot reserved.</div>
+      </div>
+      <div class="track-stage">PENDING</div>
+      <div class="track-runtime">5:00</div>
+      <div class="track-mark">⊘</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── ops schedule ─────────── -->
+<section id="ops">
+  <div class="wrap">
+    <div class="section-eyebrow">
+      <span class="num">03 /</span>
+      <span>Ops schedule</span>
+      <span class="bar"></span>
+    </div>
+    <h2 class="section-title">Run of <span class="ink">show.</span></h2>
+    <p class="section-lede">
+      One hour, four phases. Doors open as demos kick off. Pull up sharp.
+    </p>
+
+    <div class="ops">
+      <div class="op" data-num="OP / 01">
+        <div class="op-time">12:45</div>
+        <div class="op-name">Doors</div>
+        <div class="op-desc">Vetted RSVPs only. Someone on the door to let you up.</div>
+      </div>
+      <div class="op" data-num="OP / 02">
+        <div class="op-time">13:00</div>
+        <div class="op-name">Demos / Side A</div>
+        <div class="op-desc">Lineup drops Apr 30. Five minutes each. Live demos, no rehearsals.</div>
+      </div>
+      <div class="op" data-num="OP / 03">
+        <div class="op-time">13:35</div>
+        <div class="op-name">Lunch / hang</div>
+        <div class="op-desc">Pizza, drinks, Q&A spills out. Real conversation, real intros.</div>
+      </div>
+      <div class="op" data-num="OP / 04">
+        <div class="op-time">14:00</div>
+        <div class="op-name">Wrap</div>
+        <div class="op-desc">Hard wrap. Skyline co-working open all day for those staying.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── affiliated units / sponsors ─────────── -->
+<section id="units">
+  <div class="wrap">
+    <div class="section-eyebrow">
+      <span class="num">04 /</span>
+      <span>Affiliated units</span>
+      <span class="bar"></span>
+    </div>
+    <h2 class="section-title">Backed by <span class="ink">Meteora Ecosystem.</span></h2>
+    <p class="section-lede">
+      A coordinated lineup of Meteora-powered and Meteora-friendly projects. Logos confirmed Apr 30 with the lineup.
+    </p>
+
+    <div class="units">
+      <div class="unit"><div class="unit-id">UNIT / 01</div><div class="unit-mark">// CLASSIFIED</div></div>
+      <div class="unit"><div class="unit-id">UNIT / 02</div><div class="unit-mark">// CLASSIFIED</div></div>
+      <div class="unit"><div class="unit-id">UNIT / 03</div><div class="unit-mark">// CLASSIFIED</div></div>
+      <div class="unit"><div class="unit-id">UNIT / 04</div><div class="unit-mark">// CLASSIFIED</div></div>
+      <div class="unit"><div class="unit-id">UNIT / 05</div><div class="unit-mark">// CLASSIFIED</div></div>
+      <div class="unit"><div class="unit-id">UNIT / 06</div><div class="unit-mark">// CLASSIFIED</div></div>
+      <div class="unit"><div class="unit-id">UNIT / 07</div><div class="unit-mark">// CLASSIFIED</div></div>
+      <div class="unit"><div class="unit-id">UNIT / 08</div><div class="unit-mark">// CLASSIFIED</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── deploy / cta ─────────── -->
+<section id="deploy">
+  <div class="wrap">
+    <div class="deploy">
+      <div class="deploy-stamp">● ENGAGE</div>
+      <h2 class="deploy-title">Two ways <span class="ink">in.</span></h2>
+      <p class="deploy-lede">
+        RSVP to attend, or submit your project for a demo slot. Open call closes Apr 28 at 23:59. Lineup confirmed Apr 30.
+      </p>
+      <div class="cta-stack">
+        <a href="https://luma.com/knxlsunb" target="_blank" rel="noopener" class="btn btn-primary">RSVP via Luma <span class="arrow">→</span></a>
+        <a href="https://forms.gle/tvyirsjWurL4LxxH6" target="_blank" rel="noopener" class="btn btn-secondary">Submit a demo <span class="arrow">↗</span></a>
+      </div>
+      <p class="deploy-foot">
+        Working from Skyline that day? Register for co-working: <a href="https://luma.com/tqs9x31k" target="_blank" rel="noopener">luma.com/tqs9x31k</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── footer ─────────── -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-block">
+        <div class="ft-key">Photo / Video Notice</div>
+        <div class="ft-val">This event will be photographed and filmed. By registering, you consent to your likeness being used in recap content across Meteora ecosystem channels.</div>
+      </div>
+      <div class="footer-block">
+        <div class="ft-key">Capacity</div>
+        <div class="ft-val">Vetted RSVPs only. Limited room. Registration is not a guarantee of entry.</div>
+      </div>
+      <div class="footer-block">
+        <div class="ft-key">Contact</div>
+        <div class="ft-val">For partnership or press: reach Meteora Ecosystem in your usual channel. Day-of inquiries: door staff at Skyline 8F.</div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>A SOLANA SKYLINE PRODUCTION / PRESSED IN NYC</div>
+      <div>SKY-001 / © 2026 / ALL UNITS OUR OWN</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // countdown to may 1, 2026, 13:00 ET (UTC-4 during EDT)
+  const target = new Date('2026-05-01T13:00:00-04:00').getTime();
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function tick() {
+    const now = Date.now();
+    const diff = Math.max(0, target - now);
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+
+    const dEl = document.getElementById('cd-d');
+    const hEl = document.getElementById('cd-h');
+    const mEl = document.getElementById('cd-m');
+    const sEl = document.getElementById('cd-s');
+    if (dEl) dEl.textContent = pad(d);
+    if (hEl) hEl.textContent = pad(h);
+    if (mEl) mEl.textContent = pad(m);
+    if (sEl) sEl.textContent = pad(s);
+
+    const tm = document.getElementById('tminus');
+    if (tm) tm.textContent = `${pad(d)}D ${pad(h)}H ${pad(m)}M`;
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
