@@ -814,7 +814,7 @@
     <div class="drop-banner">
       <div class="left">
         <span class="pulse"></span>
-        <span>Tracks revealed · Apr 30, 26</span>
+        <span>Demos revealed · Apr 30 · <span id="reveal-countdown" style="color:var(--accent-warm);">--</span></span>
       </div>
       <div class="right">
         Want to demo? <strong><a href="#rsvp" style="color:var(--accent-warm);text-decoration:underline;">Submit a project</a></strong>. Closes Apr 28.
@@ -1001,6 +1001,9 @@
       s: document.querySelector('[data-cd="s"]'),
     };
     const titleEl = document.getElementById('countdown-title');
+    const revealEl = document.getElementById('reveal-countdown');
+    // demo lineup reveal: apr 30, 2026, 12pm ET (16:00 UTC during EDT)
+    const revealTarget = new Date('2026-04-30T16:00:00Z').getTime();
     const pad = (n) => String(Math.max(0, n)).padStart(2, '0');
     let timer = null;
 
@@ -1019,6 +1022,19 @@
         else if (days >= 1) titleEl.textContent = `Doors open in ${days} day${days === 1 ? '' : 's'}`;
         else if (hours >= 1) titleEl.textContent = `Doors open in ${hours} hour${hours === 1 ? '' : 's'}`;
         else titleEl.textContent = 'Doors open within the hour';
+      }
+      if (revealEl) {
+        const rDiff = revealTarget - Date.now();
+        if (rDiff <= 0) {
+          revealEl.textContent = 'live now';
+        } else {
+          const rD = Math.floor(rDiff / 86400000);
+          const rH = Math.floor((rDiff % 86400000) / 3600000);
+          const rM = Math.floor((rDiff % 3600000) / 60000);
+          const rS = Math.floor((rDiff % 60000) / 1000);
+          if (rD >= 1) revealEl.textContent = `${rD}d ${pad(rH)}h ${pad(rM)}m`;
+          else revealEl.textContent = `${pad(rH)}h ${pad(rM)}m ${pad(rS)}s`;
+        }
       }
     }
 
