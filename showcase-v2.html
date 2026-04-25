@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Startup Showcase at Skyline · May 1</title>
+<meta name="description" content="A startup showcase at Solana Skyline. Demos + frontier founders lunch. May 1, 1pm. Sponsored by Meteora Ecosystem Projects.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #14100c;
+    --paper-2: #1a1612;
+    --paper-deep: #0d0a07;
+    --ink: #f54b00;
+    --ink-bright: #ff5e15;
+    --ink-soft: #c33a00;
+    --bone: #f0e6d2;
+    --bone-dim: #c4b89e;
+    --bone-faint: #8a7f6a;
+    --frame: #f0e6d2;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--bone);
+    font-family: 'Inter', -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--ink); color: var(--bone); }
+
+  /* heavy grain — feels printed, not rendered */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.18;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    mix-blend-mode: overlay;
+  }
+
+  /* paper texture / subtle warmth */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 99;
+    background:
+      radial-gradient(ellipse at top, rgba(245,75,0,0.06) 0%, transparent 55%),
+      radial-gradient(ellipse at bottom right, rgba(245,75,0,0.04) 0%, transparent 50%);
+  }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+
+  /* ─────────── nav ─────────── */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(20,16,12,0.92);
+    border-bottom: 1px solid rgba(240,230,210,0.12);
+    padding: 14px 0;
+    backdrop-filter: none;
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: 1100px; margin: 0 auto; padding: 0 32px;
+  }
+  .nav-brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--bone-dim);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nav-brand .dot {
+    width: 8px; height: 8px;
+    background: var(--ink);
+    box-shadow: 0 0 10px var(--ink);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 50% { opacity: 0.4; } }
+
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--bone-faint);
+    text-decoration: none; transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+
+  /* ─────────── poster hero ─────────── */
+  .hero {
+    position: relative;
+    padding: 56px 0 80px;
+  }
+
+  .poster {
+    position: relative;
+    border: 2px solid var(--frame);
+    padding: 48px 56px 56px;
+    background: var(--paper-2);
+    box-shadow: 0 0 0 8px var(--paper), 0 0 0 9px var(--frame);
+  }
+
+  /* corner registration marks */
+  .poster::before, .poster::after {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    border: 2px solid var(--frame);
+  }
+  .poster::before {
+    top: -2px; left: -2px;
+    border-right: none; border-bottom: none;
+  }
+  .poster::after {
+    bottom: -2px; right: -2px;
+    border-left: none; border-top: none;
+  }
+
+  .poster-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid var(--frame);
+    padding-bottom: 18px;
+    margin-bottom: 36px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--bone-dim);
+  }
+  .poster-top .stamp {
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    padding: 4px 10px;
+  }
+
+  .vol-line {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+  .vol-line span {
+    border-top: 1px solid var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding: 6px 24px;
+  }
+
+  /* GIANT BLOCK HEADLINE */
+  .headline {
+    font-family: 'Bebas Neue', 'Inter', sans-serif;
+    font-size: clamp(72px, 14vw, 188px);
+    line-height: 0.86;
+    letter-spacing: -0.01em;
+    text-align: center;
+    color: var(--ink);
+    text-transform: uppercase;
+    margin: 0;
+    text-shadow:
+      2px 0 0 var(--paper-2),
+      -2px 0 0 var(--paper-2);
+    /* slight ink-bleed effect */
+    filter: contrast(1.05);
+  }
+  .headline .line { display: block; }
+  .headline .line.skyline {
+    color: var(--bone);
+    font-size: clamp(56px, 10vw, 140px);
+    -webkit-text-stroke: 2px var(--ink);
+    color: transparent;
+    margin-top: -8px;
+  }
+
+  .subhead {
+    text-align: center;
+    margin-top: 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bone-dim);
+  }
+  .subhead .ink { color: var(--ink); }
+
+  /* central illustration block — the "flame" */
+  .illustration {
+    margin: 48px auto 36px;
+    width: 220px; height: 220px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .flame-svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 30px rgba(245,75,0,0.4));
+  }
+  .flame-svg path {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+
+  /* date + venue strip */
+  .date-strip {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    gap: 24px;
+    align-items: center;
+    margin: 36px auto 0;
+    padding: 24px 0;
+    border-top: 2px solid var(--frame);
+    border-bottom: 2px solid var(--frame);
+    text-align: center;
+  }
+  .date-strip .sep {
+    color: var(--ink);
+    font-size: 22px;
+    line-height: 1;
+  }
+  .date-cell .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--bone-faint);
+    margin-bottom: 6px;
+  }
+  .date-cell .value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px; letter-spacing: 0.04em;
+    color: var(--bone);
+    line-height: 1;
+  }
+  .date-cell .value.ink { color: var(--ink); }
+
+  /* countdown */
+  .countdown {
+    margin-top: 36px;
+    text-align: center;
+  }
+  .countdown-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+    margin-bottom: 16px;
+  }
+  .countdown-grid {
+    display: inline-flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .cd-cell {
+    border: 1px solid var(--ink);
+    padding: 12px 16px;
+    min-width: 76px;
+  }
+  .cd-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .cd-unit {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+    margin-top: 4px;
+  }
+
+  /* sponsor / hosted */
+  .hosted-row {
+    margin-top: 36px;
+    text-align: center;
+  }
+  .hosted-row .by {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+    margin-bottom: 8px;
+  }
+  .hosted-row .who {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.06em;
+    color: var(--bone);
+  }
+  .hosted-row .who .ink { color: var(--ink); }
+
+  /* ─────────── triptych ─────────── */
+  .triptych {
+    padding: 80px 0;
+    border-top: 2px solid rgba(240,230,210,0.12);
+  }
+  .triptych-eyebrow {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .triptych-head {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    text-align: center;
+    color: var(--bone);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    margin: 0 0 48px;
+  }
+  .triptych-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 2px solid var(--frame);
+  }
+  .tri-cell {
+    padding: 40px 32px;
+    text-align: center;
+    border-right: 2px solid var(--frame);
+    position: relative;
+  }
+  .tri-cell:last-child { border-right: none; }
+
+  .tri-icon {
+    width: 88px; height: 88px;
+    margin: 0 auto 24px;
+  }
+  .tri-icon svg { width: 100%; height: 100%; }
+  .tri-icon svg path,
+  .tri-icon svg circle,
+  .tri-icon svg rect,
+  .tri-icon svg line {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .tri-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .tri-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--bone);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 12px;
+  }
+  .tri-text {
+    font-size: 14px;
+    color: var(--bone-dim);
+    line-height: 1.6;
+  }
+
+  /* ─────────── set list ─────────── */
+  .setlist {
+    padding: 80px 0;
+    border-top: 2px solid rgba(240,230,210,0.12);
+  }
+
+  .setlist-head {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 32px;
+    margin-bottom: 40px;
+  }
+  .setlist-head .rule {
+    height: 2px;
+    background: var(--frame);
+  }
+  .setlist-head h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    color: var(--ink);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .setlist-meta {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+    margin-bottom: 32px;
+  }
+  .setlist-meta .ink { color: var(--ink); }
+
+  .tracks {
+    border: 2px solid var(--frame);
+  }
+  .track {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    align-items: center;
+    gap: 24px;
+    padding: 22px 28px;
+    border-bottom: 1px solid rgba(240,230,210,0.12);
+    transition: background 0.15s;
+  }
+  .track:last-child { border-bottom: none; }
+  .track:hover { background: rgba(245,75,0,0.04); }
+
+  .track-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .track-mid {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .track-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bone-dim);
+  }
+  .track-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink);
+    border: 1px solid var(--ink);
+    padding: 3px 8px;
+  }
+  .track-time {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--bone-faint);
+  }
+
+  .reveal-banner {
+    margin-top: 24px;
+    padding: 18px;
+    border: 2px dashed var(--ink);
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .reveal-banner .blink { animation: blink 1.6s steps(2,end) infinite; }
+  @keyframes blink { 50% { opacity: 0.3; } }
+
+  /* ─────────── run of show ─────────── */
+  .run {
+    padding: 80px 0;
+    border-top: 2px solid rgba(240,230,210,0.12);
+  }
+  .run h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    color: var(--bone);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-align: center;
+    margin: 0 0 8px;
+  }
+  .run-sub {
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+    margin-bottom: 48px;
+  }
+  .run-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 2px solid var(--frame);
+  }
+  .run-cell {
+    padding: 32px 20px;
+    text-align: center;
+    border-right: 2px solid var(--frame);
+  }
+  .run-cell:last-child { border-right: none; }
+  .run-time {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 44px;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .run-time .ampm {
+    font-size: 16px;
+    color: var(--bone-faint);
+    margin-left: 4px;
+  }
+  .run-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--bone-dim);
+  }
+
+  /* ─────────── labels / sponsors ─────────── */
+  .labels {
+    padding: 80px 0;
+    border-top: 2px solid rgba(240,230,210,0.12);
+  }
+  .labels-head {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .labels-head .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .labels-head h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 56px;
+    color: var(--bone);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+  }
+  .labels-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border: 2px solid var(--frame);
+  }
+  .label-cell {
+    aspect-ratio: 1.6 / 1;
+    border-right: 2px solid var(--frame);
+    border-bottom: 2px solid var(--frame);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+    background: rgba(240,230,210,0.02);
+  }
+  .label-cell:nth-child(4n) { border-right: none; }
+  .label-cell:nth-child(n+5) { border-bottom: none; }
+
+  /* ─────────── CTA ─────────── */
+  .cta-section {
+    padding: 100px 0;
+    border-top: 2px solid rgba(240,230,210,0.12);
+    text-align: center;
+  }
+  .cta-section .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--ink);
+    margin-bottom: 12px;
+  }
+  .cta-section h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 88px;
+    color: var(--bone);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 0.92;
+    margin: 0 0 20px;
+  }
+  .cta-section h2 .ink { color: var(--ink); }
+  .cta-section .desc {
+    font-size: 16px;
+    color: var(--bone-dim);
+    max-width: 540px;
+    margin: 0 auto 40px;
+    line-height: 1.6;
+  }
+  .cta-stack {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 32px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.18s ease;
+    border: 2px solid var(--ink);
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .btn-primary:hover {
+    background: var(--ink-bright);
+    border-color: var(--ink-bright);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--frame);
+  }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink);
+  }
+  .btn-secondary:hover {
+    background: rgba(245,75,0,0.1);
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--frame);
+  }
+  .btn .arrow {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    letter-spacing: 0;
+  }
+
+  .coworking {
+    margin-top: 36px;
+    font-size: 13px;
+    color: var(--bone-faint);
+  }
+  .coworking a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  /* ─────────── footer ─────────── */
+  .footer {
+    padding: 56px 0 64px;
+    border-top: 2px solid rgba(240,230,210,0.12);
+    background: var(--paper-deep);
+  }
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: start;
+  }
+  .footer-brand {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--ink);
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  .footer p, .footer-notice {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--bone-faint);
+    line-height: 1.7;
+    text-transform: uppercase;
+    margin: 0;
+  }
+  .footer-notice {
+    border-left: 2px solid var(--ink);
+    padding-left: 16px;
+  }
+  .footer-bottom {
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(240,230,210,0.08);
+    display: flex;
+    justify-content: space-between;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--bone-faint);
+  }
+
+  /* ─────────── responsive ─────────── */
+  @media (max-width: 768px) {
+    .wrap { padding: 0 20px; }
+    .nav-links { display: none; }
+    .poster { padding: 32px 24px 40px; }
+    .poster-top { font-size: 9px; gap: 8px; flex-wrap: wrap; }
+    .date-strip { grid-template-columns: 1fr; gap: 16px; padding: 20px 0; }
+    .date-strip .sep { display: none; }
+    .countdown-grid { gap: 8px; }
+    .cd-cell { min-width: 64px; padding: 10px 12px; }
+    .cd-num { font-size: 28px; }
+    .triptych-grid { grid-template-columns: 1fr; }
+    .tri-cell {
+      border-right: none;
+      border-bottom: 2px solid var(--frame);
+    }
+    .tri-cell:last-child { border-bottom: none; }
+    .run-grid { grid-template-columns: 1fr 1fr; }
+    .run-cell:nth-child(2) { border-right: none; }
+    .run-cell:nth-child(1), .run-cell:nth-child(2) {
+      border-bottom: 2px solid var(--frame);
+    }
+    .labels-grid { grid-template-columns: repeat(2, 1fr); }
+    .label-cell:nth-child(2n) { border-right: none; }
+    .label-cell:nth-child(n+5) { border-bottom: 2px solid var(--frame); }
+    .label-cell:nth-child(n+7) { border-bottom: none; }
+    .track { grid-template-columns: 40px 1fr auto; gap: 12px; padding: 16px 18px; }
+    .track-mid { flex-direction: column; align-items: flex-start; gap: 6px; }
+    .cta-section h2 { font-size: 56px; }
+    .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+    .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+    .setlist-head { grid-template-columns: 1fr; }
+    .setlist-head .rule { display: none; }
+    .setlist-head h2 { font-size: 40px; }
+    .triptych-head, .run h2, .labels-head h2 { font-size: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─────────── NAV ─────────── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="dot"></span>
+      <span>SKY-001 · LIVE</span>
+    </div>
+    <div class="nav-links">
+      <a href="#tracklist">Set list</a>
+      <a href="#run">Run of show</a>
+      <a href="#labels">Labels</a>
+      <a href="#rsvp">RSVP</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ─────────── HERO POSTER ─────────── -->
+<section class="hero">
+  <div class="wrap">
+    <div class="poster">
+
+      <div class="poster-top">
+        <span>Skyline Programming · Vol. 01</span>
+        <span class="stamp">Limited Run · 20 Heads</span>
+        <span>NYC · 2026</span>
+      </div>
+
+      <div class="vol-line"><span>A Solana Skyline Production</span></div>
+
+      <h1 class="headline">
+        <span class="line">Startup</span>
+        <span class="line">Showcase</span>
+        <span class="line skyline">at Skyline</span>
+      </h1>
+
+      <p class="subhead">
+        Live <span class="ink">·</span> One Day Only <span class="ink">·</span> May 1
+      </p>
+
+      <!-- central illustration: stylized flame/star -->
+      <div class="illustration">
+        <svg class="flame-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <!-- outer ring -->
+          <circle cx="100" cy="100" r="92" stroke-width="1.5" stroke-dasharray="3 4"/>
+          <!-- inner ring -->
+          <circle cx="100" cy="100" r="74"/>
+          <!-- flame -->
+          <path d="M100 40 C 110 60, 130 70, 130 100 C 130 130, 110 150, 100 160 C 90 150, 70 130, 70 100 C 70 70, 90 60, 100 40 Z" stroke-width="2.5"/>
+          <path d="M100 70 C 105 82, 115 88, 115 105 C 115 122, 105 135, 100 140 C 95 135, 85 122, 85 105 C 85 88, 95 82, 100 70 Z" stroke-width="2"/>
+          <!-- star points -->
+          <line x1="100" y1="14" x2="100" y2="26"/>
+          <line x1="100" y1="174" x2="100" y2="186"/>
+          <line x1="14" y1="100" x2="26" y2="100"/>
+          <line x1="174" y1="100" x2="186" y2="100"/>
+        </svg>
+      </div>
+
+      <div class="date-strip">
+        <div class="date-cell">
+          <div class="label">Date</div>
+          <div class="value ink">May 01</div>
+        </div>
+        <div class="sep">●</div>
+        <div class="date-cell">
+          <div class="label">Doors</div>
+          <div class="value">12:45</div>
+        </div>
+        <div class="sep">●</div>
+        <div class="date-cell">
+          <div class="label">Venue</div>
+          <div class="value">Skyline</div>
+        </div>
+      </div>
+
+      <div class="countdown" id="countdown">
+        <div class="countdown-label">Doors open in</div>
+        <div class="countdown-grid">
+          <div class="cd-cell"><div class="cd-num" id="cd-d">--</div><div class="cd-unit">Days</div></div>
+          <div class="cd-cell"><div class="cd-num" id="cd-h">--</div><div class="cd-unit">Hours</div></div>
+          <div class="cd-cell"><div class="cd-num" id="cd-m">--</div><div class="cd-unit">Mins</div></div>
+          <div class="cd-cell"><div class="cd-num" id="cd-s">--</div><div class="cd-unit">Secs</div></div>
+        </div>
+      </div>
+
+      <div class="hosted-row">
+        <div class="by">Sponsored by</div>
+        <div class="who"><span class="ink">Meteora</span> Ecosystem Projects</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── TRIPTYCH ─────────── -->
+<section class="triptych">
+  <div class="wrap">
+    <div class="triptych-eyebrow">// Three Acts</div>
+    <h2 class="triptych-head">No Pitches. Just Builds.</h2>
+
+    <div class="triptych-grid">
+
+      <div class="tri-cell">
+        <div class="tri-icon">
+          <svg viewBox="0 0 100 100">
+            <rect x="14" y="22" width="72" height="50" rx="2"/>
+            <line x1="14" y1="34" x2="86" y2="34"/>
+            <circle cx="22" cy="28" r="1.5"/>
+            <circle cx="28" cy="28" r="1.5"/>
+            <circle cx="34" cy="28" r="1.5"/>
+            <path d="M30 50 L 42 58 L 30 66 Z"/>
+            <line x1="50" y1="50" x2="70" y2="50"/>
+            <line x1="50" y1="58" x2="62" y2="58"/>
+            <line x1="50" y1="66" x2="68" y2="66"/>
+            <line x1="40" y1="78" x2="60" y2="78"/>
+            <line x1="36" y1="84" x2="64" y2="84"/>
+          </svg>
+        </div>
+        <div class="tri-num">// 01</div>
+        <div class="tri-label">Demos</div>
+        <div class="tri-text">Six builders. Five minutes each. Hackathon teams, ecosystem projects, anyone shipping something real on Solana.</div>
+      </div>
+
+      <div class="tri-cell">
+        <div class="tri-icon">
+          <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="32"/>
+            <circle cx="50" cy="50" r="22"/>
+            <path d="M30 38 Q 50 24, 70 38" stroke-width="2"/>
+            <path d="M32 50 L 68 50"/>
+            <path d="M36 60 L 64 60"/>
+            <path d="M42 68 L 58 68"/>
+            <line x1="50" y1="14" x2="50" y2="22"/>
+          </svg>
+        </div>
+        <div class="tri-num">// 02</div>
+        <div class="tri-label">Lunch</div>
+        <div class="tri-text">Frontier Founders Lunch built into the program. Pizza, drinks, the room stays after the demos end.</div>
+      </div>
+
+      <div class="tri-cell">
+        <div class="tri-icon">
+          <svg viewBox="0 0 100 100">
+            <circle cx="34" cy="42" r="10"/>
+            <circle cx="66" cy="42" r="10"/>
+            <circle cx="50" cy="64" r="10"/>
+            <line x1="42" y1="48" x2="46" y2="58"/>
+            <line x1="58" y1="48" x2="54" y2="58"/>
+            <line x1="44" y1="42" x2="56" y2="42"/>
+            <path d="M20 86 Q 50 78, 80 86"/>
+          </svg>
+        </div>
+        <div class="tri-num">// 03</div>
+        <div class="tri-label">Hang</div>
+        <div class="tri-text">Capped at 20. Curated room. The kind of conversation that keeps going long after the credits roll.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── SET LIST / TRACKS ─────────── -->
+<section class="setlist" id="tracklist">
+  <div class="wrap">
+    <div class="setlist-head">
+      <div class="rule"></div>
+      <h2>The Set List</h2>
+      <div class="rule"></div>
+    </div>
+
+    <div class="setlist-meta">
+      Six tracks <span class="ink">·</span> Five minutes each <span class="ink">·</span> Lineup drops Apr 30
+    </div>
+
+    <div class="tracks">
+      <div class="track">
+        <div class="track-num">01</div>
+        <div class="track-mid">
+          <div class="track-title">Track 01 — Untitled</div>
+          <div class="track-tag">// Locked</div>
+        </div>
+        <div class="track-time">5:00</div>
+      </div>
+      <div class="track">
+        <div class="track-num">02</div>
+        <div class="track-mid">
+          <div class="track-title">Track 02 — Untitled</div>
+          <div class="track-tag">// Locked</div>
+        </div>
+        <div class="track-time">5:00</div>
+      </div>
+      <div class="track">
+        <div class="track-num">03</div>
+        <div class="track-mid">
+          <div class="track-title">Track 03 — Untitled</div>
+          <div class="track-tag">// Locked</div>
+        </div>
+        <div class="track-time">5:00</div>
+      </div>
+      <div class="track">
+        <div class="track-num">04</div>
+        <div class="track-mid">
+          <div class="track-title">Track 04 — Untitled</div>
+          <div class="track-tag">// Locked</div>
+        </div>
+        <div class="track-time">5:00</div>
+      </div>
+      <div class="track">
+        <div class="track-num">05</div>
+        <div class="track-mid">
+          <div class="track-title">Track 05 — Untitled</div>
+          <div class="track-tag">// Locked</div>
+        </div>
+        <div class="track-time">5:00</div>
+      </div>
+      <div class="track">
+        <div class="track-num">06</div>
+        <div class="track-mid">
+          <div class="track-title">Track 06 — Untitled</div>
+          <div class="track-tag">// Locked</div>
+        </div>
+        <div class="track-time">5:00</div>
+      </div>
+    </div>
+
+    <div class="reveal-banner">
+      <span class="blink">●</span> &nbsp; Tracklist reveal · April 30 · 12:00 ET
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── RUN OF SHOW ─────────── -->
+<section class="run" id="run">
+  <div class="wrap">
+    <h2>Run of Show</h2>
+    <div class="run-sub">May 1 · 1:00 PM start · 60 minutes</div>
+
+    <div class="run-grid">
+      <div class="run-cell">
+        <div class="run-time">12:45<span class="ampm">PM</span></div>
+        <div class="run-label">Doors</div>
+      </div>
+      <div class="run-cell">
+        <div class="run-time">1:00<span class="ampm">PM</span></div>
+        <div class="run-label">Demos</div>
+      </div>
+      <div class="run-cell">
+        <div class="run-time">1:35<span class="ampm">PM</span></div>
+        <div class="run-label">Lunch + Hang</div>
+      </div>
+      <div class="run-cell">
+        <div class="run-time">2:00<span class="ampm">PM</span></div>
+        <div class="run-label">Wrap</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── LABELS / SPONSORS ─────────── -->
+<section class="labels" id="labels">
+  <div class="wrap">
+    <div class="labels-head">
+      <div class="eyebrow">// Featured Labels</div>
+      <h2>Brought to You by Meteora Eco</h2>
+    </div>
+    <div class="labels-grid">
+      <div class="label-cell">// Logo 01</div>
+      <div class="label-cell">// Logo 02</div>
+      <div class="label-cell">// Logo 03</div>
+      <div class="label-cell">// Logo 04</div>
+      <div class="label-cell">// Logo 05</div>
+      <div class="label-cell">// Logo 06</div>
+      <div class="label-cell">// Logo 07</div>
+      <div class="label-cell">// Logo 08</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── CTA ─────────── -->
+<section class="cta-section" id="rsvp">
+  <div class="wrap">
+    <div class="eyebrow">// Get In The Room</div>
+    <h2>Two ways<br/><span class="ink">in.</span></h2>
+    <p class="desc">RSVP to attend or submit your project for a demo slot. Open call closes Apr 28, 11:59pm.</p>
+
+    <div class="cta-stack">
+      <a href="https://luma.com/knxlsunb" target="_blank" rel="noopener" class="btn btn-primary">
+        RSVP via Luma <span class="arrow">→</span>
+      </a>
+      <a href="https://forms.gle/tvyirsjWurL4LxxH6" target="_blank" rel="noopener" class="btn btn-secondary">
+        Submit a demo <span class="arrow">↗</span>
+      </a>
+    </div>
+
+    <p class="coworking">
+      Working from Skyline that day? <a href="https://luma.com/tqs9x31k" target="_blank" rel="noopener">Register for co-working</a>.
+    </p>
+  </div>
+</section>
+
+<!-- ─────────── FOOTER ─────────── -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">SKY-001</div>
+        <p>A Solana Skyline Production · NYC<br/>Sponsored by Meteora Ecosystem Projects</p>
+      </div>
+      <div class="footer-notice">
+        Photo + Video Notice: this event will be photographed and filmed for recap content and use across Meteora ecosystem channels. By registering, you consent to your likeness being used in event coverage.
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Skyline · Limited Run</span>
+      <span>Pressed in NYC</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // countdown to May 1 2026, 12:45pm ET (doors)
+  const target = new Date('2026-05-01T16:45:00Z').getTime(); // 12:45pm ET = 16:45 UTC during EDT
+  const dEl = document.getElementById('cd-d');
+  const hEl = document.getElementById('cd-h');
+  const mEl = document.getElementById('cd-m');
+  const sEl = document.getElementById('cd-s');
+
+  function tick() {
+    const now = Date.now();
+    const diff = target - now;
+    if (diff <= 0) {
+      dEl.textContent = '00';
+      hEl.textContent = '00';
+      mEl.textContent = '00';
+      sEl.textContent = '00';
+      document.querySelector('.countdown-label').textContent = 'Live now';
+      return;
+    }
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    dEl.textContent = String(d).padStart(2,'0');
+    hEl.textContent = String(h).padStart(2,'0');
+    mEl.textContent = String(m).padStart(2,'0');
+    sEl.textContent = String(s).padStart(2,'0');
+  }
+  tick();
+  setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
