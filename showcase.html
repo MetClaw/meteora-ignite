@@ -4,10 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Startup Showcase at Skyline · May 1</title>
-<meta name="description" content="A startup showcase at Solana Skyline. Demos + frontier founders lunch. May 1, 1pm. Sponsored by Meteora Ecosystem Projects.">
+<meta name="description" content="A startup showcase at Solana Skyline. Demos + Frontier Founders Lunch. May 1, 1pm. Sponsored by Meteora Ecosystem Projects.">
+
+<!-- social cards -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Startup Showcase at Skyline · May 01">
+<meta property="og:description" content="A live demo drop at Solana Skyline. Pizza, drinks, founders, builders. Sponsored by Meteora Ecosystem Projects.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Startup Showcase at Skyline · May 01">
+<meta name="twitter:description" content="A live demo drop at Solana Skyline. Pizza, drinks, founders, builders. Sponsored by Meteora Ecosystem Projects.">
+
+<!-- favicon: accent dot -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='10' fill='%23f54b00'/></svg>">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
     /* Meteora design system tokens */
@@ -703,8 +715,8 @@
       </div>
 
       <div class="cta-stack">
-        <a href="#rsvp" class="btn btn-primary">RSVP via luma <span class="arrow">→</span></a>
-        <a href="#tracklist" class="btn btn-secondary">View tracklist <span class="arrow">↓</span></a>
+        <a href="https://luma.com/knxlsunb" class="btn btn-primary" target="_blank" rel="noopener">RSVP via luma <span class="arrow">→</span></a>
+        <a href="https://forms.gle/tvyirsjWurL4LxxH6" class="btn btn-secondary" target="_blank" rel="noopener">Submit a demo <span class="arrow">↗</span></a>
       </div>
     </div>
 
@@ -737,7 +749,7 @@
     <div class="countdown">
       <div>
         <div class="countdown-label">⏱ Drops in</div>
-        <div class="countdown-title">Doors open 7 days from now</div>
+        <div class="countdown-title" id="countdown-title">Doors open soon</div>
       </div>
       <div class="countdown-grid" id="countdown">
         <div class="cd-cell"><div class="cd-num" data-cd="d">--</div><div class="cd-lbl">Days</div></div>
@@ -882,7 +894,7 @@
       <div class="settime">
         <div class="time">1:00</div>
         <div class="label">Demos start</div>
-        <div class="desc">Six slots, five minutes each. Lunch served throughout.</div>
+        <div class="desc">Five minutes each. Lunch served throughout.</div>
       </div>
       <div class="settime">
         <div class="time">1:35</div>
@@ -906,7 +918,7 @@
       <span>Featured labels</span>
       <span class="bar"></span>
     </div>
-    <h2 class="section-title">Sponsored by Meteora ecosystem projects.</h2>
+    <h2 class="section-title">Sponsored by Meteora Ecosystem Projects.</h2>
     <p class="section-lede">
       The teams making this room possible.
     </p>
@@ -975,32 +987,45 @@
 </footer>
 
 <script>
-  // ─────────── countdown to may 1, 2026, 1pm ET ───────────
-  // 1pm ET == 17:00 UTC (during EDT)
-  const target = new Date('2026-05-01T17:00:00Z').getTime();
-  const els = {
-    d: document.querySelector('[data-cd="d"]'),
-    h: document.querySelector('[data-cd="h"]'),
-    m: document.querySelector('[data-cd="m"]'),
-    s: document.querySelector('[data-cd="s"]'),
-  };
+  // countdown to may 1, 2026, 1pm ET (17:00 UTC during EDT)
+  (function () {
+    const target = new Date('2026-05-01T17:00:00Z').getTime();
+    const els = {
+      d: document.querySelector('[data-cd="d"]'),
+      h: document.querySelector('[data-cd="h"]'),
+      m: document.querySelector('[data-cd="m"]'),
+      s: document.querySelector('[data-cd="s"]'),
+    };
+    const titleEl = document.getElementById('countdown-title');
+    const pad = (n) => String(Math.max(0, n)).padStart(2, '0');
+    let timer = null;
 
-  function pad(n) { return String(Math.max(0, n)).padStart(2, '0'); }
+    function tick() {
+      const diff = Math.max(0, target - Date.now());
+      const days  = Math.floor(diff / 86400000);
+      const hours = Math.floor((diff % 86400000) / 3600000);
+      const mins  = Math.floor((diff % 3600000) / 60000);
+      const secs  = Math.floor((diff % 60000) / 1000);
+      els.d.textContent = pad(days);
+      els.h.textContent = pad(hours);
+      els.m.textContent = pad(mins);
+      els.s.textContent = pad(secs);
+      if (titleEl) {
+        if (diff <= 0) titleEl.textContent = 'Doors are open. Pull up.';
+        else if (days >= 1) titleEl.textContent = `Doors open in ${days} day${days === 1 ? '' : 's'}`;
+        else if (hours >= 1) titleEl.textContent = `Doors open in ${hours} hour${hours === 1 ? '' : 's'}`;
+        else titleEl.textContent = 'Doors open within the hour';
+      }
+    }
 
-  function tick() {
-    const now = Date.now();
-    let diff = Math.max(0, target - now);
-    const days = Math.floor(diff / 86400000); diff -= days * 86400000;
-    const hours = Math.floor(diff / 3600000); diff -= hours * 3600000;
-    const mins = Math.floor(diff / 60000); diff -= mins * 60000;
-    const secs = Math.floor(diff / 1000);
-    els.d.textContent = pad(days);
-    els.h.textContent = pad(hours);
-    els.m.textContent = pad(mins);
-    els.s.textContent = pad(secs);
-  }
-  tick();
-  setInterval(tick, 1000);
+    function start() { tick(); if (!timer) timer = setInterval(tick, 1000); }
+    function stop()  { if (timer) { clearInterval(timer); timer = null; } }
+
+    document.addEventListener('visibilitychange', () => {
+      document.hidden ? stop() : start();
+    });
+    start();
+  })();
 </script>
 
 </body>
