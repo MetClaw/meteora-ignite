@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Startup Showcase at Skyline · May 1</title>
+<meta name="description" content="A startup showcase at Solana Skyline. Demos + frontier founders lunch. May 1, 1pm. Sponsored by Meteora Ecosystem Projects.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Meteora design system tokens */
+    --base--2: #08080c;
+    --base--1: #12121c;
+    --base-0: #181825;
+    --container: #18192c;
+    --container-2: #1e1f35;
+    --stroke: #2c2e49;
+    --stroke-active: #3d3f5e;
+    --text-primary: #f9f9fb;
+    --text-secondary: #9595b2;
+    --text-tertiary: #6c6c89;
+    --border-primary: #434360;
+    --border-secondary: #2a2a3c;
+    --border-tertiary: #202031;
+    --primary: #6e45ff;
+    --accent: #f54b00;
+    --accent-warm: #ffb830;
+    --success: #24c98d;
+    --danger: #f04438;
+    --blue: #36bffa;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--base--2);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--accent); color: #fff; }
+
+  /* ─────────── grain overlay ─────────── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    mix-blend-mode: overlay;
+  }
+
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+
+  /* ─────────── nav ─────────── */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(8,8,12,0.85);
+    border-bottom: 1px solid var(--border-tertiary);
+    padding: 14px 0;
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    max-width: 1200px; margin: 0 auto; padding: 0 32px;
+  }
+  .nav-brand {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--text-secondary);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nav-brand .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 12px var(--accent);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse { 50% { opacity: 0.4; } }
+
+  .nav-links { display: flex; gap: 28px; }
+  .nav-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--text-tertiary);
+    text-decoration: none; transition: color 0.15s;
+  }
+  .nav-links a:hover { color: var(--text-primary); }
+
+  /* ─────────── hero / album cover ─────────── */
+  .hero {
+    position: relative;
+    padding: 80px 0 100px;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 30%, rgba(110,69,255,0.18) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(245,75,0,0.12) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 64px; align-items: center;
+  }
+
+  .hero-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent-warm);
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .hero-meta .bar {
+    flex: 0 0 32px; height: 1px;
+    background: var(--accent-warm);
+  }
+
+  .hero-title {
+    font-size: clamp(54px, 7.5vw, 104px);
+    font-weight: 900;
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    margin: 0 0 20px;
+    text-transform: uppercase;
+  }
+  .hero-title .word-1 {
+    display: block;
+    background: linear-gradient(180deg, #ffffff 0%, #b4b4d0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-title .word-2 {
+    display: block;
+    background: linear-gradient(90deg, var(--accent-warm) 0%, var(--accent) 35%, #d946ef 65%, var(--primary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-subtitle {
+    font-size: 18px;
+    color: var(--text-secondary);
+    margin: 0 0 36px;
+    max-width: 480px;
+  }
+  .hero-subtitle strong { color: var(--text-primary); font-weight: 600; }
+
+  /* drop info row */
+  .drop-row {
+    display: flex; flex-wrap: wrap; gap: 32px;
+    padding: 24px 0;
+    border-top: 1px solid var(--border-secondary);
+    border-bottom: 1px solid var(--border-secondary);
+    margin-bottom: 32px;
+  }
+  .drop-item .k {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-tertiary);
+    margin-bottom: 6px;
+  }
+  .drop-item .v {
+    font-size: 16px; font-weight: 700; color: var(--text-primary);
+  }
+  .drop-item .v.accent {
+    background: linear-gradient(90deg, var(--accent-warm), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* CTA stack */
+  .cta-stack { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 16px 28px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px; font-weight: 700;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent) 0%, #ff6b1f 100%);
+    color: #fff;
+    box-shadow: 0 8px 28px rgba(245,75,0,0.32);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(245,75,0,0.45); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-primary);
+    border: 1px solid var(--border-primary);
+  }
+  .btn-secondary:hover { border-color: var(--text-primary); transform: translateY(-2px); }
+  .btn .arrow { font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+
+  /* ─────────── album cover (right side of hero) ─────────── */
+  .cover {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 12px;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 30% 30%, rgba(110,69,255,0.4) 0%, transparent 50%),
+      radial-gradient(circle at 70% 70%, rgba(245,75,0,0.5) 0%, transparent 55%),
+      linear-gradient(135deg, #12121c 0%, #1a0a2e 100%);
+    border: 1px solid var(--border-primary);
+    box-shadow:
+      0 30px 80px rgba(0,0,0,0.6),
+      0 0 0 1px rgba(245,75,0,0.1);
+  }
+  .cover-noise {
+    position: absolute; inset: 0;
+    opacity: 0.18;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    mix-blend-mode: overlay;
+  }
+  .cover-content {
+    position: absolute; inset: 0;
+    padding: 32px;
+    display: flex; flex-direction: column;
+    justify-content: space-between;
+  }
+  .cover-tl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--text-secondary);
+  }
+  .cover-tl .label { color: var(--text-tertiary); }
+  .cover-vinyl {
+    position: absolute;
+    width: 60%; aspect-ratio: 1;
+    right: -15%; top: 50%; transform: translateY(-50%);
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at center, var(--accent) 0 12%, #08080c 12% 18%, #1a1a28 18% 22%, #0a0a14 22% 26%, #1a1a28 26% 30%, transparent 30%),
+      repeating-radial-gradient(circle at center, #0a0a14 0 1px, #1a1a28 1px 3px);
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
+    animation: spin 18s linear infinite;
+  }
+  @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+
+  .cover-bottom {
+    position: relative; z-index: 2;
+  }
+  .cover-bottom .album {
+    font-size: 32px; font-weight: 900;
+    line-height: 1; letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    margin: 0 0 6px;
+  }
+  .cover-bottom .artist {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent-warm);
+  }
+
+  .cover-stamp {
+    position: absolute; top: 24px; right: 24px;
+    width: 80px; height: 80px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center;
+    transform: rotate(-12deg);
+    z-index: 3;
+  }
+  .cover-stamp .inner {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    line-height: 1.2;
+  }
+
+  /* ─────────── countdown ─────────── */
+  .countdown {
+    margin-top: 80px;
+    padding: 28px;
+    background: linear-gradient(135deg, rgba(110,69,255,0.06), rgba(245,75,0,0.06));
+    border: 1px solid var(--border-secondary);
+    border-radius: 12px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 32px; align-items: center;
+  }
+  .countdown-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--text-tertiary);
+    margin-bottom: 8px;
+  }
+  .countdown-title {
+    font-size: 18px; font-weight: 700; color: var(--text-primary);
+  }
+  .countdown-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .cd-cell {
+    text-align: center;
+    padding: 14px 8px;
+    background: var(--base--1);
+    border: 1px solid var(--border-secondary);
+    border-radius: 8px;
+  }
+  .cd-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 32px; font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    background: linear-gradient(180deg, var(--accent-warm), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .cd-lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-tertiary);
+    margin-top: 6px;
+  }
+
+  /* ─────────── section primitives ─────────── */
+  section { padding: 80px 0; }
+  .section-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-eyebrow .num { color: var(--text-tertiary); }
+  .section-eyebrow .bar {
+    flex: 1; max-width: 80px; height: 1px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+  .section-title {
+    font-size: clamp(36px, 4.5vw, 56px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    text-transform: uppercase;
+  }
+  .section-lede {
+    font-size: 18px; color: var(--text-secondary);
+    max-width: 640px; margin: 0 0 48px;
+    line-height: 1.6;
+  }
+
+  /* ─────────── liner notes ─────────── */
+  .liner {
+    border-top: 1px solid var(--border-tertiary);
+    border-bottom: 1px solid var(--border-tertiary);
+  }
+  .liner-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-top: 48px;
+  }
+  .liner-item {
+    padding: 24px;
+    background: var(--container);
+    border: 1px solid var(--border-secondary);
+    border-radius: 10px;
+  }
+  .liner-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.14em;
+    color: var(--accent-warm); margin-bottom: 12px;
+  }
+  .liner-h {
+    font-size: 18px; font-weight: 700;
+    color: var(--text-primary); margin: 0 0 8px;
+  }
+  .liner-p {
+    font-size: 14px; color: var(--text-secondary);
+    line-height: 1.6; margin: 0;
+  }
+
+  /* ─────────── tracklist ─────────── */
+  .tracklist-header {
+    display: grid;
+    grid-template-columns: 60px 1fr 200px 100px 50px;
+    gap: 24px;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border-secondary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--text-tertiary);
+    margin-bottom: 4px;
+  }
+  .track {
+    display: grid;
+    grid-template-columns: 60px 1fr 200px 100px 50px;
+    gap: 24px; align-items: center;
+    padding: 22px 24px;
+    background: var(--container);
+    border: 1px solid var(--border-secondary);
+    border-radius: 10px;
+    margin-bottom: 6px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .track.locked {
+    opacity: 0.6;
+  }
+  .track:hover {
+    border-color: var(--stroke-active);
+  }
+  .track-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px; font-weight: 700;
+    color: var(--accent); letter-spacing: 0.04em;
+  }
+  .track-meta .name {
+    font-size: 17px; font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .track-meta .name.tbd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; font-weight: 500;
+    color: var(--text-tertiary);
+    letter-spacing: 0.06em;
+  }
+  .track-meta .one-liner {
+    font-size: 13px; color: var(--text-secondary);
+    line-height: 1.5;
+  }
+  .track-stage {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.1em;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+  }
+  .track-runtime {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; color: var(--text-secondary);
+    text-align: right;
+  }
+  .track-icon {
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-tertiary); font-size: 14px;
+  }
+
+  /* drop banner over tracklist */
+  .drop-banner {
+    margin: 32px 0 24px;
+    padding: 18px 24px;
+    background: linear-gradient(90deg, rgba(110,69,255,0.08), rgba(245,75,0,0.08));
+    border: 1px solid var(--border-secondary);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 16px;
+  }
+  .drop-banner .left {
+    display: flex; align-items: center; gap: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .drop-banner .left .pulse {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .drop-banner .right {
+    font-size: 13px; color: var(--text-secondary);
+  }
+  .drop-banner .right strong {
+    color: var(--accent-warm); font-weight: 700;
+  }
+
+  /* ─────────── set times ─────────── */
+  .settimes-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .settime {
+    padding: 22px;
+    background: var(--container);
+    border: 1px solid var(--border-secondary);
+    border-radius: 10px;
+  }
+  .settime .time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px; font-weight: 700;
+    color: var(--accent-warm);
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .settime .label {
+    font-size: 13px; font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .settime .desc {
+    font-size: 12px; color: var(--text-secondary);
+    line-height: 1.5;
+  }
+
+  /* ─────────── labels / sponsors ─────────── */
+  .labels-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .label-card {
+    aspect-ratio: 16 / 9;
+    background: var(--container);
+    border: 1px solid var(--border-secondary);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    transition: all 0.2s;
+  }
+  .label-card:hover { border-color: var(--stroke-active); color: var(--text-secondary); }
+
+  /* ─────────── final cta ─────────── */
+  .final-cta {
+    margin: 40px 0 80px;
+    padding: 64px 48px;
+    background: linear-gradient(135deg, rgba(110,69,255,0.08) 0%, rgba(245,75,0,0.10) 100%);
+    border: 1px solid var(--border-primary);
+    border-radius: 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .final-cta::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 30%, rgba(110,69,255,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 70%, rgba(245,75,0,0.18) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .final-cta-inner { position: relative; z-index: 1; }
+  .final-cta h2 {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    margin: 0 0 16px;
+    text-transform: uppercase;
+    background: linear-gradient(180deg, #fff, #b4b4d0);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .final-cta p {
+    font-size: 17px; color: var(--text-secondary);
+    margin: 0 0 32px;
+  }
+  .final-cta .cta-stack { justify-content: center; }
+
+  /* ─────────── footer ─────────── */
+  footer {
+    border-top: 1px solid var(--border-tertiary);
+    padding: 48px 0 36px;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 32px;
+  }
+  .footer-block {
+    font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+  }
+  .footer-block .h {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text-tertiary); margin-bottom: 12px;
+  }
+  .footer-bottom {
+    display: flex; justify-content: space-between;
+    padding-top: 24px;
+    border-top: 1px solid var(--border-tertiary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+    flex-wrap: wrap; gap: 16px;
+  }
+  .footer-bottom a { color: var(--accent-warm); text-decoration: none; }
+
+  /* ─────────── responsive ─────────── */
+  @media (max-width: 900px) {
+    .hero { padding: 60px 0 80px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 48px; }
+    .countdown { grid-template-columns: 1fr; gap: 16px; }
+    .liner-grid { grid-template-columns: 1fr; }
+    .settimes-grid { grid-template-columns: repeat(2, 1fr); }
+    .labels-grid { grid-template-columns: repeat(2, 1fr); }
+    .tracklist-header { display: none; }
+    .track {
+      grid-template-columns: 40px 1fr 60px;
+      gap: 16px;
+      padding: 18px;
+    }
+    .track-stage, .track-icon { display: none; }
+    .nav-links { gap: 16px; }
+    .nav-links a:nth-child(n+3) { display: none; }
+    .wrap { padding: 0 20px; }
+    .nav-inner { padding: 0 20px; }
+    .final-cta { padding: 40px 24px; }
+  }
+  @media (max-width: 540px) {
+    .drop-row { gap: 20px; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .settimes-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─────────── nav ─────────── -->
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <span class="dot"></span>
+      <span>SKYLINE / MAY 01 / DROP</span>
+    </div>
+    <div class="nav-links">
+      <a href="#liner">Liner</a>
+      <a href="#tracklist">Tracklist</a>
+      <a href="#settimes">Set times</a>
+      <a href="#labels">Labels</a>
+      <a href="#rsvp">RSVP</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ─────────── hero ─────────── -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="hero-meta">
+        <span class="bar"></span>
+        <span>Meteora Ecosystem Projects · presents</span>
+      </div>
+
+      <h1 class="hero-title">
+        <span class="word-1">Startup</span>
+        <span class="word-2">Showcase</span>
+      </h1>
+
+      <p class="hero-subtitle">
+        A live demo drop at <strong>Solana Skyline</strong>. Hackathon teams, meteco projects, incubator founders, and anyone shipping on Solana — five minutes each, lunch on us.
+      </p>
+
+      <div class="drop-row">
+        <div class="drop-item">
+          <div class="k">Drop date</div>
+          <div class="v accent">Fri · May 01 · 26</div>
+        </div>
+        <div class="drop-item">
+          <div class="k">Set time</div>
+          <div class="v">1:00 — 2:00 PM</div>
+        </div>
+        <div class="drop-item">
+          <div class="k">Venue</div>
+          <div class="v">Solana Skyline · 8F</div>
+        </div>
+        <div class="drop-item">
+          <div class="k">Capacity</div>
+          <div class="v">Limited / RSVP</div>
+        </div>
+      </div>
+
+      <div class="cta-stack">
+        <a href="#rsvp" class="btn btn-primary">RSVP via luma <span class="arrow">→</span></a>
+        <a href="#tracklist" class="btn btn-secondary">View tracklist <span class="arrow">↓</span></a>
+      </div>
+    </div>
+
+    <div class="cover">
+      <div class="cover-vinyl"></div>
+      <div class="cover-noise"></div>
+
+      <div class="cover-stamp">
+        <div class="inner">
+          LIMITED<br>EDITION<br>★ 05·01 ★
+        </div>
+      </div>
+
+      <div class="cover-content">
+        <div class="cover-tl">
+          <div><span class="label">CAT NO ·</span> SKY-001</div>
+          <div><span class="label">SIDE A ·</span> LIVE DEMOS</div>
+        </div>
+
+        <div class="cover-bottom">
+          <div class="artist">A Skyline x Meteora release</div>
+          <div class="album">Vol. 01 — Frontier</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- countdown -->
+  <div class="wrap">
+    <div class="countdown">
+      <div>
+        <div class="countdown-label">⏱ Drops in</div>
+        <div class="countdown-title">Doors open 7 days from now</div>
+      </div>
+      <div class="countdown-grid" id="countdown">
+        <div class="cd-cell"><div class="cd-num" data-cd="d">--</div><div class="cd-lbl">Days</div></div>
+        <div class="cd-cell"><div class="cd-num" data-cd="h">--</div><div class="cd-lbl">Hours</div></div>
+        <div class="cd-cell"><div class="cd-num" data-cd="m">--</div><div class="cd-lbl">Minutes</div></div>
+        <div class="cd-cell"><div class="cd-num" data-cd="s">--</div><div class="cd-lbl">Seconds</div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ─────────── liner notes ─────────── -->
+<section id="liner" class="liner">
+  <div class="wrap">
+    <div class="section-eyebrow">
+      <span class="num">01 /</span>
+      <span>Liner notes</span>
+      <span class="bar"></span>
+    </div>
+    <h2 class="section-title">A show & tell, but louder.</h2>
+    <p class="section-lede">
+      A relaxed midday demo session on the 8th floor of Skyline. Bring whatever you're building — hackathon project, meteco product, incubator work, side experiment. Five minutes to show. Pizza, drinks, real conversation after.
+    </p>
+
+    <div class="liner-grid">
+      <div class="liner-item">
+        <div class="liner-num">A1</div>
+        <h3 class="liner-h">No pitches</h3>
+        <p class="liner-p">Show what you've shipped, what's broken, what you'd build next. Builders talking to builders, not founders pitching VCs.</p>
+      </div>
+      <div class="liner-item">
+        <div class="liner-num">A2</div>
+        <h3 class="liner-h">Built-in lunch</h3>
+        <p class="liner-p">Demos run during lunch. Pizza, drinks, the whole room sticks around to actually talk afterwards.</p>
+      </div>
+      <div class="liner-item">
+        <div class="liner-num">A3</div>
+        <h3 class="liner-h">Curated room</h3>
+        <p class="liner-p">Vetted demo lineup, capped headcount. Hackathon teams, meteco builders, incubator founders, anyone doing the work.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── tracklist ─────────── -->
+<section id="tracklist">
+  <div class="wrap">
+    <div class="section-eyebrow">
+      <span class="num">02 /</span>
+      <span>Tracklist · Side A</span>
+      <span class="bar"></span>
+    </div>
+    <h2 class="section-title">The lineup.</h2>
+    <p class="section-lede">
+      Six demo slots. Five minutes each. Vetted from the open call. Final lineup confirmed Apr 30 — until then, all tracks locked.
+    </p>
+
+    <div class="drop-banner">
+      <div class="left">
+        <span class="pulse"></span>
+        <span>Tracks revealed · Apr 30, 26</span>
+      </div>
+      <div class="right">
+        Want to demo? <strong><a href="#rsvp" style="color:var(--accent-warm);text-decoration:underline;">Submit your project</a></strong> — open call closes Apr 28.
+      </div>
+    </div>
+
+    <div class="tracklist-header">
+      <div>Track</div>
+      <div>Project / one-liner</div>
+      <div>Stage</div>
+      <div style="text-align:right;">Runtime</div>
+      <div></div>
+    </div>
+
+    <div class="track locked">
+      <div class="track-num">A1</div>
+      <div class="track-meta">
+        <div class="name tbd">// LOCKED · drops apr 30</div>
+        <div class="one-liner">Demo slot reserved.</div>
+      </div>
+      <div class="track-stage">— · — · —</div>
+      <div class="track-runtime">5:00</div>
+      <div class="track-icon">⊘</div>
+    </div>
+
+    <div class="track locked">
+      <div class="track-num">A2</div>
+      <div class="track-meta">
+        <div class="name tbd">// LOCKED · drops apr 30</div>
+        <div class="one-liner">Demo slot reserved.</div>
+      </div>
+      <div class="track-stage">— · — · —</div>
+      <div class="track-runtime">5:00</div>
+      <div class="track-icon">⊘</div>
+    </div>
+
+    <div class="track locked">
+      <div class="track-num">A3</div>
+      <div class="track-meta">
+        <div class="name tbd">// LOCKED · drops apr 30</div>
+        <div class="one-liner">Demo slot reserved.</div>
+      </div>
+      <div class="track-stage">— · — · —</div>
+      <div class="track-runtime">5:00</div>
+      <div class="track-icon">⊘</div>
+    </div>
+
+    <div class="track locked">
+      <div class="track-num">A4</div>
+      <div class="track-meta">
+        <div class="name tbd">// LOCKED · drops apr 30</div>
+        <div class="one-liner">Demo slot reserved.</div>
+      </div>
+      <div class="track-stage">— · — · —</div>
+      <div class="track-runtime">5:00</div>
+      <div class="track-icon">⊘</div>
+    </div>
+
+    <div class="track locked">
+      <div class="track-num">A5</div>
+      <div class="track-meta">
+        <div class="name tbd">// LOCKED · drops apr 30</div>
+        <div class="one-liner">Demo slot reserved.</div>
+      </div>
+      <div class="track-stage">— · — · —</div>
+      <div class="track-runtime">5:00</div>
+      <div class="track-icon">⊘</div>
+    </div>
+
+    <div class="track locked">
+      <div class="track-num">A6</div>
+      <div class="track-meta">
+        <div class="name tbd">// LOCKED · drops apr 30</div>
+        <div class="one-liner">Demo slot reserved.</div>
+      </div>
+      <div class="track-stage">— · — · —</div>
+      <div class="track-runtime">5:00</div>
+      <div class="track-icon">⊘</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── set times ─────────── -->
+<section id="settimes">
+  <div class="wrap">
+    <div class="section-eyebrow">
+      <span class="num">03 /</span>
+      <span>Set times</span>
+      <span class="bar"></span>
+    </div>
+    <h2 class="section-title">Run of show.</h2>
+    <p class="section-lede">
+      One hour. No filler. Doors open right as demos kick off — pull up sharp.
+    </p>
+
+    <div class="settimes-grid">
+      <div class="settime">
+        <div class="time">12:45</div>
+        <div class="label">Doors</div>
+        <div class="desc">Door staff on the 8th floor. Sign in, grab a seat.</div>
+      </div>
+      <div class="settime">
+        <div class="time">1:00</div>
+        <div class="label">Demos start</div>
+        <div class="desc">Six slots, five minutes each. Lunch served throughout.</div>
+      </div>
+      <div class="settime">
+        <div class="time">1:35</div>
+        <div class="label">Open hang</div>
+        <div class="desc">Demos wrap. Conversation, intros, more pizza.</div>
+      </div>
+      <div class="settime">
+        <div class="time">2:00</div>
+        <div class="label">Wrap</div>
+        <div class="desc">Stick around for co-working, or head back out.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── labels / sponsors ─────────── -->
+<section id="labels">
+  <div class="wrap">
+    <div class="section-eyebrow">
+      <span class="num">04 /</span>
+      <span>Featured labels</span>
+      <span class="bar"></span>
+    </div>
+    <h2 class="section-title">Sponsored by Meteora ecosystem projects.</h2>
+    <p class="section-lede">
+      The teams making this room possible.
+    </p>
+
+    <div class="labels-grid">
+      <div class="label-card">// Logo 01</div>
+      <div class="label-card">// Logo 02</div>
+      <div class="label-card">// Logo 03</div>
+      <div class="label-card">// Logo 04</div>
+      <div class="label-card">// Logo 05</div>
+      <div class="label-card">// Logo 06</div>
+      <div class="label-card">// Logo 07</div>
+      <div class="label-card">// Logo 08</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── final cta ─────────── -->
+<section id="rsvp">
+  <div class="wrap">
+    <div class="final-cta">
+      <div class="final-cta-inner">
+        <div class="section-eyebrow" style="justify-content:center;color:var(--accent-warm);">
+          <span class="bar" style="background:linear-gradient(90deg,transparent,var(--accent-warm));"></span>
+          <span>Get in the room</span>
+          <span class="bar" style="background:linear-gradient(90deg,var(--accent-warm),transparent);"></span>
+        </div>
+        <h2>Two ways in.</h2>
+        <p>RSVP to attend, or submit your project for a demo slot. Open call closes Apr 28, 11:59pm.</p>
+
+        <div class="cta-stack">
+          <a href="https://luma.com/knxlsunb" class="btn btn-primary" id="luma-link" target="_blank" rel="noopener">RSVP via luma <span class="arrow">→</span></a>
+          <a href="https://forms.gle/tvyirsjWurL4LxxH6" class="btn btn-secondary" id="form-link" target="_blank" rel="noopener">Submit a demo <span class="arrow">↗</span></a>
+        </div>
+
+        <p style="margin-top:32px;font-size:13px;color:var(--text-tertiary);max-width:520px;margin-left:auto;margin-right:auto;">
+          Working from Skyline that day? Register for co-working: <a href="https://luma.com/tqs9x31k" style="color:var(--accent-warm);text-decoration:underline;">luma.com/tqs9x31k</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────── footer ─────────── -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-block">
+        <div class="h">Photo & video notice</div>
+        <p>This event will be photographed and filmed for recap content and use across Meteora ecosystem channels. By registering, you consent to your likeness being used in event coverage.</p>
+      </div>
+      <div class="footer-block">
+        <div class="h">Get in touch</div>
+        <p>
+          <a href="https://x.com/meteoraeco" style="color:var(--accent-warm);text-decoration:none;">@meteoraeco</a> · <a href="https://t.me/meteoraeco" style="color:var(--accent-warm);text-decoration:none;">Telegram</a>
+          <br>
+          Solana Skyline · NYC
+        </p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 26 · SKY-001 · LIMITED EDITION</span>
+      <span>A Skyline × Meteora release</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ─────────── countdown to may 1, 2026, 1pm ET ───────────
+  // 1pm ET == 17:00 UTC (during EDT)
+  const target = new Date('2026-05-01T17:00:00Z').getTime();
+  const els = {
+    d: document.querySelector('[data-cd="d"]'),
+    h: document.querySelector('[data-cd="h"]'),
+    m: document.querySelector('[data-cd="m"]'),
+    s: document.querySelector('[data-cd="s"]'),
+  };
+
+  function pad(n) { return String(Math.max(0, n)).padStart(2, '0'); }
+
+  function tick() {
+    const now = Date.now();
+    let diff = Math.max(0, target - now);
+    const days = Math.floor(diff / 86400000); diff -= days * 86400000;
+    const hours = Math.floor(diff / 3600000); diff -= hours * 3600000;
+    const mins = Math.floor(diff / 60000); diff -= mins * 60000;
+    const secs = Math.floor(diff / 1000);
+    els.d.textContent = pad(days);
+    els.h.textContent = pad(hours);
+    els.m.textContent = pad(mins);
+    els.s.textContent = pad(secs);
+  }
+  tick();
+  setInterval(tick, 1000);
+</script>
+
+</body>
+</html>
