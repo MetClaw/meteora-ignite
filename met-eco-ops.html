@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Met-Eco-Ops — Meteora Ecosystem Operating System</title>
+<meta name="description" content="The operating manual for Meteora Ecosystem. Roles, workflows, rhythm, fleet, tools.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #faf8f4;
+  --bg-2: #f3efe8;
+  --paper: #ffffff;
+  --ink: #1a1814;
+  --ink-2: #4a463f;
+  --ink-3: #7a7468;
+  --ink-4: #a8a294;
+  --rule: #e6e1d6;
+  --rule-2: #d4ceba;
+  --accent: #b8430a;
+  --accent-2: #d65a18;
+  --accent-soft: rgba(184,67,10,0.07);
+  --purple: #5b4fc7;
+  --purple-soft: rgba(91,79,199,0.08);
+  --mute: #98927f;
+  --serif: 'Instrument Serif', 'Iowan Old Style', Georgia, serif;
+  --sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html { background: var(--bg); color: var(--ink); scroll-behavior: smooth; }
+body {
+  font-family: var(--sans); background: var(--bg);
+  min-height: 100vh; overflow-x: hidden;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  line-height: 1.65; font-size: 16px; color: var(--ink-2);
+  font-feature-settings: "ss01", "cv11";
+}
+::selection { background: var(--accent-soft); color: var(--ink); }
+
+.mono { font-family: var(--mono); }
+.serif { font-family: var(--serif); font-weight: 400; }
+
+/* NAV */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  background: rgba(250,248,244,0.85); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--rule);
+  height: 56px; display: flex; align-items: center; padding: 0 32px;
+}
+.nav-brand {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.2em; font-weight: 500; color: var(--ink);
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-brand .dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+}
+.nav-brand .sep { color: var(--ink-4); font-weight: 400; }
+.nav-brand .tag { color: var(--ink-3); }
+.nav-links { margin-left: auto; display: flex; gap: 0; flex-wrap: wrap; }
+.nav-link {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-3); text-decoration: none;
+  padding: 8px 11px; border-radius: 0;
+  transition: color 0.18s var(--ease);
+}
+.nav-link:hover { color: var(--accent); }
+
+/* HERO */
+.hero {
+  position: relative; z-index: 2;
+  padding: 180px 32px 110px; max-width: 1100px; margin: 0 auto;
+}
+.hero-eyebrow {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.22em; color: var(--ink-3);
+  display: flex; align-items: center; gap: 12px; margin-bottom: 36px;
+  text-transform: uppercase;
+}
+.hero-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.hero-eyebrow .sep { color: var(--ink-4); }
+.hero-title {
+  font-family: var(--serif); font-style: normal;
+  font-size: clamp(3rem, 8vw, 6.5rem); font-weight: 400;
+  letter-spacing: -0.02em; line-height: 0.98;
+  margin-bottom: 36px; color: var(--ink); max-width: 920px;
+}
+.hero-accent {
+  font-style: italic; color: var(--accent);
+}
+.hero-sub {
+  font-size: 19px; color: var(--ink-2); max-width: 600px;
+  line-height: 1.55; font-weight: 400;
+}
+
+/* SECTIONS */
+.section {
+  position: relative; z-index: 2;
+  max-width: 1100px; margin: 0 auto;
+  padding: 100px 32px;
+}
+.section-eyebrow {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.2em; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 20px;
+  display: inline-flex; align-items: center; gap: 12px;
+}
+.section-eyebrow::before {
+  content: ''; width: 24px; height: 1px; background: var(--accent);
+}
+.section-title {
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  letter-spacing: -0.02em; line-height: 1.05;
+  margin-bottom: 18px; color: var(--ink); max-width: 820px;
+}
+.section-title em, .section-title .italic-accent {
+  font-style: italic; color: var(--accent);
+}
+.section-desc {
+  font-size: 17px; color: var(--ink-2); max-width: 680px;
+  margin-bottom: 48px; line-height: 1.6;
+}
+
+/* CARDS */
+.card-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.card-grid.cg-2 { grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); }
+.card-grid.cg-3 { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+
+.card {
+  position: relative;
+  background: var(--paper); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 22px 24px;
+  transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+.card:hover { border-color: var(--rule-2); transform: translateY(-1px); }
+.card-eyebrow {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.16em; color: var(--ink-3);
+  text-transform: uppercase; margin-bottom: 10px;
+}
+.card-title {
+  font-family: var(--serif); font-size: 22px;
+  font-weight: 400; margin-bottom: 8px;
+  letter-spacing: -0.01em; color: var(--ink); line-height: 1.2;
+}
+.card-body { font-size: 14.5px; color: var(--ink-2); line-height: 1.6; }
+.card-body p + p { margin-top: 8px; }
+.card-body strong { color: var(--ink); font-weight: 500; }
+.card-body ul { list-style: none; padding: 0; margin: 8px 0 0; }
+.card-body li {
+  position: relative; padding-left: 14px; margin-bottom: 4px;
+}
+.card-body li::before {
+  content: ''; position: absolute; left: 0; top: 10px;
+  width: 4px; height: 1px; background: var(--accent);
+}
+
+.card-tag {
+  display: inline-block; font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.1em;
+  padding: 3px 9px; border-radius: 999px;
+  background: var(--accent-soft); color: var(--accent);
+  text-transform: uppercase;
+}
+.card-tag.t-gold { background: rgba(184,134,11,0.1); color: #8a6510; }
+.card-tag.t-green { background: rgba(36,141,100,0.1); color: #1f7a55; }
+.card-tag.t-mute { background: rgba(120,116,104,0.1); color: var(--ink-3); }
+.card-tag.t-purple { background: var(--purple-soft); color: var(--purple); }
+
+/* ROLE CARDS */
+.card.role-human, .card.role-agent, .card.role-open {
+  padding-left: 26px;
+}
+.card.role-human { border-left: 3px solid var(--accent); }
+.card.role-agent { border-left: 3px solid var(--purple); }
+.card.role-open { border-left: 3px dashed var(--ink-4); background: var(--bg-2); }
+
+.role-glyph {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--mono); font-size: 9.5px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 3px 10px; border-radius: 999px;
+  margin-bottom: 12px;
+}
+.role-glyph::before {
+  content: ''; width: 6px; height: 6px; border-radius: 50%;
+}
+.role-glyph.g-human { background: var(--accent-soft); color: var(--accent); }
+.role-glyph.g-human::before { background: var(--accent); }
+.role-glyph.g-agent { background: var(--purple-soft); color: var(--purple); }
+.role-glyph.g-agent::before { background: var(--purple); }
+.role-glyph.g-open { background: rgba(120,116,104,0.08); color: var(--ink-3); }
+.role-glyph.g-open::before { background: var(--ink-4); }
+
+.role-meta {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.18em; color: var(--ink-3);
+  text-transform: uppercase; margin-bottom: 6px;
+}
+
+/* TABLE */
+.table-wrap { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--paper); }
+table.t { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.t th, table.t td {
+  text-align: left; padding: 14px 18px;
+  border-bottom: 1px solid var(--rule); vertical-align: top;
+}
+table.t th {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-3); font-weight: 500;
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--rule-2);
+}
+table.t td { color: var(--ink-2); }
+table.t td strong { color: var(--ink); font-weight: 500; }
+table.t tr:last-child td { border-bottom: none; }
+table.t tr:hover td { background: var(--bg); }
+
+/* WEEKLY GRID */
+.week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.day {
+  background: var(--paper); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 14px; min-height: 120px;
+  transition: border-color 0.2s var(--ease);
+}
+.day:hover { border-color: var(--rule-2); }
+.day-name {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.18em; color: var(--ink-3);
+  text-transform: uppercase; margin-bottom: 10px;
+}
+.day-name.active { color: var(--accent); }
+.day-slot { font-size: 13px; color: var(--ink); margin-bottom: 4px; line-height: 1.45; }
+.day-owner { font-family: var(--mono); font-size: 10px; color: var(--ink-3); letter-spacing: 0.1em; }
+
+/* CHECKLIST */
+.checklist { list-style: none; padding: 0; }
+.checklist li {
+  display: flex; gap: 18px; padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+  font-size: 14.5px; color: var(--ink-2); align-items: baseline;
+}
+.checklist li:last-child { border-bottom: none; }
+.checklist .num {
+  font-family: var(--mono); font-size: 12px;
+  color: var(--accent); letter-spacing: 0.08em; flex-shrink: 0;
+  width: 32px; font-weight: 500;
+}
+.checklist .task { flex: 1; line-height: 1.55; }
+.checklist .task strong { color: var(--ink); font-weight: 500; }
+
+/* DIVIDER */
+.divider {
+  height: 1px; background: var(--rule);
+  margin: 0 32px; max-width: 1100px;
+  margin-left: auto; margin-right: auto;
+}
+
+/* DETAILS */
+details.playbook {
+  background: var(--paper); border: 1px solid var(--rule);
+  border-radius: 6px; padding: 0; margin-bottom: 10px;
+  transition: border-color 0.2s var(--ease);
+}
+details.playbook[open] { border-color: var(--rule-2); }
+details.playbook summary {
+  cursor: pointer; padding: 18px 22px;
+  display: flex; align-items: center; gap: 14px;
+  list-style: none; font-size: 15.5px; font-weight: 500; color: var(--ink);
+}
+details.playbook summary::-webkit-details-marker { display: none; }
+details.playbook summary::before {
+  content: '+'; font-family: var(--mono);
+  color: var(--accent); font-size: 18px; transition: transform 0.2s var(--ease);
+  font-weight: 400;
+}
+details.playbook[open] summary::before { transform: rotate(45deg); }
+details.playbook .pb-body {
+  padding: 0 22px 22px 50px; font-size: 14px;
+  color: var(--ink-2); line-height: 1.65;
+}
+details.playbook .pb-body p { margin-bottom: 8px; }
+details.playbook .pb-body strong { color: var(--ink); font-weight: 500; }
+details.playbook .pb-body ol, details.playbook .pb-body ul {
+  margin: 6px 0 6px 18px;
+}
+details.playbook .pb-body li { margin-bottom: 5px; }
+details.playbook .pb-meta {
+  font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.14em; color: var(--ink-3);
+  text-transform: uppercase; margin-left: auto;
+  font-weight: 400;
+}
+
+h3.sub {
+  margin-top: 40px; margin-bottom: 16px;
+  font-family: var(--serif); font-size: 22px; font-weight: 400;
+  color: var(--ink); letter-spacing: -0.01em;
+}
+
+/* LINKS */
+.ext-link {
+  color: var(--accent); text-decoration: none;
+  border-bottom: 1px solid rgba(184,67,10,0.3);
+  transition: border-color 0.18s var(--ease), color 0.18s var(--ease);
+}
+.ext-link:hover { border-bottom-color: var(--accent); color: var(--accent-2); }
+.ext-link::after { content: ' ↗'; font-size: 0.85em; opacity: 0.6; }
+a:not(.ext-link):not(.nav-link):not(.card):not(.tab) {
+  color: var(--accent); text-decoration: none;
+  border-bottom: 1px solid rgba(184,67,10,0.3);
+}
+a:not(.ext-link):not(.nav-link):not(.card):not(.tab):hover { border-bottom-color: var(--accent); }
+
+code {
+  font-family: var(--mono); font-size: 13px;
+  background: var(--bg-2); padding: 2px 6px; border-radius: 3px;
+  color: var(--ink); border: 1px solid var(--rule);
+}
+
+/* FOOTER */
+.footer {
+  position: relative; z-index: 2;
+  padding: 70px 32px 60px; text-align: center;
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.18em; color: var(--ink-3);
+  text-transform: uppercase; border-top: 1px solid var(--rule);
+  margin-top: 40px;
+}
+
+/* TABS */
+.tab-bar {
+  position: sticky; top: 64px; z-index: 40;
+  background: var(--bg); border-bottom: 1px solid var(--rule);
+  padding: 0 32px; display: flex; gap: 4px;
+  overflow-x: auto;
+}
+.tab-btn {
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  padding: 18px 24px; border: none; background: transparent;
+  color: var(--ink-2); cursor: pointer; font-weight: 500;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+  position: relative;
+}
+.tab-btn:hover { color: var(--ink); }
+.tab-btn.active {
+  color: var(--accent); border-bottom-color: var(--accent);
+}
+.tab-btn .count {
+  margin-left: 8px; padding: 2px 8px;
+  background: var(--bg-2); color: var(--ink-3);
+  border-radius: 10px; font-size: 10px;
+}
+.tab-btn.active .count { background: var(--accent); color: var(--paper); }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+
+/* LIVE specific */
+.live-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); margin-top: 16px; }
+.live-card {
+  background: var(--paper); border: 1px solid var(--rule); padding: 22px;
+  border-left: 3px solid var(--accent);
+}
+.live-card.live-blocker { border-left-color: var(--gold); }
+.live-card.live-win { border-left-color: var(--success); }
+.live-card.live-event { border-left-color: var(--purple); }
+.live-card.live-stat { border-left-color: var(--accent); }
+.live-card.live-stat .lc-title { font-family: var(--serif); font-size: 28px; font-weight: 400; letter-spacing: -0.02em; color: var(--ink); }
+.live-card.live-stat .lc-title.is-loading { color: var(--ink-3); }
+.live-card.live-stat .lc-body { font-size: 12.5px; }
+.live-card.live-stat .delta-up { color: var(--success); font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; }
+.live-card.live-stat .delta-down { color: var(--gold); font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; }
+.live-card .lc-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.live-card .lc-meta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--ink-3); text-transform: uppercase; margin-bottom: 10px; }
+.live-card .lc-body { font-size: 13.5px; color: var(--ink-2); line-height: 1.55; }
+.live-card .lc-cta { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; color: var(--accent); text-transform: uppercase; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--rule); }
+
+.countdown {
+  display: inline-block; font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.14em; padding: 3px 8px;
+  background: var(--bg-2); color: var(--accent);
+  text-transform: uppercase; margin-left: 8px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 960px) {
+  .week-grid { grid-template-columns: repeat(2, 1fr); }
+  .nav-links { display: none; }
+  .hero { padding: 140px 24px 80px; }
+  .section { padding: 70px 24px; }
+  .tab-bar { padding: 0 16px; }
+  .tab-btn { padding: 14px 16px; }
+}
+
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="glow"></div>
+<div class="glow g2"></div>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">
+    <span class="dot"></span>
+    <span>MET-ECO-OPS</span>
+    <span class="sep">/</span>
+    <span class="tag">v3.0</span>
+  </div>
+  <div class="nav-links">
+    <a class="nav-link" href="#thesis">Thesis</a>
+    <a class="nav-link" href="#readme">00</a>
+    <a class="nav-link" href="#org">01</a>
+    <a class="nav-link" href="#workflows">02</a>
+    <a class="nav-link" href="#rhythm">03</a>
+    <a class="nav-link" href="#content">04</a>
+    <a class="nav-link" href="#product">05</a>
+    <a class="nav-link" href="#fleet">06</a>
+    <a class="nav-link" href="#tools">07</a>
+    <a class="nav-link" href="#contacts">08</a>
+    <a class="nav-link" href="#events">12</a>
+    <a class="nav-link" href="#creators">13</a>
+    <a class="nav-link" href="#resources">14</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span class="dot"></span>
+    <span>Meteora Ecosystem</span>
+    <span class="sep">·</span>
+    <span>Operating System</span>
+  </div>
+  <h1 class="hero-title">
+    Agent–human <span class="hero-accent">organisation</span>.
+  </h1>
+  <p class="hero-sub">
+    Three modes. <strong>Live</strong> is what's happening now. <strong>Onboard</strong> is for new humans joining. <strong>Ops</strong> is the reference manual.
+  </p>
+</section>
+
+<!-- TABS -->
+<div class="tab-bar">
+  <button class="tab-btn active" data-tab="tab-live">Live</button>
+  <button class="tab-btn" data-tab="tab-onboard">Onboard</button>
+  <button class="tab-btn" data-tab="tab-ops">Ops reference</button>
+</div>
+
+<!-- ===== LIVE PANE ===== -->
+<div class="tab-pane active" id="tab-live">
+
+<section class="section">
+  <div class="section-eyebrow">Live · this week</div>
+  <h2 class="section-title">What's shipping. What's blocked.</h2>
+  <p class="section-desc">Updated as state moves. The single page anyone on the team can scan in 60 seconds to know where things are.</p>
+
+  <h3 class="sub">Meteora ecosystem · live <span id="stats-status" style="font-family: var(--mono); font-size: 11px; color: var(--ink-3); letter-spacing: 0.12em; margin-left: 12px;">loading…</span></h3>
+  <div class="live-grid" id="live-stats">
+    <div class="live-card live-stat">
+      <div class="lc-meta">TVL · Solana</div>
+      <div class="lc-title" data-stat="tvl">—</div>
+      <div class="lc-body">Total value locked across DLMM, DAMM, DBC, Vaults.</div>
+    </div>
+    <div class="live-card live-stat">
+      <div class="lc-meta">Volume · 24h</div>
+      <div class="lc-title" data-stat="volume24h">—</div>
+      <div class="lc-body" data-stat="volumeChange1d">—</div>
+    </div>
+    <div class="live-card live-stat">
+      <div class="lc-meta">Volume · 7d</div>
+      <div class="lc-title" data-stat="volume7d">—</div>
+      <div class="lc-body">Trailing 7-day swap volume.</div>
+    </div>
+    <div class="live-card live-stat">
+      <div class="lc-meta">Fees · 24h</div>
+      <div class="lc-title" data-stat="fees24h">—</div>
+      <div class="lc-body">Daily protocol fees. Most flow back to LPs.</div>
+    </div>
+  </div>
+  <p style="font-family: var(--mono); font-size: 11px; color: var(--ink-3); letter-spacing: 0.1em; margin-top: 12px;">Source: <a class="ext-link" href="https://defillama.com/protocol/meteora" target="_blank" rel="noopener">DefiLlama</a> · cached 5 min · <span id="stats-updated">—</span></p>
+
+  <h3 class="sub">Showcase week (May 1–7)</h3>
+  <div class="live-grid">
+    <div class="live-card live-event">
+      <div class="lc-meta">May 1 · Confirmed <span class="countdown" data-countdown="2026-05-01T00:00:00-04:00"></span></div>
+      <div class="lc-title">Solana Skyline Startup Showcase</div>
+      <div class="lc-body">Founder lineup TBC. Content + clipping coverage to brief. Standard recap + clip pack post-event.</div>
+      <div class="lc-cta">Need: lineup, clipper assignment</div>
+    </div>
+    <div class="live-card live-event">
+      <div class="lc-meta">May 4 · Confirmed <span class="countdown" data-countdown="2026-05-04T00:00:00-04:00"></span></div>
+      <div class="lc-title">MonkeDAO Demo Day</div>
+      <div class="lc-body">Initiative: purchase Monkes for selected founders. Owner: Director. Founder shortlist + budget needed.</div>
+      <div class="lc-cta">Need: budget, recipient shortlist</div>
+    </div>
+    <div class="live-card live-event">
+      <div class="lc-meta">May 5–7 · Confirmed <span class="countdown" data-countdown="2026-05-05T00:00:00-04:00"></span></div>
+      <div class="lc-title">Consensus Miami</div>
+      <div class="lc-body">Presence + side events TBC. "Road to Consensus" lead-up campaign starts next week (Yash + Juliet on key art).</div>
+      <div class="lc-cta">Need: role decision, side events, founders to amplify</div>
+    </div>
+  </div>
+
+  <h3 class="sub">Open decisions (waiting on Director)</h3>
+  <div class="live-grid">
+    <div class="live-card live-blocker">
+      <div class="lc-meta">Blocking · Frontier Founders Workshop 01</div>
+      <div class="lc-title">Leon: Unfungible co-branding + clip rights</div>
+      <div class="lc-body">Workshop 01 copy + launch campaign waits on this. Unblocks Galatea, Juliet, Atlas to ship.</div>
+    </div>
+    <div class="live-card live-blocker">
+      <div class="lc-meta">Blocking · Workshop 01</div>
+      <div class="lc-title">Video host decision</div>
+      <div class="lc-body">Where the workshop videos live (CDN, branded player, captions). Affects Workshop 01 build sequence.</div>
+    </div>
+    <div class="live-card live-blocker">
+      <div class="lc-meta">Blocking · Distribution</div>
+      <div class="lc-title">Colosseum video file</div>
+      <div class="lc-body">MetClips pipeline ready to run. Drop file or URL into the request sheet to kick off.</div>
+    </div>
+    <div class="live-card live-blocker">
+      <div class="lc-meta">Strategic</div>
+      <div class="lc-title">First human hire — Community/Tester or Events?</div>
+      <div class="lc-body">Both gaps real. Community Lead unlocks retention layer. Events Producer unlocks IRL scale. Pick one to scope first.</div>
+    </div>
+  </div>
+
+  <h3 class="sub">Recent wins (last 7 days)</h3>
+  <div class="live-grid">
+    <div class="live-card live-win">
+      <div class="lc-meta">Apr 23 · Distribution</div>
+      <div class="lc-title">Sunrise DeFi recap thread shipped</div>
+      <div class="lc-body">Bullish-led copy, clip-friendly opener. CHIP launch thesis front-loaded. Engagement healthy.</div>
+    </div>
+    <div class="live-card live-win">
+      <div class="lc-meta">Apr 19–26 · Operating</div>
+      <div class="lc-title">Met-Eco-Ops v2.0 + Gannon redesign live</div>
+      <div class="lc-body">Operating manual fully rebuilt. Roles colour-coded human/agent. Light editorial pass. This page.</div>
+    </div>
+    <div class="live-card live-win">
+      <div class="lc-meta">Apr 20 · Fleet</div>
+      <div class="lc-title">Callisto (data scientist agent) spawned</div>
+      <div class="lc-body">Narrow scope: weekly metrics pull, structured reports, knowledge base uploads. Mon AM cadence locked.</div>
+    </div>
+    <div class="live-card live-win">
+      <div class="lc-meta">Apr 19 · Coordination</div>
+      <div class="lc-title">Fleet Dashboard + Daily Review live</div>
+      <div class="lc-body">Single source of truth across 9 agents. Updated daily before Mon Week Ahead.</div>
+    </div>
+  </div>
+
+  <h3 class="sub">Agent activity (right now)</h3>
+  <div class="table-wrap">
+    <table class="t">
+      <thead><tr><th>Agent</th><th>Current focus</th><th>Next deliverable</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Ophelia</strong></td><td>Fleet coordination + this week's distribution</td><td>Mon PRIME memo</td></tr>
+        <tr><td><strong>Orcus</strong></td><td>Sunday recap workflow standing</td><td>Sun Apr 27 ecosystem scan</td></tr>
+        <tr><td><strong>Ariel</strong></td><td>Standing compliance gate</td><td>Async, on demand</td></tr>
+        <tr><td><strong>Callisto</strong></td><td>First weekly metrics pull</td><td>Mon Apr 28 numbers</td></tr>
+        <tr><td><strong>Galatea</strong></td><td>MetIgnite Skills 5–8 build</td><td>community-setup skill</td></tr>
+        <tr><td><strong>Juliet</strong></td><td>Spaces graphics + recap cards</td><td>Road to Consensus key art</td></tr>
+        <tr><td><strong>Atlas</strong></td><td>Reactivating: Tue data dive + Sat motion</td><td>Tue chart + narrative</td></tr>
+        <tr><td><strong>Proteus</strong></td><td>Outcome metrics framing</td><td>North Star definition w/ Callisto</td></tr>
+        <tr><td><strong>Bianca</strong></td><td>Sourcing reserves (post-DAD)</td><td>NYC list refresh</td></tr>
+        <tr><td><strong>Titan</strong></td><td>Praxis ↔ Sheet integration</td><td>One-way sync spec</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">North Star</h3>
+  <p style="color: var(--ink-3); font-size: 14px;">Weekly active LPs &gt;$1K. First Callisto pull Mon Apr 28. Number lands here.</p>
+</section>
+
+</div>
+
+<!-- ===== ONBOARD PANE ===== -->
+<div class="tab-pane" id="tab-onboard">
+
+<section class="section">
+  <div class="section-eyebrow">Onboard · welcome</div>
+  <h2 class="section-title">You're joining an <span class="hero-accent">agent–human</span> organisation.</h2>
+  <p class="section-desc">This is unusual. Read this section first before doing anything else. The shape of the org will not match what you've seen elsewhere.</p>
+
+  <div class="card-grid cg-2">
+    <div class="card">
+      <div class="card-eyebrow">What MetEco is</div>
+      <div class="card-title">Community + distribution as a service.</div>
+      <div class="card-body">We package the crypto-native community playbook (drops, cohorts, tester networks, IRL rooms, content engines) and offer it to non-tokenized founders building real products. Frontier Founders is the flagship.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">How it runs</div>
+      <div class="card-title">9 agents + a few humans.</div>
+      <div class="card-body">9 specialised Pentagon agents handle research, design support, compliance, builds, metrics, motion. Humans hold strategy, taste, relationships, taste calls, partnerships. You will route most work through agents.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">Your job</div>
+      <div class="card-title">Build conviction first. Ship second.</div>
+      <div class="card-body">Day 1–2: no tasks. Just sit with Pentagon. Talk to every agent. Watch how the Director uses them. You cannot outsource your conviction on these tools — develop it directly.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">What we don't do</div>
+      <div class="card-title">No tokens. No memecoins.</div>
+      <div class="card-body">No funding founders, no token launches, no investment advice. We compete on community + distribution craft, not on financial primitives.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section">
+  <div class="section-eyebrow">Onboard · archetypes</div>
+  <h2 class="section-title">Which one are you?</h2>
+  <p class="section-desc">The org has three archetypes. No managers. No middleware. Self-locate before your first PRIME.</p>
+
+  <div class="card-grid cg-3">
+    <div class="card">
+      <div class="card-eyebrow">Archetype 01</div>
+      <div class="card-title">DRI</div>
+      <div class="card-body">Owns an outcome end-to-end. Decides what's good. Carries deliverables across the line. Briefs agents, integrates output, ships.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">Archetype 02</div>
+      <div class="card-title">IC / builder</div>
+      <div class="card-body">Ships specific high-craft work. Yash (graphics), Tuan (multi-platform), MetClips team (clipping). Hands-on, opinionated, output-led.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">Archetype 03</div>
+      <div class="card-title">AI-founder</div>
+      <div class="card-body">Sits with agents daily. Builds intuition. Sees workflows others miss because they're inside Pentagon every day. The Director is one. You should be too.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section">
+  <div class="section-eyebrow">Onboard · first 7 days</div>
+  <h2 class="section-title">Day-by-day plan.</h2>
+  <p class="section-desc">No shortcuts. The order matters.</p>
+
+  <ol style="list-style: none; padding: 0; margin: 0;">
+    <li style="display: flex; gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--rule); align-items: baseline;">
+      <span style="font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.1em; flex-shrink: 0; width: 50px; font-weight: 500;">DAY 1</span>
+      <div style="font-size: 14px; color: var(--ink-2); line-height: 1.6;"><strong>Conviction day.</strong> Pentagon login. DM every agent (Ophelia, Orcus, Ariel, Proteus, Atlas, Callisto, Galatea, Juliet, Bianca, Titan). Read this whole tab. Read the Ops reference Thesis + Operating Principles. No shipping.</div>
+    </li>
+    <li style="display: flex; gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--rule); align-items: baseline;">
+      <span style="font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.1em; flex-shrink: 0; width: 50px; font-weight: 500;">DAY 2</span>
+      <div style="font-size: 14px; color: var(--ink-2); line-height: 1.6;"><strong>Watch day.</strong> Shadow the Director or Ophelia for one full day. Watch how briefs are written, how agent output is reviewed, how PRIME runs. No shipping.</div>
+    </li>
+    <li style="display: flex; gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--rule); align-items: baseline;">
+      <span style="font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.1em; flex-shrink: 0; width: 50px; font-weight: 500;">DAY 3</span>
+      <div style="font-size: 14px; color: var(--ink-2); line-height: 1.6;"><strong>First brief.</strong> Pick one daily slot (morning meme, afternoon card, or Spaces graphic). Brief the relevant agent. Review their output. Iterate. Ship.</div>
+    </li>
+    <li style="display: flex; gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--rule); align-items: baseline;">
+      <span style="font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.1em; flex-shrink: 0; width: 50px; font-weight: 500;">DAY 4</span>
+      <div style="font-size: 14px; color: var(--ink-2); line-height: 1.6;"><strong>First workflow.</strong> Take a known workflow (Sunday recap or Spaces production). Run one cycle end-to-end with agents. Document anything unclear.</div>
+    </li>
+    <li style="display: flex; gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--rule); align-items: baseline;">
+      <span style="font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.1em; flex-shrink: 0; width: 50px; font-weight: 500;">DAY 5</span>
+      <div style="font-size: 14px; color: var(--ink-2); line-height: 1.6;"><strong>Outside meeting.</strong> Sit in on at least one external call (founder, partner, ecosystem lead). Listen, don't drive.</div>
+    </li>
+    <li style="display: flex; gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--rule); align-items: baseline;">
+      <span style="font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.1em; flex-shrink: 0; width: 50px; font-weight: 500;">DAY 6</span>
+      <div style="font-size: 14px; color: var(--ink-2); line-height: 1.6;"><strong>Own a P0.</strong> First PRIME after onboarding: take one P0 mapped to an outcome. Map dependencies. Brief agents. Review output. Ship by Friday.</div>
+    </li>
+    <li style="display: flex; gap: 18px; padding: 18px 0; align-items: baseline;">
+      <span style="font-family: var(--mono); font-size: 13px; color: var(--accent); letter-spacing: 0.1em; flex-shrink: 0; width: 50px; font-weight: 500;">DAY 7</span>
+      <div style="font-size: 14px; color: var(--ink-2); line-height: 1.6;"><strong>SHIP review.</strong> Friday SHIP: report what landed, what didn't, what changed. One memo to the Director. ~5 min read. Locked rhythm starts here.</div>
+    </li>
+  </ol>
+</section>
+
+<div class="divider"></div>
+
+<section class="section">
+  <div class="section-eyebrow">Onboard · how to brief an agent</div>
+  <h2 class="section-title">Five rules. Use them every time.</h2>
+
+  <div class="card-grid cg-2">
+    <div class="card">
+      <div class="card-eyebrow">Rule 01</div>
+      <div class="card-title">Role-specific intake.</div>
+      <div class="card-body">Don't ask agents "what's your status." Ask Orcus "what's your research queue?" Ask Atlas "what's your motion queue?" Generic questions get generic answers.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">Rule 02</div>
+      <div class="card-title">One P0 at a time.</div>
+      <div class="card-body">Mapped to an outcome (founder growth · token volume · Meteora volume · weekly active LPs). P0 = unblocks others or has a deadline. Everything else is P1/P2.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">Rule 03</div>
+      <div class="card-title">Map dependencies first.</div>
+      <div class="card-body">If agent B is blocked on agent A's output, A's task is P0 regardless of what's shinier. Sequence by who unblocks whom.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">Rule 04</div>
+      <div class="card-title">Review actual output.</div>
+      <div class="card-body">Open the artifact. Read the copy. Look at the chart. Don't review the description an agent gives you of their own work. Trust nothing without looking.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">Rule 05</div>
+      <div class="card-title">When pausing, pause instantly.</div>
+      <div class="card-body">If priorities shift mid-week, the fleet pauses immediately. No negotiation, no "but we should finish X." Re-prioritise in the next PRIME.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section">
+  <div class="section-eyebrow">Onboard · who to ask</div>
+  <h2 class="section-title">Decision tree.</h2>
+
+  <div class="table-wrap">
+    <table class="t">
+      <thead><tr><th>If you need…</th><th>Ask</th></tr></thead>
+      <tbody>
+        <tr><td>What's moving in the ecosystem?</td><td><strong>Orcus</strong></td></tr>
+        <tr><td>Numbers — TVL, volume, fees, North Star</td><td><strong>Callisto</strong></td></tr>
+        <tr><td>Compliance check before publishing</td><td><strong>Ariel</strong></td></tr>
+        <tr><td>Why isn't growth working?</td><td><strong>Proteus</strong></td></tr>
+        <tr><td>An app, prototype, or MetIgnite skill built</td><td><strong>Galatea</strong></td></tr>
+        <tr><td>A graphic, social card, or visual recap</td><td><strong>Yash</strong> (lead) or <strong>Juliet</strong> (volume)</td></tr>
+        <tr><td>Animated motion or data viz</td><td><strong>Atlas</strong></td></tr>
+        <tr><td>Clips for short-form distribution</td><td><strong>MetClips team</strong> (request sheet) → <strong>Tuan</strong> (multi-platform)</td></tr>
+        <tr><td>Event guest list, intro, sourcing</td><td><strong>Bianca</strong></td></tr>
+        <tr><td>Cross-system integration, Praxis, tooling</td><td><strong>Titan</strong></td></tr>
+        <tr><td>Anything operational / unclear</td><td><strong>Ophelia</strong> (default)</td></tr>
+        <tr><td>Strategic call / partnership / drop window</td><td><strong>Director</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="section">
+  <div class="section-eyebrow">Onboard · glossary</div>
+  <h2 class="section-title">Terms you'll hear daily.</h2>
+
+  <div class="table-wrap">
+    <table class="t">
+      <tbody>
+        <tr><td><strong>PRIME / PULSE / SHIP</strong></td><td>Mon direction-set · Wed mid-week unblock · Fri delivery + summary. Weekly rhythm.</td></tr>
+        <tr><td><strong>P0 / P1 / P2</strong></td><td>P0 = top priority, blocks others or has a deadline. One per agent per week.</td></tr>
+        <tr><td><strong>North Star</strong></td><td>Weekly active LPs &gt;$1K. The single number we move.</td></tr>
+        <tr><td><strong>DRI</strong></td><td>Directly Responsible Individual. Owns an outcome end-to-end.</td></tr>
+        <tr><td><strong>Gannon</strong></td><td>Visual standard. Flat saturated colour, massive type, zero gradients. <code>#f54b00</code> · <code>#08080c</code> · <code>#f9f9fb</code>.</td></tr>
+        <tr><td><strong>MetClips</strong></td><td>Manual clipping team (Daniel, Riddy, ML, West) + request sheet workflow. Self-assign, edit, drop in Drive, post in Telegram.</td></tr>
+        <tr><td><strong>Frontier Founders</strong></td><td>Flagship program. Distribution + community sprints for non-tokenized founders open to crypto tooling.</td></tr>
+        <tr><td><strong>MetIgnite</strong></td><td>Agentic self-serve product. Skills + AI agent for founders. <code>metignite.vercel.app</code>.</td></tr>
+        <tr><td><strong>Pentagon</strong></td><td>The agent workspace. Where the 9 agents live and coordinate.</td></tr>
+        <tr><td><strong>Conservative-cut</strong></td><td>Strip unverified claims, ship the safe version, queue the verified upgrade in parallel. Used when speed matters.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</div>
+
+<!-- ===== OPS PANE ===== -->
+<div class="tab-pane" id="tab-ops">
+
+<div class="divider"></div>
+
+<!-- THESIS -->
+<section class="section" id="thesis">
+  <div class="section-eyebrow">Thesis</div>
+  <h2 class="section-title">The bet.</h2>
+  <p class="section-desc">Why MetEco exists. Read this before anything else.</p>
+
+  <div class="card-grid cg-2">
+    <div class="card">
+      <div class="card-eyebrow">What works</div>
+      <div class="card-title">The community layer of crypto.</div>
+      <div class="card-body">NFTs, group chats, cohort mechanics, IRL rooms, incentive design. These tactics genuinely move people. They've just been trapped inside crypto-native projects.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">What's commoditized</div>
+      <div class="card-title">Building.</div>
+      <div class="card-body">Anyone can ship an app now. AI collapsed the build moat. The hard part has shifted left: distribution, community, user acquisition.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">The bet</div>
+      <div class="card-title">Community + distribution as a service.</div>
+      <div class="card-body">Take the crypto-native playbook — content, coordination, product testing, community building — and offer it as a service to promising founders. <strong>Prosumer Community Building &amp; Product Distribution as a Service.</strong></div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">The flagship</div>
+      <div class="card-title">Frontier Founders.</div>
+      <div class="card-body">Designed for builders with <strong>non-tokenized</strong> projects (AI, robotics, hardware, frontier tech) who are open to using crypto tooling — drops, cohort mechanics, tester rewards — to grow their user base. Not for token launches. Not for memecoins. Real products, real users, real distribution.</div>
+    </div>
+  </div>
+
+  <h3 class="sub">Out of scope</h3>
+  <p style="color: var(--text-2); font-size: 14px;">No funding founders. No token launches. No investment advice. No tokenized projects in Frontier Founders. No anime IP. We do not compete with the memecoin / token-launch playbook — we offer the alternative.</p>
+</section>
+
+<div class="divider"></div>
+
+<!-- OPERATING PRINCIPLES -->
+<section class="section" id="principles">
+  <div class="section-eyebrow">Operating principles</div>
+  <h2 class="section-title">How we work.</h2>
+  <p class="section-desc">Seven tenets. Adapted from YC's AI-OS framework (Diana Hu). Every workflow, hire, and decision sits inside this frame.</p>
+
+  <div class="card-grid cg-2">
+    <div class="card">
+      <div class="card-eyebrow">01</div>
+      <div class="card-title">AI is the operating system, not a tool.</div>
+      <div class="card-body">Every workflow, decision, and process flows through an intelligent layer that's constantly learning. 9 Pentagon agents are the default operating layer. If a task can sit with an agent, it does.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">02</div>
+      <div class="card-title">Closed loops everywhere.</div>
+      <div class="card-body">Every important process captures information, feeds it back into the system, and improves over time. Sun recap → Ariel gate → ship → Callisto metrics → next week's brief. Open loops are lossy. We don't run any.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">03</div>
+      <div class="card-title">The org is queryable.</div>
+      <div class="card-body">The whole organisation should be legible to AI. Every important action produces an artifact. Notetakers in every meeting. Minimise DMs and emails. State lives in artifacts, not heads.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">04</div>
+      <div class="card-title">Software factories, not feature factories.</div>
+      <div class="card-body">Humans write a spec and tests that define success. Agents generate the implementation and iterate until the tests pass. Galatea builds. The DRI defines what + judges output. Code is the agent's job.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">05</div>
+      <div class="card-title">No human middleware.</div>
+      <div class="card-body">Velocity is only as fast as information flow. Every layer of human routing you remove is direct speed gain. No middle managers, no status rollups, no hand-offs that could be artifacts. Humans at the edges, agents in the middle.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">06</div>
+      <div class="card-title">Three archetypes. Working prototypes, not pitch decks.</div>
+      <div class="card-body"><strong>IC / builder</strong> — everyone builds, everyone ships. Comes to meetings with working prototypes. <strong>DRI</strong> — one person, one outcome, no hiding. <strong>AI-founder</strong> — sits with agents daily, leads by example, never delegates the AI strategy.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">07</div>
+      <div class="card-title">Token-max, not headcount-max. Conviction is non-delegable.</div>
+      <div class="card-body">Run an uncomfortably high API bill before adding humans. One person with AI tools = a preAI engineering team. Everyone on the team must sit with agents directly until they break their own priors about what's now possible. Day 1-2 = conviction only, no shipping.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- TOC -->
+<section class="section" id="toc" style="padding-top: 40px; padding-bottom: 40px;">
+  <div class="section-eyebrow">Contents</div>
+  <h2 class="section-title" style="margin-bottom: 28px;">Jump to a section.</h2>
+  <div class="card-grid cg-3">
+    <a class="card" href="#thesis" style="text-decoration:none; color:inherit; display:block;">
+      <div class="card-eyebrow">—</div>
+      <div class="card-title">Thesis</div>
+    </a>
+    <a class="card" href="#readme" style="text-decoration:none; color:inherit; display:block;">
+      <div class="card-eyebrow">00</div>
+      <div class="card-title">Quick start</div>
+    </a>
+    <a class="card" href="#org" style="text-decoration:none; color:inherit; display:block;">
+      <div class="card-eyebrow">01</div>
+      <div class="card-title">Roles</div>
+    </a>
+    <a class="card" href="#workflows" style="text-decoration:none; color:inherit; display:block;">
+      <div class="card-eyebrow">02</div>
+      <div class="card-title">Workflows</div>
+    </a>
+    <a class="card" href="#rhythm" style="text-decoration:none; color:inherit; display:block;">
+      <div class="card-eyebrow">03</div>
+      <div class="card-title">Weekly rhythm</div>
+    </a>
+    <a class="card" href="#content" style="text-decoration:none; color:inherit; display:block;">
+      <div class="card-eyebrow">04</div>
+      <div class="card-title">Content + brand</div>
+    </a>
+    <a class="card" href="#product" style="text-decoration:none; color:inherit; display:block;">
+      <div class="card-eyebrow">05</div>
+      <div class="card-title">Product roadmap</div>
+    </a>
+    <a class="card" href="#fleet" style="text-decoration:none; color:inherit; display:block;">
+      <div class="card-eyebrow">06</div>
+      <div class="card-title">Fleet (agents)</div>
+    </a>
+    <a class="card" href="#tools" style="text-decoration:none; color:inherit; display:block;">
+      <div class="card-eyebrow">07</div>
+      <div class="card-title">Tools + access</div>
+    </a>
+    <a class="card" href="#contacts" style="text-decoration:none; color:inherit; display:block;">
+      <div class="card-eyebrow">08</div>
+      <div class="card-title">Contact map</div>
+    </a>
+    <a class="card" href="#events" style="text-decoration:none; color:inherit; display:block;">
+      <div class="card-eyebrow">12</div>
+      <div class="card-title">Events</div>
+    </a>
+    <a class="card" href="#creators" style="text-decoration:none; color:inherit; display:block;">
+      <div class="card-eyebrow">13</div>
+      <div class="card-title">Creators</div>
+    </a>
+    <a class="card" href="#resources" style="text-decoration:none; color:inherit; display:block;">
+      <div class="card-eyebrow">14</div>
+      <div class="card-title">Resources</div>
+    </a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 00 QUICK START -->
+<section class="section" id="readme">
+  <div class="section-eyebrow">00 · Quick start</div>
+  <h2 class="section-title">First week, in seven steps.</h2>
+  <p class="section-desc">Click any number to jump.</p>
+
+  <ol style="list-style: none; padding: 0; margin: 0;">
+    <li style="display: flex; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: baseline;">
+      <a href="#org" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: 0.1em; flex-shrink: 0; width: 36px; text-decoration: none; font-weight: 500;">01</a>
+      <div style="font-size: 14px; color: var(--text-2); line-height: 1.55;">Read <a class="ext-link" href="#org">sections 01</a> and <a class="ext-link" href="#rhythm">03</a> first. Org chart and weekly rhythm tell you who does what and when. Everything else is reference.</div>
+    </li>
+    <li style="display: flex; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: baseline;">
+      <a href="#tools" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: 0.1em; flex-shrink: 0; width: 36px; text-decoration: none; font-weight: 500;">02</a>
+      <div style="font-size: 14px; color: var(--text-2); line-height: 1.55;">Inherit access. <a class="ext-link" href="#tools">Section 07</a> lists every tool. Walk through each, get logged in, confirm permissions.</div>
+    </li>
+    <li style="display: flex; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: baseline;">
+      <a href="#fleet" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: 0.1em; flex-shrink: 0; width: 36px; text-decoration: none; font-weight: 500;">03</a>
+      <div style="font-size: 14px; color: var(--text-2); line-height: 1.55;">Meet the fleet. <a class="ext-link" href="#fleet">Section 06</a> maps the 9 Pentagon agents. Open one DM with each on day one to introduce yourself and confirm scope.</div>
+    </li>
+    <li style="display: flex; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: baseline;">
+      <a href="#rhythm" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: 0.1em; flex-shrink: 0; width: 36px; text-decoration: none; font-weight: 500;">04</a>
+      <div style="font-size: 14px; color: var(--text-2); line-height: 1.55;">Run a Monday PRIME. Send each agent the role-specific intake question. Compile responses before assigning. <a class="ext-link" href="#rhythm">Section 03</a> has the template.</div>
+    </li>
+    <li style="display: flex; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: baseline;">
+      <a href="#workflows" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: 0.1em; flex-shrink: 0; width: 36px; text-decoration: none; font-weight: 500;">05</a>
+      <div style="font-size: 14px; color: var(--text-2); line-height: 1.55;">Ship one piece of content this week. Sunday ecosystem recap is the lowest-friction entry point. <a class="ext-link" href="#workflows">Section 02</a> has the workflow.</div>
+    </li>
+    <li style="display: flex; gap: 18px; padding: 16px 0; border-bottom: 1px solid var(--border); align-items: baseline;">
+      <a href="#content" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: 0.1em; flex-shrink: 0; width: 36px; text-decoration: none; font-weight: 500;">06</a>
+      <div style="font-size: 14px; color: var(--text-2); line-height: 1.55;">Read <a class="ext-link" href="#content">section 04</a> and <a class="ext-link" href="#product">section 05</a> by end of week one. Content + brand and product roadmap shape every decision.</div>
+    </li>
+    <li style="display: flex; gap: 18px; padding: 16px 0; align-items: baseline;">
+      <a href="#product" style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--accent); letter-spacing: 0.1em; flex-shrink: 0; width: 36px; text-decoration: none; font-weight: 500;">07</a>
+      <div style="font-size: 14px; color: var(--text-2); line-height: 1.55;">Scan <a class="ext-link" href="#product">section 05</a> for the full roadmap (live · in flight · pipeline · gaps). That's where you pick up the baton.</div>
+    </li>
+  </ol>
+</section>
+
+<div class="divider"></div>
+
+<!-- 01 ORG -->
+<section class="section" id="org">
+  <div class="section-eyebrow">01 · Roles</div>
+  <h2 class="section-title">Who does what.</h2>
+  <p class="section-desc">Ten roles. Some human, some agent, some open. Structure stays the same.</p>
+
+  <p class="section-desc" style="margin-top:-28px; margin-bottom:32px; display:flex; gap:10px; flex-wrap:wrap;">
+    <span class="role-glyph g-human" style="position:static;">Human</span>
+    <span class="role-glyph g-agent" style="position:static;">Agent</span>
+    <span class="role-glyph g-open" style="position:static;">Open / hire</span>
+  </p>
+
+  <div class="card-grid cg-2">
+    <div class="card role-human">
+      <span class="role-glyph g-human">Human</span>
+      <div class="role-meta">Strategy</div>
+      <div class="card-title">Director / Head of MetEco</div>
+      <div class="card-body">Strategy, taste, partnerships, drop windows. Approves what ships.</div>
+    </div>
+
+    <div class="card role-human">
+      <span class="role-glyph g-human">Human</span>
+      <div class="role-meta">Distribution</div>
+      <div class="card-title">Content + Distribution Lead</div>
+      <div class="card-body">@MeteoraEco day to day. Daily slots, weekly cadence, Spaces, recaps, ecosystem amplification.</div>
+    </div>
+
+    <div class="card role-open">
+      <span class="role-glyph g-open">Open</span>
+      <div class="role-meta">Community</div>
+      <div class="card-title">Community + Tester Lead</div>
+      <div class="card-body">Daily presence in the <a class="ext-link" href="https://t.me/meteoraeco" target="_blank" rel="noopener">Meteora Ecosystem Telegram</a>. Builder chat, Spaces updates, retweet + amplification requests. Product testers, recognition tiers, relationship density. Owns conversion + retention.</div>
+    </div>
+
+    <div class="card role-open">
+      <span class="role-glyph g-open">Open</span>
+      <div class="role-meta">Events</div>
+      <div class="card-title">Events Producer</div>
+      <div class="card-body">DeFi After Dark dinners, conference presence, sponsorships, IRL recordings.</div>
+    </div>
+
+    <div class="card role-human">
+      <span class="role-glyph g-human">Human</span>
+      <div class="role-meta">Product</div>
+      <div class="card-title">MetIgnite Lead</div>
+      <div class="card-body">Agentic product: skills + AI agent for founders and launchpads. Galatea (agent) builds; this role decides what.</div>
+    </div>
+
+    <div class="card role-human">
+      <span class="role-glyph g-human">Human</span>
+      <div class="role-meta">Program</div>
+      <div class="card-title">Frontier Founders Lead</div>
+      <div class="card-body">Flagship program for builders with <strong>non-tokenized</strong> projects (AI, robotics, hardware, frontier tech) who are open to using crypto-native tooling — community incentives, drops, cohort mechanics, tester rewards — to grow their user base. Curates founders, sprints, demos, tester pipelines.</div>
+    </div>
+
+    <div class="card role-human">
+      <span class="role-glyph g-human">Human · Yash</span>
+      <div class="role-meta">Design</div>
+      <div class="card-title">Design Lead</div>
+      <div class="card-body">Owns graphics end to end. Holds the Gannon visual standard. Brand guardrails on every drop.</div>
+    </div>
+
+    <div class="card role-agent">
+      <span class="role-glyph g-agent">Agent · Juliet</span>
+      <div class="role-meta">Design</div>
+      <div class="card-title">Design Support</div>
+      <div class="card-body">Production volume under Yash. Templates, recap cards, social variants. 2 P0s/week ceiling.</div>
+    </div>
+
+    <div class="card role-agent">
+      <span class="role-glyph g-agent">Agents · Orcus + Callisto</span>
+      <div class="role-meta">Research + Data</div>
+      <div class="card-title">Research + Intel Lead</div>
+      <div class="card-body">Orcus: signal, narrative, ecosystem scans. Callisto: weekly metrics (DefiLlama + Meteora). Outputs feed everyone.</div>
+    </div>
+
+    <div class="card role-agent">
+      <span class="role-glyph g-agent">Agent · Ariel</span>
+      <div class="role-meta">Compliance</div>
+      <div class="card-title">Legal + Compliance Gate</div>
+      <div class="card-body">Standing async pre-publish review. Returns APPROVED or APPROVED + revisions.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 02 WORKFLOWS -->
+<section class="section" id="workflows">
+  <div class="section-eyebrow">02 · Workflows</div>
+  <h2 class="section-title">The playbooks.</h2>
+  <p class="section-desc">Recurring functions, documented. Click to expand.</p>
+
+  <details class="playbook">
+    <summary>Sunday Ecosystem Recap <span class="pb-meta">Weekly</span></summary>
+    <div class="pb-body">Orcus scans 400+ accounts → Lead drafts thread (hook + 5-8 highlights + close) → Ariel compliance pass → post Sun 9am PT. Conservative-cut if unverified.</div>
+  </details>
+
+  <details class="playbook">
+    <summary>Spaces Production <span class="pb-meta">~Weekly</span></summary>
+    <div class="pb-body">T-7 confirm guests · T-5 graphic · T-3 announce · T-1 remind · Live host + clip · +24h recap thread · +48h MetClips packs to multi-platform.</div>
+  </details>
+
+  <details class="playbook">
+    <summary>Frontier Founders Workshops <span class="pb-meta">Monthly</span></summary>
+    <div class="pb-body">Book speaker → record → upload → Galatea drops into template (Watch / Learn / Implement / Track) → Juliet cards → Atlas explainers → Ariel pass → launch (countdown · drop · recap · 30-day implementation). Same template every workshop.</div>
+  </details>
+
+  <details class="playbook">
+    <summary>Weekly Content Cadence <span class="pb-meta">Daily</span></summary>
+    <div class="pb-body">Sat anim · Sun recap · Mon Week Ahead · Tue data dive · Wed rest/Spaces · Thu Spaces recap · Fri DA news. See section 03. If a slot can't ship at quality, kill it.</div>
+  </details>
+
+  <details class="playbook">
+    <summary>Product Tester Recruitment <span class="pb-meta">Monthly</span></summary>
+    <div class="pb-body">Source from Orcus + Bianca → qualification DM → onboard with feedback template → weekly rotating tests → recognition (shoutouts, early access). Curated, not open.</div>
+  </details>
+
+  <details class="playbook">
+    <summary>MetEco Dinner <span class="pb-meta">Quarterly per city</span></summary>
+    <div class="pb-body">Director sets theme + city → 12 guests (4 founders / 4 VCs / 4 finance-AI-design) → private venue + photographer → personalized invites → recap as cultural artifact.</div>
+  </details>
+
+  <details class="playbook">
+    <summary>Daily Posting <span class="pb-meta">Daily</span></summary>
+    <div class="pb-body">Morning GMET + meme (nexokane) · Afternoon project card · Evening DA/DeFi/policy card. Templates compliance-checked weekly, not per-post.</div>
+  </details>
+
+  <details class="playbook">
+    <summary>Weekly Operating Rhythm (PRIME · PULSE · SHIP) <span class="pb-meta">Weekly · Fleet</span></summary>
+    <div class="pb-body">
+      <p>The three-touch cadence that keeps the fleet aligned without daily standups. Three days do real work, the rest is heads-down execution.</p>
+      <p><strong>Monday PRIME — set direction.</strong> Send each agent a role-specific intake question (not "what's your status"). Compile responses before assigning. Lock 1 P0 per agent, mapped to an outcome metric. Map dependencies (if B is blocked on A, A is P0). Push a single priority memo to the fleet before 10am.</p>
+      <p><strong>Wednesday PULSE — catch slippage.</strong> Read reports (don't ask). Unblock anyone stuck. Catch trust-breaking details early (stale data labels, unverified claims, off-brand visuals). Escalate only what the fleet can't resolve internally.</p>
+      <p><strong>Friday SHIP — close the week.</strong> Deliverables finalized or explicitly carried over. Callisto + Proteus deliver weekly numbers. One short summary memo to the Director: what shipped, what didn't, what changed strategically.</p>
+      <p><strong>Why not daily:</strong> daily standups optimize for managers feeling in control. This rhythm optimizes for agents getting work done. Tue + Thu are protected execution days.</p>
+      <p><strong>Bar:</strong> Skipping Monday means Tuesday assigns from assumption. Skipping Friday means next Monday starts cold. Don't.</p>
+    </div>
+  </details>
+
+  <details class="playbook">
+    <summary>Compliance Gate <span class="pb-meta">Continuous</span></summary>
+    <div class="pb-body">Ariel checks: never-say, unverified claims, regulatory flags, dead platforms, brand consistency. Returns APPROVED or APPROVED + revisions. Async.</div>
+  </details>
+
+  <details class="playbook">
+    <summary>Builder Chat + Community Management <span class="pb-meta">Daily · Community</span></summary>
+    <div class="pb-body">
+      <p><strong>Owner:</strong> Community + Tester Lead. <strong>Channel:</strong> <a class="ext-link" href="https://t.me/meteoraeco" target="_blank" rel="noopener">Meteora Ecosystem Telegram</a>.</p>
+      <p><strong>Daily duties:</strong></p>
+      <ol>
+        <li>Post Spaces updates: pre-Space link, live link, recap link.</li>
+        <li>Engage with builders: surface ships, answer questions, route to fleet.</li>
+        <li>Field retweet + amplification requests. Triage: real ship → amplify, filler → decline politely.</li>
+        <li>Surface launchpad/founder activity worth a spotlight slot.</li>
+        <li>Flag friction signals (bugs, confusion, missing docs) to MetIgnite Lead + Orcus.</li>
+      </ol>
+      <p><strong>Bar:</strong> Presence is the product. Visible, responsive, useful. Not a megaphone.</p>
+    </div>
+  </details>
+
+  <details class="playbook">
+    <summary>Drop Calendar <span class="pb-meta">Quarterly</span></summary>
+    <div class="pb-body">Treat launches, workshops, tester cohorts as cultural events. Hype runway → drop moment (Space, dinner, thread) → recap → cohort identity (badges, tiers, quiet prestige).</div>
+  </details>
+</section>
+
+<div class="divider"></div>
+
+<!-- 03 RHYTHM -->
+<section class="section" id="rhythm">
+  <div class="section-eyebrow">03 · Weekly Rhythm</div>
+  <h2 class="section-title">The week.</h2>
+
+  <div class="week-grid">
+    <div class="day">
+      <div class="day-name">Sat</div>
+      <div class="day-slot">Absolute Solana animation drop</div>
+      <div class="day-owner">Atlas + Juliet</div>
+    </div>
+    <div class="day">
+      <div class="day-name">Sun</div>
+      <div class="day-slot">Ecosystem recap thread</div>
+      <div class="day-owner">Orcus → Ariel → Lead</div>
+    </div>
+    <div class="day">
+      <div class="day-name active">Mon</div>
+      <div class="day-slot">Week Ahead thread</div>
+      <div class="day-slot">PRIME (fleet intake)</div>
+      <div class="day-owner">Lead + Director</div>
+    </div>
+    <div class="day">
+      <div class="day-name">Tue</div>
+      <div class="day-slot">Data dive thread</div>
+      <div class="day-owner">Callisto → Atlas</div>
+    </div>
+    <div class="day">
+      <div class="day-name">Wed</div>
+      <div class="day-slot">Rest / Spaces if scheduled</div>
+      <div class="day-slot">PULSE (fleet review)</div>
+      <div class="day-owner">Director</div>
+    </div>
+    <div class="day">
+      <div class="day-name">Thu</div>
+      <div class="day-slot">Spaces recap thread</div>
+      <div class="day-owner">Lead</div>
+    </div>
+    <div class="day">
+      <div class="day-name">Fri</div>
+      <div class="day-slot">DA news summary</div>
+      <div class="day-slot">SHIP (weekly summary)</div>
+      <div class="day-owner">Orcus → Lead</div>
+    </div>
+  </div>
+
+  <h3 class="sub">Daily slots</h3>
+  <div class="card-grid cg-3">
+    <div class="card">
+      <div class="card-eyebrow">Morning</div>
+      <div class="card-title">GMET + meme</div>
+      <div class="card-body">One-line + nexokane meme/video.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">Afternoon</div>
+      <div class="card-title">Project highlight</div>
+      <div class="card-body">Templated launchpad / project card.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">Evening</div>
+      <div class="card-title">DA / DeFi / policy</div>
+      <div class="card-body">Templated news card.</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 04 CONTENT + BRAND -->
+<section class="section" id="content">
+  <div class="section-eyebrow">04 · Content + Brand</div>
+  <h2 class="section-title">Voice, visual, distribution.</h2>
+  <p class="section-desc">How it sounds, how it looks, how it ships.</p>
+
+  <div class="card-grid cg-2">
+    <div class="card">
+      <div class="card-eyebrow">Voice</div>
+      <div class="card-title">YC + a16z synthesis</div>
+      <div class="card-body">Evergreen + radical transparency. Timely AND reusable.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">Tweet 1 doctrine</div>
+      <div class="card-title">Front-load impact</div>
+      <div class="card-body">Reader gets the thesis without "show more." Under 280 chars.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">Visual system</div>
+      <div class="card-title">Jamey Gannon-coded</div>
+      <div class="card-body">Flat saturated color, massive type, zero gradients. Palette: #f54b00 / #08080c / #f9f9fb.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">Design system + fonts</div>
+      <div class="card-title">Meteora Design System</div>
+      <div class="card-body"><a class="ext-link" href="https://github.com/0xSoju2/meteora-design-system" target="_blank" rel="noopener">github.com/0xSoju2/meteora-design-system</a> · Next.js 14, Tailwind, CVA, Inter. Editorial: Anybody, League Spartan, Casta via <a class="ext-link" href="https://freefaces.gallery" target="_blank" rel="noopener">freefaces.gallery</a>.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">Distribution</div>
+      <div class="card-title">Multi-platform</div>
+      <div class="card-body">X (@MeteoraEco) + Spaces own primary. TikTok / IG Reels / Shorts owned by <strong>Tuan</strong> — clip repurposing across short-form. Gap: Discord, partners, podcasts.</div>
+    </div>
+    <div class="card">
+      <div class="card-eyebrow">Video stack</div>
+      <div class="card-title">Three-tier</div>
+      <div class="card-body">Remotion (programmatic) · HyperFrames (HTML→MP4) · MetClips team (manual).</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 05 ROADMAP -->
+<section class="section" id="product">
+  <div class="section-eyebrow">05 · Roadmap</div>
+  <h2 class="section-title">What we're building + what's open.</h2>
+  <p class="section-desc">Products, programs, gaps, and hires in one place. <strong>MetIgnite</strong> is the agentic self-serve layer of the service. <strong>Frontier Founders</strong> is the flagship program — distribution + community sprints for non-tokenized founders open to crypto-native tooling. Both live at <a class="ext-link" href="https://metignite.vercel.app" target="_blank" rel="noopener">metignite.vercel.app</a>.</p>
+
+  <h3 class="sub">Live</h3>
+  <div class="table-wrap">
+    <table class="t">
+      <thead><tr><th>Item</th><th>Owner</th></tr></thead>
+      <tbody>
+        <tr><td><strong>MetIgnite v1</strong> · Skills 1-4 (pool-setup, tokenomics, content, growth)</td><td>Galatea</td></tr>
+        <tr><td><strong>Praxis</strong> (personal work OS)</td><td>Director</td></tr>
+        <tr><td><strong>MetReport</strong> (public ecosystem report)</td><td>Director</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">In flight</h3>
+  <div class="table-wrap">
+    <table class="t">
+      <thead><tr><th>Item</th><th>Owner</th><th>Next</th></tr></thead>
+      <tbody>
+        <tr><td><strong>MetIgnite Skills 5-8</strong> (community, dex-listing, outreach, analytics)</td><td>Galatea + Ariel</td><td>Galatea shipping</td></tr>
+        <tr><td><strong>Frontier Founders Workshop 01</strong> (Leon Abboud)</td><td>Build team</td><td>Video host + Leon rights</td></tr>
+        <tr><td><strong>North Star dashboard</strong></td><td>Callisto + Atlas</td><td>Mon pull → viz</td></tr>
+        <tr><td><strong>Praxis ↔ Sheet sync</strong></td><td>Titan</td><td>One-way Sheet → Praxis</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">Pipeline</h3>
+  <div class="table-wrap">
+    <table class="t">
+      <thead><tr><th>Item</th><th>Owner</th></tr></thead>
+      <tbody>
+        <tr><td><strong>MetIgnite Skills 9-17</strong> (Phase 3-4)</td><td>Galatea</td></tr>
+        <tr><td><strong>Frontier Founders Workshops 02-05</strong> (Tushar, Little Unusuals, Edgar, Kade)</td><td>Director</td></tr>
+        <tr><td><strong>MetRecon</strong> (intel unit)</td><td>TBD</td></tr>
+        <tr><td><strong>Tester program</strong></td><td>Needs Tester Lead</td></tr>
+        <tr><td><strong>Universities program</strong> — Boiler Blockchain partnership (NBC sponsorship + spring activation/research/content teams). Dormant, no active recent developments. Contacts: Eli Dubizh, Siya Jariwala.</td><td>Director</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">Gaps + hires</h3>
+  <div class="table-wrap">
+    <table class="t">
+      <thead><tr><th>Item</th><th>Next</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Community + Tester Lead</strong></td><td>Hire</td></tr>
+        <tr><td><strong>Events Producer</strong></td><td>Hire</td></tr>
+        <tr><td><strong>Distribution channels</strong></td><td>Need owner. X-only today.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">Outcome metrics — every P0 maps to one</h3>
+  <p style="color: var(--text-3); font-size: 14px;">TBD.</p>
+</section>
+
+<div class="divider"></div>
+
+<!-- 06 FLEET -->
+<section class="section" id="fleet">
+  <div class="section-eyebrow">06 · Fleet</div>
+  <h2 class="section-title">Pentagon agents.</h2>
+  <p class="section-desc">Nine specialist agents, narrow scope each, coordinated through Ophelia.</p>
+
+  <div class="table-wrap">
+    <table class="t">
+      <thead><tr><th>Agent</th><th>Owns</th><th>When to use</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Ophelia</strong></td><td>Coordination, content shipping, distribution</td><td>Default operational contact</td></tr>
+        <tr><td><strong>Orcus</strong></td><td>Research, ecosystem signal, X scans</td><td>"What's moving?"</td></tr>
+        <tr><td><strong>Ariel</strong></td><td>Compliance gate, regulatory landscape</td><td>Before publishing</td></tr>
+        <tr><td><strong>Proteus</strong></td><td>Growth strategy, AARRR, North Star</td><td>"Why isn't growth working?"</td></tr>
+        <tr><td><strong>Atlas</strong></td><td>Data viz + animated motion</td><td>Charts, dashboards, motion</td></tr>
+        <tr><td><strong>Callisto</strong></td><td>Weekly metrics pull, structured reports</td><td>Mon AM numbers, Thu check</td></tr>
+        <tr><td><strong>Galatea</strong></td><td>Apps, prototypes, MetIgnite, FF site</td><td>"Build it"</td></tr>
+        <tr><td><strong>Juliet</strong></td><td>Brand guardrails, design output at volume</td><td>Anything visual (2 P0s/wk)</td></tr>
+        <tr><td><strong>Bianca</strong></td><td>Human sourcing, event guest curation</td><td>Guest lists, intros</td></tr>
+        <tr><td><strong>Titan</strong></td><td>Praxis architecture, tooling glue</td><td>Cross-system integration</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">How to brief</h3>
+  <p style="color: var(--text-2); font-size: 14px;">Role-specific intake (not "what's your status"). One P0 mapped to outcome metric. Map dependencies first. Review actual output, not descriptions. When pausing, pause instantly.</p>
+</section>
+
+<div class="divider"></div>
+
+<!-- 07 TOOLS -->
+<section class="section" id="tools">
+  <div class="section-eyebrow">07 · Tools</div>
+  <h2 class="section-title">The stack.</h2>
+
+  <div class="table-wrap">
+    <table class="t">
+      <thead><tr><th>Tool</th><th>Purpose</th><th>Owner</th></tr></thead>
+      <tbody>
+        <tr><td colspan="3" style="color: var(--text-3);">TBD</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section style="display:none;" data-archived-tools="07">
+  <div class="table-wrap">
+    <table class="t">
+      <thead><tr><th>Tool</th><th>Purpose</th><th>Owner</th></tr></thead>
+      <tbody>
+        <tr><td><strong><a class="ext-link" href="https://runpentagon.com" target="_blank" rel="noopener">Pentagon</a></strong></td><td>Agent workspace</td><td>Director</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://github.com/0xSoju2/MetClaw" target="_blank" rel="noopener">GitHub MetClaw</a></strong></td><td>Code repo (metignite, <a href="praxis.html">praxis</a>, <a href="metreport.html">metreport</a>, <a href="ignite.html">ignite</a>)</td><td>Director</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://vercel.com" target="_blank" rel="noopener">Vercel</a></strong></td><td>Deployment (metignite.vercel.app)</td><td>Director</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://workspace.google.com" target="_blank" rel="noopener">Google Workspace</a></strong></td><td>Drive, Docs, Sheets, Calendar, Gmail</td><td>Director</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://x.com/MeteoraEco" target="_blank" rel="noopener">X / Twitter</a></strong></td><td>Primary distribution</td><td>Director</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://www.anthropic.com/api" target="_blank" rel="noopener">Claude API</a></strong></td><td>MetIgnite agentic layer</td><td>Galatea</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://vercel.com/docs/storage/vercel-kv" target="_blank" rel="noopener">Vercel KV</a></strong></td><td>MetIgnite session persistence</td><td>Galatea</td></tr>
+        <tr><td><strong>MetClips workflow</strong></td><td>Manual clipping pipeline</td><td>Content Lead</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://hyperframes.app" target="_blank" rel="noopener">HyperFrames</a></strong> · <strong><a class="ext-link" href="https://remotion.dev" target="_blank" rel="noopener">Remotion</a></strong></td><td>Video tooling</td><td>Atlas / Ophelia</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://defillama.com/docs/api" target="_blank" rel="noopener">DefiLlama</a></strong> · <strong><a class="ext-link" href="https://docs.meteora.ag" target="_blank" rel="noopener">Meteora API</a></strong></td><td>Metrics</td><td>Callisto</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 08 CONTACTS -->
+<section class="section" id="contacts">
+  <div class="section-eyebrow">08 · Contact Map</div>
+  <h2 class="section-title">Ecosystem map.</h2>
+  <p style="color: var(--text-2);"><a class="ext-link" href="#" target="_blank" rel="noopener">Open contact map sheet</a> <span style="color: var(--text-3);">(link TBD)</span></p>
+</section>
+
+<div class="divider"></div>
+
+<!-- 12 EVENTS -->
+<section class="section" id="events">
+  <div class="section-eyebrow">12 · Events</div>
+  <h2 class="section-title">What's on the calendar.</h2>
+  <p class="section-desc">Confirmed + tracked events. Owner: Events Producer (open). Each event needs run-of-show, content plan, and follow-up.</p>
+
+  <div class="table-wrap">
+    <table class="t">
+      <thead><tr><th>Event</th><th>When</th><th>Status</th><th>Next</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Consensus Miami</strong></td><td>May 5–7</td><td><span class="card-tag t-green">Confirmed</span></td><td>Confirm presence, lock side events, brief content + clipping team</td></tr>
+        <tr><td><strong>MonkeDAO Demo Day</strong><br><span style="color: var(--text-3); font-size: 12px;">Initiative: purchase Monkes for founders. Owner: Director.</span></td><td>May 4</td><td><span class="card-tag t-green">Confirmed</span></td><td>Confirm sponsorship/role, founder shortlist, Monke purchase budget + recipients, content capture plan</td></tr>
+        <tr><td><strong>Solana Skyline Startup Showcase</strong></td><td>May 1</td><td><span class="card-tag t-gold">Confirmed</span></td><td>Confirm role, founder lineup, content + clipping coverage</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 13 CREATORS -->
+<section class="section" id="creators">
+  <div class="section-eyebrow">13 · Creators</div>
+  <h2 class="section-title">Production network.</h2>
+
+  <h3 class="sub">Clipping team (MetClips)</h3>
+  <p style="color: var(--text-2); font-size: 14px; margin-bottom: 14px;">Manual workflow. Self-assign from request sheet, edit + caption + outro, drop into Drive, share in Telegram.</p>
+  <div class="table-wrap">
+    <table class="t">
+      <thead><tr><th>Clipper</th><th>Handle</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Daniel</strong></td><td>handle TBC</td></tr>
+        <tr><td><strong>Riddy</strong></td><td><a class="ext-link" href="https://x.com/Defipr1est" target="_blank" rel="noopener">@Defipr1est</a></td></tr>
+        <tr><td><strong>ML</strong></td><td><a class="ext-link" href="https://x.com/yoursML" target="_blank" rel="noopener">@yoursML</a></td></tr>
+        <tr><td><strong>West</strong></td><td><a class="ext-link" href="https://x.com/west_XE" target="_blank" rel="noopener">@west_XE</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">Workflow</h3>
+  <p style="color: var(--text-2); font-size: 14px;">Self-assign from <a class="ext-link" href="https://tinyurl.com/met-clips-request" target="_blank" rel="noopener">request sheet</a> → download (<a class="ext-link" href="https://fetchv.net/" target="_blank" rel="noopener">fetchv</a> / <a class="ext-link" href="https://cobalt.tools/" target="_blank" rel="noopener">cobalt</a>) → clip + subtitle + <a class="ext-link" href="https://drive.google.com/drive/folders/1lSz4jFReltnXV8GMixSg4MXemiHM7oKQ" target="_blank" rel="noopener">outro</a> → upload to <a class="ext-link" href="https://drive.google.com/drive/folders/1Tl_85ucSUcj2w_h_xuDXK1AW_-zHQCt3?usp=drive_link" target="_blank" rel="noopener">Drive</a> → post in <a class="ext-link" href="https://t.me/meteoraeco/140834" target="_blank" rel="noopener">Telegram</a> with stream name, X link, pack, handles.</p>
+
+  <h3 class="sub">Multi-platform distribution</h3>
+  <p style="color: var(--text-2); font-size: 14px; margin-bottom: 14px;">Short-form repurposing across TikTok, IG Reels, YouTube Shorts. Clips from MetClips team feed into the platform pipeline.</p>
+  <div class="table-wrap">
+    <table class="t">
+      <thead><tr><th>Owner</th><th>Platforms</th><th>Role</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Tuan</strong></td><td>TikTok · IG Reels · Shorts</td><td>Short-form posting + scheduling. Pulls clip packs from MetClips Drive.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">Other creators</h3>
+  <div class="table-wrap">
+    <table class="t">
+      <thead><tr><th>Creator</th><th>Role</th></tr></thead>
+      <tbody>
+        <tr><td><strong>nexokane</strong></td><td>Morning slot meme/video</td></tr>
+        <tr><td><strong>MetEco Clippers</strong></td><td>Organic Spaces clips, founder soundbites</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">Graphic + motion</h3>
+  <div class="table-wrap">
+    <table class="t">
+      <tbody>
+        <tr><td><strong>Yash</strong> (human)</td><td>Graphics lead. End-to-end production. Higher-touch motion.</td></tr>
+        <tr><td><strong>Juliet</strong> (agent)</td><td>Templates, recap cards, social variants. 2 P0s/wk.</td></tr>
+        <tr><td><strong>Atlas</strong> (agent)</td><td>Data viz + motion (Tue dive, Sat anim, FF explainers).</td></tr>
+        <tr><td><strong>Ophelia</strong> (agent)</td><td>Programmatic video via Remotion.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- 14 RESOURCES -->
+<section class="section" id="resources">
+  <div class="section-eyebrow">14 · Resources</div>
+  <h2 class="section-title">Everything in one place.</h2>
+
+  <h3 class="sub">Operating docs</h3>
+  <div class="table-wrap">
+    <table class="t">
+      <tbody>
+        <tr><td><strong><a class="ext-link" href="https://docs.google.com/document/d/11bQoTR_ysJRzCkybe7cOp7Aywcqz6u0NKmJ81aDHY20" target="_blank" rel="noopener">Daily Review (MASTER)</a></strong></td><td>What every agent is working on. Updated daily.</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://docs.google.com/document/d/1NEniWuMpTS_2uFFhk5betyR1OihZKsblnTaLfuIX7tM" target="_blank" rel="noopener">Fleet Dashboard</a></strong></td><td>Status, workstreams, blockers</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://docs.google.com/document/d/1Y20lpBdnfNlaIRGnqWNwhlUuotFisEgHpm3dhfZx_4Q" target="_blank" rel="noopener">Fleet Outputs Index</a></strong></td><td>All shipped deliverables</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://docs.google.com/document/d/11ZgATuzf1Ih8xa9WP1zwf-LK3U7Pz-2y2rxmKS0eQcc" target="_blank" rel="noopener">Weekly Content Plan</a></strong></td><td>Slot ownership + dependencies</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://docs.google.com/document/d/1QV8G_6zDAG21RdwDgH-6iQNszq0SBdKBOhwMzJZhI3c" target="_blank" rel="noopener">MetIgnite Product Doc</a></strong></td><td>Spec, skills, architecture</td></tr>
+        <tr><td><strong><a href="praxis.html">Praxis</a></strong> · <strong><a href="metreport.html">MetReport</a></strong> · <strong><a href="ignite.html">MetIgnite landing</a></strong></td><td>Internal sites in this repo</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://docs.google.com/document/d/1d7wPDLLRZmTQDz2Ytux97XtWKZHrX3G7cLaGXAli0fI/edit?usp=sharing" target="_blank" rel="noopener">MetEco Social Media Amplification Guidelines</a></strong></td><td>How we engage, amplify, and post across X</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">Meteora</h3>
+  <div class="table-wrap">
+    <table class="t">
+      <tbody>
+        <tr><td><strong><a class="ext-link" href="https://meteora.ag" target="_blank" rel="noopener">meteora.ag</a></strong></td><td>Main site</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://docs.meteora.ag" target="_blank" rel="noopener">docs.meteora.ag</a></strong></td><td>Protocol docs (DLMM, DAMM v1/v2, DBC, Vaults)</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://app.meteora.ag" target="_blank" rel="noopener">app.meteora.ag</a></strong></td><td>LP application</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://github.com/0xSoju2/meteora-design-system" target="_blank" rel="noopener">Meteora Design System</a></strong></td><td>Tokens, components</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://metignite.vercel.app" target="_blank" rel="noopener">MetIgnite (live)</a></strong></td><td>Production agentic copilot</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="sub">Frameworks + data</h3>
+  <div class="table-wrap">
+    <table class="t">
+      <tbody>
+        <tr><td><strong><a class="ext-link" href="https://a16zcrypto.com" target="_blank" rel="noopener">a16z crypto</a></strong> · <strong><a class="ext-link" href="https://www.ycombinator.com/library" target="_blank" rel="noopener">YC playbook</a></strong> · <strong>Jamey Gannon</strong></td><td>Community ops · evergreen content · visual reference</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://defillama.com/protocol/meteora" target="_blank" rel="noopener">DefiLlama</a></strong> · <strong><a class="ext-link" href="https://dune.com" target="_blank" rel="noopener">Dune</a></strong> · <strong><a class="ext-link" href="https://flipsidecrypto.xyz" target="_blank" rel="noopener">Flipside</a></strong> · <strong><a class="ext-link" href="https://www.helius.dev" target="_blank" rel="noopener">Helius</a></strong></td><td>Metrics + on-chain analytics</td></tr>
+        <tr><td><strong><a class="ext-link" href="https://freefaces.gallery" target="_blank" rel="noopener">freefaces.gallery</a></strong></td><td>Free editorial fonts</td></tr>
+        <tr><td><strong>MetClips</strong></td><td><a class="ext-link" href="https://tinyurl.com/met-clips-request" target="_blank" rel="noopener">Sheet</a> · <a class="ext-link" href="https://drive.google.com/drive/folders/1Tl_85ucSUcj2w_h_xuDXK1AW_-zHQCt3?usp=drive_link" target="_blank" rel="noopener">Drive</a> · <a class="ext-link" href="https://t.me/meteoraeco/140834" target="_blank" rel="noopener">Telegram</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</div>
+<!-- /OPS PANE -->
+
+<!-- FOOTER -->
+<footer class="footer">
+  Met-Eco-Ops · v3.1 · Live · Onboard · Ops · Real-time stats via DefiLlama
+</footer>
+
+<script>
+// Playbook auto-scroll
+document.querySelectorAll('details.playbook').forEach(el => {
+  el.addEventListener('toggle', () => {
+    if (el.open) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+});
+
+// ===== LIVE COUNTDOWNS =====
+function renderCountdowns() {
+  const now = Date.now();
+  document.querySelectorAll('[data-countdown]').forEach(el => {
+    const target = new Date(el.dataset.countdown).getTime();
+    if (isNaN(target)) return;
+    const ms = target - now;
+    if (ms < 0) {
+      const daysAgo = Math.floor(-ms / 86400000);
+      el.textContent = daysAgo === 0 ? 'today' : daysAgo + 'd ago';
+      return;
+    }
+    const d = Math.floor(ms / 86400000);
+    const h = Math.floor((ms % 86400000) / 3600000);
+    if (d === 0) el.textContent = h + 'h';
+    else if (d < 7) el.textContent = d + 'd ' + h + 'h';
+    else el.textContent = d + ' days';
+  });
+}
+renderCountdowns();
+setInterval(renderCountdowns, 60000);
+
+// ===== LIVE METEORA STATS =====
+function fmtUSD(n) {
+  if (n == null || isNaN(n)) return '—';
+  if (n >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
+  if (n >= 1e6) return '$' + (n / 1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return '$' + (n / 1e3).toFixed(1) + 'K';
+  return '$' + Math.round(n).toLocaleString();
+}
+
+function fmtRelTime(unixSec) {
+  if (!unixSec) return '—';
+  const ms = Date.now() - unixSec * 1000;
+  const m = Math.floor(ms / 60000);
+  if (m < 1) return 'just now';
+  if (m < 60) return m + ' min ago';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + 'h ago';
+  return Math.floor(h / 24) + 'd ago';
+}
+
+function animateNumber(el, target, formatter, duration) {
+  duration = duration || 900;
+  const start = 0;
+  const startTime = performance.now();
+  el.classList.remove('is-loading');
+  function step(now) {
+    const t = Math.min(1, (now - startTime) / duration);
+    const eased = 1 - Math.pow(1 - t, 3);
+    const v = start + (target - start) * eased;
+    el.textContent = formatter(v);
+    if (t < 1) requestAnimationFrame(step);
+    else el.textContent = formatter(target);
+  }
+  requestAnimationFrame(step);
+}
+
+async function loadMeteoraStats() {
+  const status = document.getElementById('stats-status');
+  const updated = document.getElementById('stats-updated');
+  try {
+    const res = await fetch('/api/meteora-stats', { cache: 'no-store' });
+    if (!res.ok) throw new Error('http ' + res.status);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    const tvlEl = document.querySelector('[data-stat="tvl"]');
+    const v24El = document.querySelector('[data-stat="volume24h"]');
+    const v7El = document.querySelector('[data-stat="volume7d"]');
+    const f24El = document.querySelector('[data-stat="fees24h"]');
+    const dEl = document.querySelector('[data-stat="volumeChange1d"]');
+
+    if (tvlEl && data.tvl != null) animateNumber(tvlEl, data.tvl, fmtUSD);
+    if (v24El && data.volume24h != null) animateNumber(v24El, data.volume24h, fmtUSD);
+    if (v7El && data.volume7d != null) animateNumber(v7El, data.volume7d, fmtUSD);
+    if (f24El && data.fees24h != null) animateNumber(f24El, data.fees24h, fmtUSD);
+    if (dEl && data.volumeChange1d != null) {
+      const sign = data.volumeChange1d >= 0 ? '+' : '';
+      dEl.innerHTML = '<span class="' + (data.volumeChange1d >= 0 ? 'delta-up' : 'delta-down') + '">' + sign + data.volumeChange1d.toFixed(2) + '% · 24h</span>';
+    }
+
+    if (status) {
+      status.textContent = 'live';
+      status.style.color = 'var(--success)';
+    }
+    if (updated) updated.textContent = 'Fetched ' + fmtRelTime(data.fetchedAt);
+  } catch (err) {
+    console.warn('meteora-stats failed:', err);
+    if (status) {
+      status.textContent = 'unavailable';
+      status.style.color = 'var(--gold)';
+    }
+    if (updated) updated.textContent = 'Live fetch unavailable in this environment. Deploy to Vercel to see real numbers.';
+  }
+}
+loadMeteoraStats();
+// Refresh every 5 min while page is open
+setInterval(loadMeteoraStats, 5 * 60 * 1000);
+
+// Tab switching
+const tabBtns = document.querySelectorAll('.tab-btn');
+const tabPanes = document.querySelectorAll('.tab-pane');
+
+function activateTab(tabId) {
+  tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+  tabPanes.forEach(p => p.classList.toggle('active', p.id === tabId));
+  // Update URL hash without scroll-jump
+  if (history.replaceState) history.replaceState(null, '', '#' + tabId.replace('tab-', ''));
+}
+
+tabBtns.forEach(btn => {
+  btn.addEventListener('click', () => activateTab(btn.dataset.tab));
+});
+
+// Honour URL hash on load
+(function() {
+  const hash = location.hash.replace('#', '');
+  const map = { live: 'tab-live', onboard: 'tab-onboard', ops: 'tab-ops' };
+  if (map[hash]) {
+    activateTab(map[hash]);
+  } else if (hash) {
+    // Hash points to a section inside a tab — find which and activate it
+    const target = document.getElementById(hash);
+    if (target) {
+      const pane = target.closest('.tab-pane');
+      if (pane) {
+        activateTab(pane.id);
+        setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+      }
+    }
+  }
+})();
+
+// Cross-tab anchor links — auto-switch tab if link points into a different pane
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', (e) => {
+    const id = a.getAttribute('href').slice(1);
+    const target = document.getElementById(id);
+    if (!target) return;
+    const pane = target.closest('.tab-pane');
+    if (pane && !pane.classList.contains('active')) {
+      e.preventDefault();
+      activateTab(pane.id);
+      setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+    }
+  });
+});
+</script>
+
+</body>
+</html>
