@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MetReport · Q1 2026 — Concentration, not Decline</title>
+<meta name="description" content="Meteora Ecosystem Q1 2026 report. X, Spaces, IRL events. Reach contracted. Conviction grew.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#060609;
+  --ink:#ffffff;
+  --ink-2:rgba(255,255,255,0.7);
+  --ink-3:rgba(255,255,255,0.45);
+  --ink-4:rgba(255,255,255,0.22);
+  --line:rgba(255,255,255,0.08);
+  --line-2:rgba(255,255,255,0.14);
+  --surface:rgba(255,255,255,0.025);
+  --accent:#f54b00;
+  --gold:#f7c10b;
+  --purple:#5f33ff;
+  --good:#24c98d;
+  --bad:#ff5d5d;
+  --grad:linear-gradient(259deg,#f7c10b 0%,#f84c00 40%,#5f33ff 100%);
+  --ease:cubic-bezier(0.22,1,0.36,1);
+}
+html{scroll-behavior:smooth}
+html,body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.55;font-size:15px}
+.slide{scroll-margin-top:72px}
+.mono{font-family:'JetBrains Mono',monospace}
+.serif{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-weight:400}
+.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-family:'Instrument Serif',Georgia,serif;font-style:italic}
+
+/* ATMOSPHERICS */
+.glow{position:fixed;pointer-events:none;z-index:0;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(245,75,0,0.10) 0%,rgba(95,51,255,0.04) 40%,transparent 70%);filter:blur(80px);top:-220px;right:-200px}
+.glow.g2{top:auto;bottom:-300px;left:-200px;width:700px;height:700px;background:radial-gradient(circle,rgba(95,51,255,0.10) 0%,rgba(247,193,11,0.03) 40%,transparent 70%)}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;backdrop-filter:blur(20px);background:rgba(6,6,9,0.6);border-bottom:1px solid var(--line);height:56px;display:flex;align-items:center;padding:0 28px}
+.nav-brand{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.22em;color:var(--ink);font-weight:500;display:flex;align-items:center;gap:10px}
+.nav-brand .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2.5s ease-in-out infinite}
+.nav-brand .sep{color:var(--ink-4)}
+.nav-brand .tag{color:var(--ink-3)}
+.nav-meta{margin-left:auto;display:flex;gap:4px;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--ink-3);align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.nav-link{color:var(--ink-3);text-decoration:none;padding:7px 11px;border-radius:6px;transition:color 0.2s var(--ease),background 0.2s var(--ease);white-space:nowrap}
+.nav-link:hover{color:var(--ink);background:rgba(255,255,255,0.05)}
+.nav-link.active{color:var(--accent)}
+@media (max-width: 900px){.nav-meta{display:none}}
+@keyframes pulse{0%,100%{opacity:0.5;box-shadow:0 0 0 0 rgba(245,75,0,0.3)}50%{opacity:1;box-shadow:0 0 0 6px rgba(245,75,0,0)}}
+
+/* DECK CONTAINER */
+.deck{position:relative;z-index:2;max-width:1180px;margin:0 auto;padding:96px 28px 120px}
+
+/* SLIDE */
+.slide{min-height:88vh;display:flex;flex-direction:column;justify-content:center;padding:64px 0;border-bottom:1px solid var(--line);position:relative}
+.slide:last-child{border-bottom:none}
+.slide-num{position:absolute;top:32px;left:0;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.24em;color:var(--ink-4);text-transform:uppercase}
+.slide-num span{color:var(--accent)}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.24em;color:var(--accent);text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:'';width:24px;height:1px;background:var(--accent)}
+.title{font-weight:200;letter-spacing:-0.035em;line-height:1.05;color:rgba(255,255,255,0.95);font-size:clamp(2rem,4.6vw,3.4rem);margin-bottom:18px;max-width:880px}
+.kicker{font-size:17px;line-height:1.6;color:var(--ink-2);max-width:680px;margin-bottom:48px}
+
+/* SLIDE 1 — COVER */
+.cover{align-items:center;text-align:center;justify-content:center;min-height:100vh}
+.cover-eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.32em;color:var(--ink-3);text-transform:uppercase;margin-bottom:40px;display:flex;align-items:center;gap:14px;justify-content:center}
+.cover-eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2.5s ease-in-out infinite}
+.cover-eyebrow .sep{color:var(--ink-4)}
+.cover-title{font-weight:200;letter-spacing:-0.045em;line-height:1.02;font-size:clamp(2.6rem,7.8vw,5.6rem);margin-bottom:36px;max-width:900px}
+.cover-sub{font-size:18px;line-height:1.6;color:var(--ink-3);max-width:560px;margin-bottom:64px}
+.cover-stats{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap}
+.cover-stat{padding:0 36px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.cover-stat-val{font-family:'Instrument Serif',Georgia,serif;font-size:2.6rem;font-weight:400;line-height:1;color:rgba(255,255,255,0.95)}
+.cover-stat-val.accent{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;font-style:italic}
+.cover-stat-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.22em;color:var(--ink-3);text-transform:uppercase}
+.cover-stat-sep{width:1px;height:44px;background:var(--line)}
+
+/* HERO NUMBER (Slide 2) */
+.hero-num{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-weight:400;font-size:clamp(8rem,18vw,15rem);line-height:0.9;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-0.03em}
+.hero-num-cap{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.24em;color:var(--good);text-transform:uppercase;margin-top:24px}
+.hero-num-note{font-size:17px;color:var(--ink-2);margin-top:18px;max-width:560px;line-height:1.6}
+
+/* CHANNEL TABLE */
+.channel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.channel{background:var(--bg);padding:36px 28px}
+.channel-name{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:var(--ink-3);margin-bottom:16px}
+.channel-val{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:3rem;line-height:1;color:rgba(255,255,255,0.95);margin-bottom:8px}
+.channel-val.accent{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.channel-unit{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-4);margin-bottom:20px}
+.channel-row{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-top:1px solid var(--line)}
+.channel-row span:first-child{color:var(--ink-3)}
+.channel-row span:last-child{color:var(--ink);font-family:'JetBrains Mono',monospace;font-size:12px}
+.channel.spaces{background:linear-gradient(180deg,rgba(245,75,0,0.04),transparent)}
+
+/* SPACES BARS */
+.spaces-list{display:flex;flex-direction:column;gap:14px;margin-top:8px}
+.space-row{display:grid;grid-template-columns:80px 1fr 80px;gap:18px;align-items:center}
+.space-date{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.12em;color:var(--ink-3);text-transform:uppercase}
+.space-bar-wrap{position:relative;height:44px;display:flex;align-items:center}
+.space-bar{height:36px;background:linear-gradient(90deg,rgba(245,75,0,0.6),rgba(247,193,11,0.5));border-radius:6px;display:flex;align-items:center;padding:0 14px;font-family:'JetBrains Mono',monospace;font-size:11px;color:#060609;font-weight:500;letter-spacing:0.04em;min-width:60px;transition:transform 0.3s var(--ease)}
+.space-bar.muted{background:rgba(255,255,255,0.06);color:var(--ink-2)}
+.space-bar.frontier{background:linear-gradient(90deg,#f54b00,#f7c10b);box-shadow:0 0 28px rgba(245,75,0,0.25)}
+.space-title{font-size:13px;color:var(--ink-2);text-align:right;line-height:1.3}
+.space-title b{color:var(--ink);font-weight:500}
+
+/* MONTHLY CHART */
+.monthly-wrap{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:36px 32px}
+.monthly-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px}
+.month-col{text-align:center;padding:20px 12px;border-radius:12px;background:rgba(255,255,255,0.02);border:1px solid var(--line);position:relative}
+.month-col.peak{border-color:rgba(245,75,0,0.35);background:linear-gradient(180deg,rgba(245,75,0,0.05),transparent)}
+.month-name{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.16em;color:var(--ink-3);text-transform:uppercase;margin-bottom:14px}
+.month-volume{font-size:32px;font-weight:300;color:var(--ink);line-height:1}
+.month-volume-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.18em;color:var(--ink-4);text-transform:uppercase;margin-top:4px;margin-bottom:18px}
+.month-er{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:1.6rem;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.month-er-lbl{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.18em;color:var(--ink-4);text-transform:uppercase;margin-top:4px}
+.peak-tag{position:absolute;top:-10px;right:12px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.2em;color:var(--accent);background:var(--bg);padding:2px 8px;border:1px solid rgba(245,75,0,0.3);border-radius:4px;text-transform:uppercase}
+
+/* DOW HEATMAP */
+.dow-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:8px}
+.dow-cell{padding:24px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--line);text-align:center;position:relative;transition:transform 0.25s var(--ease)}
+.dow-cell:hover{transform:translateY(-3px);border-color:var(--line-2)}
+.dow-day{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.18em;color:var(--ink-3);text-transform:uppercase;margin-bottom:14px}
+.dow-er{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:1.8rem;line-height:1;color:rgba(255,255,255,0.92);margin-bottom:6px}
+.dow-er.high{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.dow-er.low{color:var(--bad)}
+.dow-imp{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-3);letter-spacing:0.05em}
+.dow-tag{display:block;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:0.2em;color:var(--accent);text-transform:uppercase}
+
+/* IRL HUB MAP */
+.hub-wrap{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.hub{padding:32px 28px;border:1px solid var(--line);border-radius:16px;background:var(--surface);position:relative;overflow:hidden}
+.hub::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(245,75,0,0.5),transparent)}
+.hub-name{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.22em;color:var(--ink-3);text-transform:uppercase;margin-bottom:8px}
+.hub-city{font-size:32px;font-weight:300;letter-spacing:-0.02em;margin-bottom:6px}
+.hub-venue{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-3);margin-bottom:24px}
+.hub-events{display:flex;flex-direction:column;gap:10px}
+.hub-event{display:flex;align-items:center;gap:14px;padding:12px 14px;background:rgba(255,255,255,0.02);border:1px solid var(--line);border-radius:8px}
+.hub-event-dot{width:10px;height:10px;border-radius:50%;background:var(--accent);flex-shrink:0;box-shadow:0 0 12px rgba(245,75,0,0.4)}
+.hub-event-dot.big{width:18px;height:18px;box-shadow:0 0 18px rgba(245,75,0,0.6)}
+.hub-event-dot.med{width:13px;height:13px}
+.hub-event-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-3);letter-spacing:0.06em;width:64px;flex-shrink:0}
+.hub-event-name{font-size:13px;color:var(--ink-2);flex:1;line-height:1.3}
+.hub-event-rsvp{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:1.4rem;color:rgba(255,255,255,0.95);flex-shrink:0}
+.hub-event-rsvp.peak{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hub-total{margin-top:20px;padding-top:20px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.hub-total-lbl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.22em;color:var(--ink-3);text-transform:uppercase}
+.hub-total-val{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:2rem;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+/* FLYWHEEL */
+.flywheel{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;align-items:stretch;margin-top:8px}
+.fw-step{padding:32px 24px;background:var(--surface);border:1px solid var(--line);border-radius:14px;position:relative;display:flex;flex-direction:column;justify-content:space-between;min-height:200px}
+.fw-step-num{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.22em;color:var(--accent);text-transform:uppercase;margin-bottom:12px}
+.fw-step-name{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-size:1.8rem;line-height:1.1;margin-bottom:14px}
+.fw-step-desc{font-size:13px;color:var(--ink-3);line-height:1.5;margin-bottom:14px;flex:1}
+.fw-step-num-val{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--good);letter-spacing:0.04em}
+.fw-arrow{display:none}
+@media(max-width:900px){.flywheel{grid-template-columns:1fr}.channel-grid{grid-template-columns:1fr}.hub-wrap{grid-template-columns:1fr}.dow-grid{grid-template-columns:repeat(2,1fr)}.monthly-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* PLAYS */
+.plays{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.play{padding:28px 26px;border:1px solid var(--line);border-radius:14px;background:var(--surface);position:relative}
+.play-tag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.22em;text-transform:uppercase;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center}
+.play-tag .num{color:var(--accent)}
+.play-tag .own{color:var(--ink-3)}
+.play-title{font-size:18px;font-weight:300;line-height:1.3;color:var(--ink);letter-spacing:-0.01em;margin-bottom:10px}
+.play-why{font-size:13px;color:var(--ink-3);line-height:1.5}
+@media(max-width:760px){.plays{grid-template-columns:1fr}}
+
+/* OUTRO */
+.outro{align-items:center;text-align:center;justify-content:center;min-height:90vh}
+.outro-line{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-weight:400;font-size:clamp(2.4rem,5.6vw,4.2rem);line-height:1.15;letter-spacing:-0.02em;max-width:900px;margin-bottom:40px}
+.outro-line .grad-inline{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.outro-meta{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:0.24em;color:var(--ink-3);text-transform:uppercase;display:flex;gap:16px;align-items:center}
+.outro-meta .sep{color:var(--ink-4)}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.9s var(--ease),transform 0.9s var(--ease)}
+.reveal.in{opacity:1;transform:translateY(0)}
+</style>
+</head>
+<body>
+
+<div class="glow"></div>
+<div class="glow g2"></div>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <span class="dot"></span>
+    METREPORT
+    <span class="sep">/</span>
+    <span class="tag">Q1 · 2026</span>
+  </div>
+  <div class="nav-meta">
+    <a href="#s01" class="nav-link">Cover</a>
+    <a href="#s02" class="nav-link">Signal</a>
+    <a href="#s03" class="nav-link">Channels</a>
+    <a href="#s04" class="nav-link">Spaces</a>
+    <a href="#s05" class="nav-link">Cadence</a>
+    <a href="#s06" class="nav-link">Days</a>
+    <a href="#s07" class="nav-link">Hubs</a>
+    <a href="#s08" class="nav-link">Flywheel</a>
+    <a href="#s09" class="nav-link">This Week</a>
+    <a href="#s10" class="nav-link">This Month</a>
+    <a href="#s11" class="nav-link">Outro</a>
+  </div>
+</nav>
+
+<main class="deck">
+
+  <!-- 01 COVER -->
+  <section id="s01" class="slide cover">
+    <div class="slide-num"><span>01</span> / 11 — Cover</div>
+    <div class="cover-eyebrow">
+      <span class="dot"></span>
+      Meteora Ecosystem
+      <span class="sep">·</span>
+      Feb 4 — May 3, 2026
+      <span class="sep">·</span>
+      Built by Agent Titan
+    </div>
+    <h1 class="cover-title">
+      Concentration,<br>
+      not <span class="grad">decline</span>.
+    </h1>
+    <p class="cover-sub">Reach contracted. Conviction grew. The hub-flywheel proved out across X, Spaces, and IRL — in two cities.</p>
+    <div class="cover-stats">
+      <div class="cover-stat">
+        <div class="cover-stat-val accent">1.0M</div>
+        <div class="cover-stat-label">X Impressions</div>
+      </div>
+      <div class="cover-stat-sep"></div>
+      <div class="cover-stat">
+        <div class="cover-stat-val">11.3K</div>
+        <div class="cover-stat-label">Spaces Listeners</div>
+      </div>
+      <div class="cover-stat-sep"></div>
+      <div class="cover-stat">
+        <div class="cover-stat-val">744</div>
+        <div class="cover-stat-label">IRL RSVPs · 7 Events</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 ONE NUMBER -->
+  <section id="s02" class="slide reveal" style="align-items:center;text-align:center">
+    <div class="slide-num"><span>02</span> / 11 — The One Number</div>
+    <div class="eyebrow" style="justify-content:center">The signal that matters</div>
+    <h2 class="title" style="text-align:center;margin:0 auto 8px">Engagement rate.</h2>
+    <p class="kicker" style="margin:0 auto 56px;text-align:center">Smaller audience. Sharper signal. Shares — the highest-cost engagement — actually grew.</p>
+    <div class="hero-num">4.06%</div>
+    <div class="hero-num-cap">↑ 17% QoQ · Shares ↑ 14%</div>
+    <p class="hero-num-note">Reach fell 54%. The audience that stayed is more engaged, more likely to share, and more loyal. This is not a decline story.</p>
+  </section>
+
+  <!-- 03 CHANNEL MIX -->
+  <section id="s03" class="slide reveal">
+    <div class="slide-num"><span>03</span> / 11 — Channel Mix</div>
+    <div class="eyebrow">Three channels, one flywheel</div>
+    <h2 class="title">Spaces became the breakout. <span class="grad">Livestream is underperforming.</span></h2>
+    <p class="kicker">Per-unit reach tells the real story. Spaces deliver ~4× livestream's average for the same effort.</p>
+
+    <div class="channel-grid">
+      <div class="channel">
+        <div class="channel-name">X · Posts</div>
+        <div class="channel-val">976K</div>
+        <div class="channel-unit">Impressions · 1,416 posts</div>
+        <div class="channel-row"><span>Avg / post</span><span>690</span></div>
+        <div class="channel-row"><span>Originals (36%)</span><span>1,552 avg</span></div>
+        <div class="channel-row"><span>Replies (64%)</span><span>212 avg</span></div>
+        <div class="channel-row"><span>Engagement rate</span><span>4.06%</span></div>
+      </div>
+      <div class="channel spaces">
+        <div class="channel-name">Spaces · Hosted</div>
+        <div class="channel-val accent">11.3K</div>
+        <div class="channel-unit">Listeners · 9 sessions</div>
+        <div class="channel-row"><span>Avg / Space</span><span>1,259</span></div>
+        <div class="channel-row"><span>Total impressions</span><span>60,587</span></div>
+        <div class="channel-row"><span>Top session</span><span>2,621</span></div>
+        <div class="channel-row"><span>Frontier arc</span><span>386 → 2,500</span></div>
+      </div>
+      <div class="channel">
+        <div class="channel-name">Livestream</div>
+        <div class="channel-val">~600</div>
+        <div class="channel-unit">Viewers · 2 shows</div>
+        <div class="channel-row"><span>Avg / show</span><span>~300</span></div>
+        <div class="channel-row"><span>Min watched</span><span>~700</span></div>
+        <div class="channel-row"><span>vs Spaces</span><span>0.24×</span></div>
+        <div class="channel-row"><span>Status</span><span style="color:var(--bad)">Reallocate</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 SPACES BREAKOUT -->
+  <section id="s04" class="slide reveal">
+    <div class="slide-num"><span>04</span> / 11 — Spaces Breakout</div>
+    <div class="eyebrow">The Frontier arc compounds</div>
+    <h2 class="title">Two breakouts carry the quarter.<br><span class="grad">Sequels work.</span></h2>
+    <p class="kicker">Pt 1 → Pt 2 jumped 6.5×. Lock Frontier as a recurring series. AI/builder framing is a proven hook.</p>
+
+    <div class="spaces-list">
+      <div class="space-row">
+        <div class="space-date">Apr 8</div>
+        <div class="space-bar-wrap"><div class="space-bar" style="width:100%">2,621 listeners</div></div>
+        <div class="space-title"><b>AI Replacing Humans?!</b></div>
+      </div>
+      <div class="space-row">
+        <div class="space-date">Apr 29</div>
+        <div class="space-bar-wrap"><div class="space-bar frontier" style="width:95%">2,500 listeners</div></div>
+        <div class="space-title"><b>Frontier Pt 2</b><br>Colosseum</div>
+      </div>
+      <div class="space-row">
+        <div class="space-date">Apr 22</div>
+        <div class="space-bar-wrap"><div class="space-bar" style="width:18%">393</div></div>
+        <div class="space-title">Tokenization &amp; Future of Investing</div>
+      </div>
+      <div class="space-row">
+        <div class="space-date">Apr 15</div>
+        <div class="space-bar-wrap"><div class="space-bar frontier" style="width:17%">386</div></div>
+        <div class="space-title"><b>Frontier Pt 1</b><br>Colosseum</div>
+      </div>
+      <div class="space-row">
+        <div class="space-date">Apr 21</div>
+        <div class="space-bar-wrap"><div class="space-bar" style="width:9%">190</div></div>
+        <div class="space-title">Sunrise &amp; Future of Digital Assets</div>
+      </div>
+      <div class="space-row">
+        <div class="space-date">Mar 11</div>
+        <div class="space-bar-wrap"><div class="space-bar muted" style="width:5%">82</div></div>
+        <div class="space-title">Ultimate Alpha for Builders<br><span style="color:var(--bad);font-size:11px;letter-spacing:0.1em;text-transform:uppercase">Lowest of quarter — diagnose</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 VOLUME vs Engagement Rate -->
+  <section id="s05" class="slide reveal">
+    <div class="slide-num"><span>05</span> / 11 — Cadence Ceiling</div>
+    <div class="eyebrow">The volume trap</div>
+    <h2 class="title">Tripling output cut engagement rate by <span class="grad">a third</span>.</h2>
+    <p class="kicker">Cadence ceiling sits around 17 posts/day. February's restraint was the highest-quality month — by a wide margin.</p>
+
+    <div class="monthly-wrap">
+      <div class="monthly-grid">
+        <div class="month-col peak">
+          <span class="peak-tag">Peak Engagement Rate</span>
+          <div class="month-name">Feb</div>
+          <div class="month-volume">219</div>
+          <div class="month-volume-lbl">Posts</div>
+          <div class="month-er">5.42%</div>
+          <div class="month-er-lbl">Engagement Rate</div>
+        </div>
+        <div class="month-col">
+          <div class="month-name">Mar</div>
+          <div class="month-volume">616</div>
+          <div class="month-volume-lbl">Posts</div>
+          <div class="month-er">3.61%</div>
+          <div class="month-er-lbl">Engagement Rate</div>
+        </div>
+        <div class="month-col">
+          <div class="month-name">Apr</div>
+          <div class="month-volume">528</div>
+          <div class="month-volume-lbl">Posts</div>
+          <div class="month-er">3.97%</div>
+          <div class="month-er-lbl">Engagement Rate</div>
+        </div>
+        <div class="month-col">
+          <div class="month-name">May</div>
+          <div class="month-volume">51</div>
+          <div class="month-volume-lbl">Posts (3d)</div>
+          <div class="month-er">3.44%</div>
+          <div class="month-er-lbl">Engagement Rate</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 DOW -->
+  <section id="s06" class="slide reveal">
+    <div class="slide-num"><span>06</span> / 11 — Day-of-Week Playbook</div>
+    <div class="eyebrow">When to publish</div>
+    <h2 class="title">Sun is conviction. Tue/Wed is reach. <span class="grad">Thu is noise.</span></h2>
+    <p class="kicker">Day-of-week engagement rate differential is nearly 2×. Move launches to Tue/Wed; reserve Sun for narrative.</p>
+
+    <div class="dow-grid">
+      <div class="dow-cell">
+        <div class="dow-day">Sun</div>
+        <div class="dow-er high">5.10%</div>
+        <div class="dow-imp">430 imp</div>
+        <span class="dow-tag">Conviction</span>
+      </div>
+      <div class="dow-cell">
+        <div class="dow-day">Mon</div>
+        <div class="dow-er">4.35%</div>
+        <div class="dow-imp">655 imp</div>
+        <span class="dow-tag" style="color:var(--ink-4)">·</span>
+      </div>
+      <div class="dow-cell">
+        <div class="dow-day">Tue</div>
+        <div class="dow-er high">4.30%</div>
+        <div class="dow-imp">788 imp</div>
+        <span class="dow-tag">Launch</span>
+      </div>
+      <div class="dow-cell">
+        <div class="dow-day">Wed</div>
+        <div class="dow-er high">4.21%</div>
+        <div class="dow-imp">737 imp</div>
+        <span class="dow-tag">Launch</span>
+      </div>
+      <div class="dow-cell">
+        <div class="dow-day">Thu</div>
+        <div class="dow-er low">2.66%</div>
+        <div class="dow-imp">1,086 imp</div>
+        <span class="dow-tag" style="color:var(--bad)">High noise</span>
+      </div>
+      <div class="dow-cell">
+        <div class="dow-day">Fri</div>
+        <div class="dow-er">4.22%</div>
+        <div class="dow-imp">569 imp</div>
+        <span class="dow-tag" style="color:var(--ink-4)">·</span>
+      </div>
+      <div class="dow-cell">
+        <div class="dow-day">Sat</div>
+        <div class="dow-er">4.47%</div>
+        <div class="dow-imp">607 imp</div>
+        <span class="dow-tag" style="color:var(--ink-4)">·</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 IRL EVENTS -->
+  <section id="s07" class="slide reveal">
+    <div class="slide-num"><span>07</span> / 11 — Bi-Coastal Hub</div>
+    <div class="eyebrow">Two anchors, not a tour</div>
+    <h2 class="title">744 RSVPs across 7 events.<br><span class="grad">SF + NYC carry it all.</span></h2>
+    <p class="kicker">NYC drives reach (380-RSVP Skyline anchor). SF drives credibility (Colosseum). Everything is registrations — check-in noise removed.</p>
+
+    <div class="hub-wrap">
+      <div class="hub">
+        <div class="hub-name">Hub · East</div>
+        <div class="hub-city">NYC</div>
+        <div class="hub-venue">Solana Skyline · 55 Delancey</div>
+        <div class="hub-events">
+          <div class="hub-event">
+            <span class="hub-event-dot big"></span>
+            <span class="hub-event-date">Mar 25</span>
+            <span class="hub-event-name">Phoenix &amp; Future of Digital Assets</span>
+            <span class="hub-event-rsvp peak">380</span>
+          </div>
+          <div class="hub-event">
+            <span class="hub-event-dot med"></span>
+            <span class="hub-event-date">May 1</span>
+            <span class="hub-event-name">Startup Showcase / Founders' Lunch</span>
+            <span class="hub-event-rsvp">55</span>
+          </div>
+          <div class="hub-event">
+            <span class="hub-event-dot med"></span>
+            <span class="hub-event-date">Apr 10</span>
+            <span class="hub-event-name">Frontier Founders' Lunch</span>
+            <span class="hub-event-rsvp">54</span>
+          </div>
+          <div class="hub-event">
+            <span class="hub-event-dot med"></span>
+            <span class="hub-event-date">Apr 11</span>
+            <span class="hub-event-name">Raposa × Meteora · Liquidity Lounge</span>
+            <span class="hub-event-rsvp">53</span>
+          </div>
+        </div>
+        <div class="hub-total">
+          <span class="hub-total-lbl">NYC RSVPs · 4 events</span>
+          <span class="hub-total-val">542</span>
+        </div>
+      </div>
+      <div class="hub">
+        <div class="hub-name">Hub · West</div>
+        <div class="hub-city">SF</div>
+        <div class="hub-venue">Colosseum · 153 Kearny</div>
+        <div class="hub-events">
+          <div class="hub-event">
+            <span class="hub-event-dot med"></span>
+            <span class="hub-event-date">Apr 21</span>
+            <span class="hub-event-name">Frontier Demo Night &amp; Mixer</span>
+            <span class="hub-event-rsvp">92</span>
+          </div>
+          <div class="hub-event">
+            <span class="hub-event-dot"></span>
+            <span class="hub-event-date">Mar 11</span>
+            <span class="hub-event-name">Solana's Agentic Future</span>
+            <span class="hub-event-rsvp">65</span>
+          </div>
+          <div class="hub-event">
+            <span class="hub-event-dot"></span>
+            <span class="hub-event-date">Mar 17</span>
+            <span class="hub-event-name">Capital Formation on Solana</span>
+            <span class="hub-event-rsvp">45</span>
+          </div>
+        </div>
+        <div class="hub-total">
+          <span class="hub-total-lbl">SF RSVPs · 3 events</span>
+          <span class="hub-total-val">202</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 FLYWHEEL -->
+  <section id="s08" class="slide reveal">
+    <div class="slide-num"><span>08</span> / 11 — The Flywheel</div>
+    <div class="eyebrow">How the channels compound</div>
+    <h2 class="title">Each leg <span class="grad">multiplies</span> the next.</h2>
+    <p class="kicker">Q1 proved the loop. Mar 25 NYC Skyline (380 RSVPs) was preceded by the Mar 19 Skyline tweet (82,679 imp) — that wasn't algorithmic luck, it was event marketing.</p>
+
+    <div class="flywheel">
+      <div class="fw-step">
+        <div>
+          <div class="fw-step-num">01 · Observe</div>
+          <div class="fw-step-name">X originals</div>
+          <div class="fw-step-desc">Drive RSVPs. Tue/Wed launch posts feed event funnels.</div>
+        </div>
+        <div class="fw-step-num-val">505 originals · 1,552 avg imp</div>
+      </div>
+      <div class="fw-step">
+        <div>
+          <div class="fw-step-num">02 · Convert</div>
+          <div class="fw-step-name">IRL events</div>
+          <div class="fw-step-desc">Convert reach to community in physical hubs. Only format that drives new follows at scale.</div>
+        </div>
+        <div class="fw-step-num-val">744 RSVPs · 2 hub cities</div>
+      </div>
+      <div class="fw-step">
+        <div>
+          <div class="fw-step-num">03 · Amplify</div>
+          <div class="fw-step-name">Spaces</div>
+          <div class="fw-step-desc">Extend the event narrative. Frontier series compounds across sessions.</div>
+        </div>
+        <div class="fw-step-num-val">11.3K listeners · 9 hosted</div>
+      </div>
+      <div class="fw-step">
+        <div>
+          <div class="fw-step-num">04 · Compound</div>
+          <div class="fw-step-name">Recap thread</div>
+          <div class="fw-step-desc">Feed next event's RSVP funnel. Closes the loop.</div>
+        </div>
+        <div class="fw-step-num-val">T+1 cadence · weekly</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 Q2 PLAYS -->
+  <section id="s09" class="slide reveal">
+    <div class="slide-num"><span>09</span> / 11 — Q2 Plays · This Week</div>
+    <div class="eyebrow">ACT layer · ≤ 3 days</div>
+    <h2 class="title">Four moves. <span class="grad">Lock now.</span></h2>
+    <p class="kicker">Highest-leverage actions. Owners assigned. No invention required — execute against locked findings.</p>
+
+    <div class="plays">
+      <div class="play">
+        <div class="play-tag"><span class="num">Play 01</span><span class="own">Comms</span></div>
+        <div class="play-title">Cap daily post volume at 12 originals + replies.</div>
+        <div class="play-why">Mar overshoot proved engagement rate decays past ~17/day. Restraint → quality lift.</div>
+      </div>
+      <div class="play">
+        <div class="play-tag"><span class="num">Play 02</span><span class="own">Recon</span></div>
+        <div class="play-title">Audit Mar 11 Space (82 listeners). Find root cause.</div>
+        <div class="play-why">Lowest-of-quarter outlier. Diagnose timing, topic, or co-host mismatch.</div>
+      </div>
+      <div class="play">
+        <div class="play-tag"><span class="num">Play 03</span><span class="own">Comms</span></div>
+        <div class="play-title">Reschedule launches to Tue/Wed. Narrative to Sun.</div>
+        <div class="play-why">Day-of-week engagement rate differential is 2×. Free reach + free conviction.</div>
+      </div>
+      <div class="play">
+        <div class="play-tag"><span class="num">Play 04</span><span class="own">Events</span></div>
+        <div class="play-title">Lock Frontier as monthly recurring series.</div>
+        <div class="play-why">Pt 1 → Pt 2 (386 → 2,500) validated the franchise. Reserve venue + co-hosts now.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 Q2 PLAYS · MONTH -->
+  <section id="s10" class="slide reveal">
+    <div class="slide-num"><span>10</span> / 11 — Q2 Plays · This Month</div>
+    <div class="eyebrow">ORIENT layer · 30 days</div>
+    <h2 class="title">Concentration plays. <span class="grad">Cut what doesn't compound.</span></h2>
+    <p class="kicker">Q2 is concentration, not recovery. Smaller surface, sharper signal, repeat the hub-flywheel.</p>
+
+    <div class="plays">
+      <div class="play">
+        <div class="play-tag"><span class="num">Play 05</span><span class="own">Comms</span></div>
+        <div class="play-title">Cut bottom 30% of post formats.</div>
+        <div class="play-why">515 posts under 100 imp = pure dilution. Audit the long tail; kill recurring dead formats.</div>
+      </div>
+      <div class="play">
+        <div class="play-tag"><span class="num">Play 06</span><span class="own">Distribution</span></div>
+        <div class="play-title">Migrate one Showcase from Livestream → Spaces.</div>
+        <div class="play-why">Spaces deliver ~4× reach for the same effort. A/B-test the format swap.</div>
+      </div>
+      <div class="play">
+        <div class="play-tag"><span class="num">Play 07</span><span class="own">Events</span></div>
+        <div class="play-title">Lock bi-coastal hub: SF Colosseum + NYC Skyline monthly.</div>
+        <div class="play-why">6 of 7 Q1 events validated the pattern. Recurring physical anchors > one-off tour.</div>
+      </div>
+      <div class="play">
+        <div class="play-tag"><span class="num">Play 08</span><span class="own">Events</span></div>
+        <div class="play-title">Schedule one Space/month in Lagos/Mumbai/Jakarta windows.</div>
+        <div class="play-why">32% of audience is Global South. Programming windows should reflect this.</div>
+      </div>
+      <div class="play">
+        <div class="play-tag"><span class="num">Play 09</span><span class="own">Comms</span></div>
+        <div class="play-title">Rebalance originals : replies → 40 / 60.</div>
+        <div class="play-why">Originals carry 80% of reach at 7× per-post yield. Small shift, meaningful lift.</div>
+      </div>
+      <div class="play">
+        <div class="play-tag"><span class="num">Play 10</span><span class="own">Events / Recon</span></div>
+        <div class="play-title">Standardize RSVP-only reporting across event recaps.</div>
+        <div class="play-why">Check-in tracking was creating false signals. Registrations are the metric.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 OUTRO -->
+  <section id="s11" class="slide outro">
+    <div class="slide-num"><span>11</span> / 11 — Outro</div>
+    <div class="cover-eyebrow" style="margin-bottom:48px">
+      <span class="dot"></span>
+      Q1 2026 · The signal
+      <span class="sep">·</span>
+      Q2 begins May 4
+    </div>
+    <p class="outro-line">
+      Smaller audience.<br>
+      <span class="grad-inline">Higher conviction.</span><br>
+      Same direction.
+    </p>
+    <div class="outro-meta">
+      <span>MetReport</span>
+      <span class="sep">·</span>
+      <span>Built by Agent Titan</span>
+      <span class="sep">·</span>
+      <span>Sources: X · Unfungible · Partiful</span>
+    </div>
+  </section>
+
+</main>
+
+<script>
+// Reveal-on-scroll
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+// Scroll-spy: highlight active nav link
+const navLinks = document.querySelectorAll('.nav-link');
+const slides = document.querySelectorAll('.slide');
+const spy = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      const id = e.target.id;
+      navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + id));
+    }
+  });
+}, { rootMargin: '-40% 0px -55% 0px', threshold: 0 });
+slides.forEach(s => { if (s.id) spy.observe(s); });
+</script>
+
+</body>
+</html>
